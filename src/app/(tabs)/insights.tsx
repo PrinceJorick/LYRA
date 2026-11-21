@@ -36,11 +36,7 @@ export default function Insights() {
 
   return (
     <Screen top title="Insights" subtitle="Summaries of recorded events and entries.">
-      <Notice tone="warning">
-        {meta.status === 'mock'
-          ? 'ML model not integrated. Insights currently use illustrative sample data.'
-          : 'Experimental research model loaded (trained on SeizeIT2 hospital recordings). It is not connected to live pod data and is not clinically validated. Insights use illustrative sample data.'}
-      </Notice>
+      <Notice tone="warning">ML model not integrated. Insights currently use illustrative sample data.</Notice>
 
       {/* 1. Historical statistics */}
       <SectionHeader title="Event statistics" />
@@ -89,7 +85,7 @@ export default function Insights() {
       <SectionHeader title="Model output" />
       <Card style={{ gap: space.sm }}>
         <KeyValue label="Model" value={meta.modelId === 'none' ? 'None' : meta.modelId} />
-        <KeyValue label="Status" value={meta.status === 'mock' ? 'Mock: ML model not integrated' : 'Integrated (experimental, no live pod data)'} />
+        <KeyValue label="Status" value={meta.status === 'mock' ? 'Mock: ML model not integrated' : 'Integrated'} />
         {outputs.length === 0 ? (
           <Txt v="small" muted>
             No model outputs available. LYRA shows no risk scores, predictions or confidence values until a
