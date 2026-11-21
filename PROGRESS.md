@@ -60,7 +60,7 @@ Expo SDK 58 / React Native 0.88 / Expo Router / TypeScript (strict) app, iOS and
 - The pod graphic is an abstract SVG, not a real render.
 - Default countdown is 8 s; the hardware spec mentions a 10 s pod cancel window. Confirm which is intended.
 - Only the Ponytail skill is installed. Superpowers, UIUX Promax and Caveman were not available and were not used.
-- Nothing is committed yet.
+- (Superseded: session 1 work was later committed as `5c0e664` and `e97cd8f`.)
 
 ### How to run
 ```bash
@@ -78,3 +78,35 @@ The dev server was last left running on `http://localhost:8081` (web). Stop it w
 4. Replace `mockDeviceService` with real BLE once the pod firmware's GATT profile is defined (needs a development build, not Expo Go).
 5. Replace `mockMlService` once a model and its `ModelMetadata` exist.
 6. Real notification channel, with caregiver consent flow.
+
+## Session 2 (2026-11-21): MLM software foundation, pre-training phase
+
+### What exists
+A Python package in `mlm/` (separate from the Expo app; `src/` stays JS-only). Python >= 3.11, numpy, scipy, pytest. Venv at `mlm/.venv` (uv, Python 3.12).
+- Modules in `mlm/src/lyra_mlm/`: signals, annotations, sync, preprocess, quality, windows, features, model, inference, confirmation, evaluation, datasets, ble.
+- 104 pytest tests on synthetic fixtures (`mlm/tests/`), all passing. `StubScorePredictor` exists in `tests/synthetic.py` only.
+- Docs: `mlm/README.md`, `mlm/docs/{ARCHITECTURE,DATASETS,TRAINING_PLAN,BLE_PROTOCOL}.md`.
+
+### Hard boundaries kept
+No model trained (`.fit()` never called; a test greps for it). No dataset downloaded. No metrics. No export. Wi-Fi CSI not integrated.
+
+### Decisions worth remembering
+- Native sampling rates are preserved end to end. `resample()` needs an explicit method and is never called by the pipeline.
+- Quality states (VALID/DEGRADED/INVALID/MISSING/UNSYNCHRONIZED) live in `quality.py`, which must not import model code.
+- SUPPRESSED predictions have `score=None, class=None` and never count as negatives. `invalid_window_policy` defaults to "hold".
+- EMG feature names include the signal type (`emg_env_*` vs `emg_raw_*`). Multimodal currently supports ENV only.
+- RECT/ENV filters may only be lowpass. ENV frequency features stay unavailable until `bandwidth_hz` is declared.
+- Confirmation states are IDLE/ACCUMULATING/POSSIBLE_EVENT/REFRACTORY. There is no "confirmed seizure" state.
+
+### Open items
+- MyoWare ENV sample rate and analog bandwidth: not specified.
+- Required alert text "Possible convulsive seizure detected. This is not a diagnosis." differs from the app's "Possible Event" wording. The app was not changed.
+- The app's `MlService` assumes phone-side detection and equal channel lengths, which conflicts with on-pod inference and native rates. Align when BLE lands.
+- context.md §5/§14 is out of date against the finalized hardware brief. Not edited (policy: only when asked).
+- Superpowers and Research Superpowers are not installed. Installing them needs the user's authorization.
+- `node_modules` was absent at session start, so the app's tsc/eslint were not re-run. The app code was not touched.
+
+### How to run
+```bash
+cd mlm && .venv/bin/python -m pytest -q
+```
