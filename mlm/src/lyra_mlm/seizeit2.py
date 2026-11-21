@@ -6,8 +6,12 @@ come from each EDF header (the JSON SamplingFrequency is cross-checked and diffe
 
 - EMG: 'EMG SD', raw sEMG on the left deltoid -> EmgSignalType.RAW, native rate kept.
 - IMU: the 'ECGEMG SD' module (left chest, same device as the EMG) ACC X/Y/Z + GYR A/B/C.
-  Units are kept as the source gives them: EDF labels both ACC and GYR 'g', resting |acc| is
-  ~0.5, and the gyro unit is unverified, so no conversion to g / deg/s is applied.
+  The EDF labels both 'g', but each recording uses its own storage scale: median |acc| (gravity)
+  is ~1/2 or ~1/6 in valid recordings, and pinned at 32.768 (or zero, or ~1.34) in broken ones.
+  GYR carries the same per-recording factor (verified by rigid-body kinematics, see
+  ml/seizeit2/gyro_calibration.py). calibrate_imu() divides ACC and GYR by the recording's
+  gravity estimate (ACC -> g) and converts GYR with GYRO_DPS_PER_UNIT (-> deg/s, estimated);
+  recordings outside ACC_SCALE_VALID get every IMU sample flagged INVALID.
 - Timing: EMG and MOV EDF start times are anonymised differently, so both are assumed to start
   at the recording onset (t = 0) that events.tsv onsets refer to. Not proof of physical sync.
 - A recording missing an EMG/MOV file or the expected channels loads that modality as None and
@@ -25,14 +29,40 @@ import numpy as np
 from .annotations import SEIZURE_LIKE, Annotation, AnnotationKind
 from .datasets import SOURCES, RecordingInfo
 from .edf import EdfError, read_edf, read_edf_header
-from .signals import IMU_CHANNELS, DataOrigin, EmgSignalType, Modality, Recording, SignalStream
+from .signals import IMU_CHANNELS, DataOrigin, EmgSignalType, Modality, Recording, SampleFlag, SignalStream
 
 EMG_LABEL = "EMG SD"
 IMU_LABELS = ("ECGEMG SD ACC X", "ECGEMG SD ACC Y", "ECGEMG SD ACC Z",
               "ECGEMG SD GYR A", "ECGEMG SD GYR B", "ECGEMG SD GYR C")
 EMG_PLACEMENT = "left_deltoid"
 IMU_PLACEMENT = "chest_upper_back"  # dataset tag; the left-chest ECGEMG module is the one used
-IMU_UNITS = ("g [EDF label; scale unverified]",) * 3 + ("unverified [EDF label 'g']",) * 3
+IMU_UNITS = ("g [per-recording gravity calibration]",) * 3 + ("deg/s [estimated, GYRO_DPS_PER_UNIT]",) * 3
+# Median |acc| per recording, in the file's unit. Valid recordings sit at ~1/2 or ~1/6 (1 = already g).
+ACC_SCALE_VALID = (0.12, 1.2)
+# Calibrated gyro unit -> deg/s: median 125.4 (IQR 109-136) over 24 recordings, fitted from
+# rigid-body kinematics with the identity axis map in all 24 (ml/seizeit2/gyro_calibration.py,
+# models/seizeit2/evaluation/gyro_calibration.json). An estimate, not a datasheet value.
+GYRO_DPS_PER_UNIT = 125.0
+
+
+def calibrate_imu(values: np.ndarray, gyro_to_dps: float = GYRO_DPS_PER_UNIT
+                  ) -> tuple[np.ndarray, np.ndarray | None, str]:
+    """(values, source flags or None, provenance note) for the 6 IMU columns (ACC x3, GYR x3).
+
+    ACC and GYR share the recording's storage scale, so both are divided by the median |acc|
+    (gravity); GYR is then converted to deg/s. A recording whose gravity estimate is outside
+    ACC_SCALE_VALID cannot be calibrated: values are returned unchanged and every sample is INVALID.
+    """
+    acc = values[:, :3]
+    mag = np.linalg.norm(acc[np.isfinite(acc).all(axis=1)], axis=1)
+    scale = float(np.median(mag)) if mag.size else float("nan")
+    if not ACC_SCALE_VALID[0] <= scale <= ACC_SCALE_VALID[1]:
+        return values, np.full(len(values), SampleFlag.INVALID, np.int8), (
+            f"IMU rejected: median |acc| {scale:.4g} outside {ACC_SCALE_VALID} (pinned, zero or unknown scale)")
+    out = values / scale
+    out[:, 3:] *= gyro_to_dps
+    return out, None, (f"IMU calibrated: ACC and GYR divided by median |acc| {scale:.4f} (gravity -> g); "
+                       f"GYR x {gyro_to_dps:g} deg/s per unit")
 
 
 class MissingRecordingData(ValueError):
@@ -155,9 +185,9 @@ class SeizeIT2Adapter:
         if info.imu_rate_hz:
             _, sig = read_edf(p["mov"], IMU_LABELS)
             ts = sig[IMU_LABELS[0]][0]
-            imu = SignalStream(Modality.IMU, ts, np.column_stack([sig[lb][1] for lb in IMU_LABELS]),
-                               info.imu_rate_hz, IMU_CHANNELS, IMU_UNITS, DataOrigin.DATASET,
-                               provenance=(f"SeizeIT2 {p['mov'].name} ECGEMG SD module",))
+            vals, flags, note = calibrate_imu(np.column_stack([sig[lb][1] for lb in IMU_LABELS]))
+            imu = SignalStream(Modality.IMU, ts, vals, info.imu_rate_hz, IMU_CHANNELS, IMU_UNITS, DataOrigin.DATASET,
+                               flags=flags, provenance=(f"SeizeIT2 {p['mov'].name} ECGEMG SD module", note))
         if emg is None and imu is None:
             raise MissingRecordingData(f"{recording_id}: {'; '.join(info.missing)}")
         return Recording(info.participant_id, recording_id, DataOrigin.DATASET, emg, imu,
