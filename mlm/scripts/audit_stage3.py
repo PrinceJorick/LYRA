@@ -22,20 +22,13 @@ from lyra_mlm.evaluation import SEIZEIT2_PLANNED_SPLIT, Partition
 from lyra_mlm.features import feature_names
 from lyra_mlm.prep import QUALITY_CODE, PrepConfig, primary_emg_metadata
 from lyra_mlm.preprocess import raw_to_simulated_env
-<<<<<<< HEAD
 from lyra_mlm.quality import QUALITY_RANK, USABLE, QualityState
-=======
-from lyra_mlm.quality import USABLE
->>>>>>> 414a2140836e55fed760a18fff6c49fe2bc0082d
 from lyra_mlm.seizeit2 import SeizeIT2Adapter
 
 DATA = Path(__file__).resolve().parents[1] / "data"
 STATE = {v: k.value for k, v in QUALITY_CODE.items()}
 USABLE_CODES = [QUALITY_CODE[s] for s in USABLE]
-<<<<<<< HEAD
 RANK_OF_CODE = np.array([QUALITY_RANK[s] for s in QualityState])  # indexed by stored code
-=======
->>>>>>> 414a2140836e55fed760a18fff6c49fe2bc0082d
 
 
 def expected_windows(adapter: SeizeIT2Adapter, rid: str, cfg: PrepConfig) -> int:
@@ -103,11 +96,8 @@ def main() -> None:
             if z["primary_available"][np.ix_(emg_bad, emg_block)].any() or \
                     z["primary_available"][np.ix_(imu_bad, imu_block)].any():
                 problems.append(f"{rid}: features present for an unusable modality")
-<<<<<<< HEAD
             if (RANK_OF_CODE[z["emg_state"]] < RANK_OF_CODE[z["raw_emg_state"]]).any():
                 problems.append(f"{rid}: simulated ENV rated better than its RAW source")
-=======
->>>>>>> 414a2140836e55fed760a18fff6c49fe2bc0082d
             if z["primary"].shape[1] != n_primary:
                 problems.append(f"{rid}: primary feature width {z['primary'].shape[1]} != {n_primary}")
             st, prov = str(z["primary_emg_signal_type"]), str(z["primary_emg_provenance"])
