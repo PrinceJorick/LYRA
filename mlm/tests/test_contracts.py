@@ -135,7 +135,8 @@ def test_ble_codes_cover_pipeline_states():
 
 
 def test_package_contains_no_training_or_model_files():
-    text = "\n".join(p.read_text() for p in SRC.rglob("*.py"))
+    """Pre-training guard, kept active through Stage 3: no .fit(), no ML libraries, no model files."""
+    text = "\n".join(p.read_text() for d in (SRC, SRC.parents[1] / "scripts") for p in d.rglob("*.py"))
     assert not re.search(r"\.fit\(", text)
     assert not re.search(r"^\s*(import|from)\s+(sklearn|xgboost|joblib|pickle)\b", text, re.M)
     root = SRC.parents[1]

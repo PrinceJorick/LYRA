@@ -1,60 +1,63 @@
-# How the separate dataset-integration and training session should begin
+# Stage 4 plan: controlled model training
 
-Requires explicit authorization from the project owner first. Nothing below has been done.
+**Requires explicit authorization from the project owner.** Nothing below has been done. Stage 3
+produced `mlm/data/processed/` (gitignored): raw feature vectors, availability masks, quality states,
+labels and split manifests. No model was trained and no statistic was fitted on real data.
 
-## 0. Preconditions (decisions to record first)
+## 0. Already decided (locked in Stage 3)
 
-- Window labelling convention: ≥50% overlap vs centre-in-event (context.md U11).
-- ENV-vs-RAW strategy for SeizeIT2 EMG (DATASETS.md, difference 1).
-- MyoWare ENV acquisition rate and analog bandwidth (set `SignalStream.bandwidth_hz`).
-- `degraded_policy`, `missing_modality_policy`, `invalid_window_policy` choices for the experiments.
-- Event-matching rule for event-based sensitivity and false alarms.
+- **Labels:** POSITIVE ≥ 50% FBTCS overlap, NEGATIVE outside ±30 s of any seizure, IGNORE otherwise.
+- **Primary path** `SIMULATED_ENV_FROM_RAW` (22-feature multimodal schema); **secondary** `RAW` (8 features).
+- **Envelope rate** 50 Hz. Envelope modulation features cover 1.5–5.0 Hz.
+- **Confirmation and inference defaults:** see ARCHITECTURE.md §7–8.
 
-## 1. Data (see DATASETS.md, integration procedure steps 1–6)
+Still to decide before training: how to treat `IGNORE` and `artifact_overlap` windows in the loss
+(the recommendation is to exclude both from training and keep them for event-level evaluation),
+how events are matched for event-level metrics, whether the active-event gap rule in
+ARCHITECTURE.md §8 stands, and how unavailable features are handled (suppress, or a model that
+accepts missing values).
 
-Manifest + checksums → inspect annotations → `AnnotationMapper` → `DatasetAdapter` →
-`validate_recording` report → reconcile counts → verify the split.
+## 1. Inputs
 
-## 2. Windows and features
+- `processed/windows/<sub>/<recording>.npz`: `start_s`, `end_s`, `label`, `fbtcs_overlap_s`,
+  `artifact_overlap`, quality codes (`overall`, `emg_state`, `imu_state`, `raw_emg_state`),
+  coverages, `primary` + `primary_available`, `secondary` + `secondary_available`.
+- `processed/feature_schema.json`: feature order, specs, quality and label codes, prep config.
+- `processed/splits_manifest.json`: train/CV vs held-out participants, FBTCS counts, window label counts.
 
-1. `segment()` every recording with the configured `WindowConfig`/`QualityConfig`. Keep **all**
-   windows, including suppressed and unavailable ones, with their quality metadata.
-2. `extract_features()` per window. Store the names, values, availability mask, quality and
-   annotation refs.
-3. Report per participant: window counts by quality state, and feature availability rates. A model
-   cannot be compared fairly if suppression differs between configurations.
+## 2. Leakage rules
 
-## 3. Splits and leakage
+1. Train/CV uses sub-001…sub-096 only. Cross-validation folds are grouped by participant
+   (`check_participant_independence` on every fold).
+2. Fit normalization (`fit_normalization(..., Partition.TRAIN, ...)`), feature selection, class
+   weighting and threshold choice inside each training fold only. Apply them unchanged to the
+   validation fold.
+3. Do not open held-out data (sub-097…sub-125) for anything until the analysis plan is frozen.
+   Then evaluate once.
 
-1. Assign partitions by participant with `SEIZEIT2_PLANNED_SPLIT.partition_of()`. Run
-   `check_participant_independence()` on the result.
-2. Cross-validation inside sub-001…096 only, grouped by participant.
-3. Fit normalization (`fit_normalization(..., Partition.TRAIN, ...)`), feature selection and threshold
-   choice inside each training fold only. Apply them unchanged to the validation fold.
-4. Do not touch the held-out set (sub-097…125) until the analysis plan is frozen. Then evaluate once.
-
-## 4. Models (in this order)
+## 3. Models (in this order)
 
 1. Logistic regression baseline.
-2. Random forest, the primary embedded candidate. Starting search range 25–50 trees, depth 6–8
-   (research bounds, not final values).
+2. Random forest, the primary embedded candidate. Research range 25–50 trees, depth 6–8.
 3. XGBoost for offline comparison, and SVM optionally.
 
-Each `Trainer` must call `require_training_partition()`. Record the dataset version, split, git commit,
-seed and hyperparameters in `ModelConfig.training_record`, and set `trained=True` only on a fitted model.
-Run ablations: sEMG-only, IMU-only, multimodal, and multimodal with unimodal fallback.
+Each `Trainer` calls `require_training_partition()`. Record the dataset version, split, git commit,
+seed and hyperparameters in `ModelConfig.training_record`, and set `trained=True` only on a fitted
+model. Run ablations: simulated-ENV-only, IMU-only, multimodal, RAW-only (secondary), and multimodal
+with unimodal fallback.
 
-## 5. Evaluation
+## 4. Evaluation (held-out, once)
 
-Fill `EvaluationReport` on held-out participants: event sensitivity, false alarms per 24 h (with
-`valid_monitored_hours` and `suppressed_hours` reported), detection latency, precision, AUPRC,
-specificity, per-participant results, and false alarms by hard-negative activity group where labels
-exist. Run `EventConfirmation` over the predictions so event-level metrics reflect the deployed logic.
-Treat every number as a research estimate on an in-hospital FBTCS cohort. It is not clinical
-validation and not GTCS evidence.
+Fill `EvaluationReport`: event sensitivity, false alarms per 24 h (with valid monitored and
+suppressed hours reported), detection latency, precision, AUPRC, specificity, and per-participant
+results. Run `EventConfirmation` with the Decision 4 defaults over the continuous predictions,
+including IGNORE windows, so event-level metrics reflect the deployed logic. Treat every number as a
+research estimate on an in-hospital FBTCS cohort (55 events). It is not clinical validation and not
+GTCS evidence.
 
-## 6. Embedded
+## 5. Embedded
 
-`ensure_exportable()` → implement an `EmbeddedExporter` (investigate emlearn, micromlgen and m2cgen
-support for the chosen family) → port the feature extraction to C99 in `feature_names` order → measure
-`EmbeddedBenchmark` on a real ESP32-S3, including Python-vs-C score parity on shared feature rows.
+`ensure_exportable()` → `EmbeddedExporter` (investigate emlearn, micromlgen and m2cgen for the chosen
+family) → C99 feature extraction in `feature_names` order → `EmbeddedBenchmark` on a real ESP32-S3,
+including Python-vs-C score parity. Before any hardware claim, compare simulated ENV against real
+MyoWare ENV recordings.

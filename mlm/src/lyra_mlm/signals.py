@@ -26,11 +26,17 @@ class Modality(StrEnum):
 
 
 class EmgSignalType(StrEnum):
-    """MyoWare 2.0 outputs. Not interchangeable: each has different sensor-side processing."""
+    """MyoWare 2.0 outputs, plus a software model of ENV. Never interchangeable."""
 
     RAW = "RAW"
     RECT = "RECT"
-    ENV = "ENV"
+    ENV = "ENV"  # hardware MyoWare envelope
+    SIMULATED_ENV_FROM_RAW = "SIMULATED_ENV_FROM_RAW"  # raw sEMG passed through raw_to_simulated_env
+
+
+ENVELOPE_TYPES = frozenset({EmgSignalType.ENV, EmgSignalType.SIMULATED_ENV_FROM_RAW})
+FEATURE_PREFIX = {EmgSignalType.RAW: "raw", EmgSignalType.RECT: "rect", EmgSignalType.ENV: "env",
+                  EmgSignalType.SIMULATED_ENV_FROM_RAW: "simenv"}
 
 
 class DataOrigin(StrEnum):
@@ -109,6 +115,8 @@ class SignalStream:
         object.__setattr__(self, "timestamps", _readonly(ts))
         object.__setattr__(self, "values", _readonly(vals))
         object.__setattr__(self, "flags", _readonly(flags))
+        # sorted, finite timestamps allow O(log n) slicing; anything else falls back to a mask
+        object.__setattr__(self, "_sorted", bool(np.isfinite(ts).all() and (np.diff(ts) > 0).all()))
 
     @property
     def n(self) -> int:
@@ -127,7 +135,7 @@ class SignalStream:
         """
         if self.bandwidth_hz is not None:
             return min(self.nyquist_hz, self.bandwidth_hz)
-        if self.signal_type in (EmgSignalType.RECT, EmgSignalType.ENV):
+        if self.signal_type in (EmgSignalType.RECT, EmgSignalType.ENV, EmgSignalType.SIMULATED_ENV_FROM_RAW):
             return None
         return self.nyquist_hz
 
@@ -138,7 +146,10 @@ class SignalStream:
 
     def slice_time(self, start_s: float, end_s: float) -> SignalStream:
         """Samples with start_s <= t < end_s, original order kept (so disorder stays detectable)."""
-        m = (self.timestamps >= start_s) & (self.timestamps < end_s)
+        if self._sorted:
+            m = slice(*np.searchsorted(self.timestamps, [start_s, end_s], side="left"))
+        else:
+            m = (self.timestamps >= start_s) & (self.timestamps < end_s)
         return replace(self, timestamps=self.timestamps[m], values=self.values[m], flags=self.flags[m])
 
     def contiguous_runs(self, gap_factor: float = 3.0) -> list[tuple[int, int]]:

@@ -4,9 +4,9 @@
 |---|---|
 | **Project name** | LYRA |
 | **Document purpose** | Central context, source of truth, and onboarding document for LYRA. Written so that developers, researchers, clinicians, and AI coding assistants can understand the project, its evidence base, its decisions, and its open questions without re-deriving the background. |
-| **Last updated** | 2026-11-16 |
-| **Document version** | 1.0 (first substantive version; replaces the empty placeholder) |
-| **Project status** | **Concept / pre-implementation.** No hardware, firmware, dataset pipeline, or model exists in the repository yet. |
+| **Last updated** | 2026-11-21 |
+| **Document version** | 1.1 (finalized hardware, four locked Stage 3 decisions, implementation status) |
+| **Project status** | **Stage 3 — dataset preparation.** Hardware selected (§5.8, not yet built or tested). Python ML foundation and SeizeIT2 preparation pipeline in `mlm/` (§9.7). **No model trained, no performance measured.** Expo companion app with simulated data in `src/`. |
 | **Repository** | `https://github.com/PrinceJorick/LYRA` (branch `main`) |
 | **Owner / maintainer** | Kyle Masilang (git author on record) |
 
@@ -260,6 +260,8 @@ Rationale:
 
 ### 5.1 Status
 
+> **Superseded 2026-11-21:** the hardware is now selected — see §5.8. The table below is kept as the 2026-11-16 record.
+
 **There is no hardware.** No board, module, sensor, electrode, battery, or enclosure is named anywhere in the repository `[DOC: repo inspection, §15.B]`. Consequently:
 
 - Microcontroller / SoC: **`[NOT YET SPECIFIED]`**
@@ -391,6 +393,26 @@ Before any firmware work, the owner must answer:
 4. Whether inference runs on-device or on a phone.
 5. Minimum runtime and battery budget.
 6. Whether raw data is stored for research or only features.
+
+### 5.8 Finalized hardware configuration (2026-11-21)
+
+`[DOC: owner brief, 2026-11-21]`. Selected, **not yet built, bench-tested or validated**.
+
+| Item | Selection |
+|---|---|
+| Microcontroller | ESP32-S3-DevKitC-1-N8R8 — primary on-device inference |
+| sEMG | MyoWare 2.0 Muscle Sensor v2.0.4; `ENV` output is the first processing path, `RAW` kept as a separate research path |
+| sEMG `ENV` ADC rate | **50.0 Hz** (locked Decision 3; exact 2:1 against the IMU) |
+| MyoWare analog chain (as modelled) | input high-pass 20.8 Hz (1st order) → rectifier → passive envelope low-pass 3.6 Hz (1st order) `[DOC: Decision 2]` |
+| IMU | Bosch BMI270, accelerometer + gyroscope, **25 Hz ODR** (50 Hz experimental) |
+| Battery / power | Protected 3.7 V 500 mAh LiPo; TI BQ24074 charger/power path; TI TPS63031 regulator; MAX17048 fuel gauge |
+| Electrodes | Disposable Ag/AgCl |
+| User control | Physical tactile cancellation button |
+| Placement | Proximal upper arm, preferably the **deltoid** (sEMG and IMU on the pod) |
+| Phone link | BLE: pod = GATT peripheral/server, phone = central/client (draft payloads in `mlm/docs/BLE_PROTOCOL.md`) |
+| Inference location | **On the ESP32-S3.** The phone handles pairing, battery, alerts, the cancellation countdown, caregiver workflow, history, observations and reports |
+
+Wi-Fi CSI is a separate research track and not an input to the primary detector.
 
 ---
 
@@ -996,6 +1018,8 @@ LYRA/
 
 > **Note for maintainers:** `.gitignore` currently ignores `/context.md`, so this document will **not** be committed unless the rule is removed. Decide whether the master context should be version-controlled (recommended) and update `.gitignore` accordingly. This document does not change `.gitignore` unilaterally.
 
+> **Superseded 2026-11-21:** see §9.7 for the current repository.
+
 ### 9.2 Languages, frameworks, libraries
 
 `[NOT YET SPECIFIED]` — nothing is installed or declared. No `requirements.txt`, `pyproject.toml`, `package.json`, `platformio.ini`, or `CMakeLists.txt` exists.
@@ -1072,6 +1096,21 @@ LYRA/
 4. Feature invariance (amplitude scaling, time shift).
 5. Metric correctness against a hand-computed confusion matrix.
 6. Split integrity (assert no subject appears in two folds).
+
+---
+
+### 9.7 Current implementation (2026-11-21)
+
+`[VERIFIED: repo inspection]`
+
+| Path | What it is |
+|---|---|
+| `src/` | Expo SDK 58 / React Native companion app. All device, alert, notification and ML data is simulated. |
+| `src/services/ml/` | **Legacy / deprecated.** Its `MlService` assumes phone-side detection and equal channel lengths; both conflict with on-device inference and native sampling rates. Not to be extended; the app will consume BLE event/status payloads instead. Not modified in Stage 3. |
+| `mlm/src/lyra_mlm/` | Python ML foundation: signal schemas, quality states, windowing, features, quality-gated inference, event confirmation, contracts, EDF reader, SeizeIT2 adapter, Stage 3 preparation |
+| `mlm/scripts/` | `download_seizeit2.py`, `prepare_seizeit2.py` |
+| `mlm/docs/` | ARCHITECTURE, DATASETS, TRAINING_PLAN, BLE_PROTOCOL |
+| `mlm/data/` | Gitignored. SeizeIT2 wearable subset and processed windows. Never committed. |
 
 ---
 
@@ -1270,6 +1309,22 @@ sequenceDiagram
 
 **Nothing in LYRA is "completed" except the concept and this document.**
 
+### 13.1a Status update (2026-11-21)
+
+| Component | Status |
+|---|---|
+| Target seizure type | **Decided:** GTCS/FBTCS; v1 automated scope excludes non-convulsive, absence and focal non-motor seizures |
+| Hardware selection | **Decided** (§5.8); not built |
+| Firmware | Not started |
+| Dataset download / inspection | **Done** for the SeizeIT2 wearable subset (EMG, MOV, events); see `mlm/docs/DATASETS.md` |
+| Annotation parser | **Done** (SeizeIT2 mapper; `sz_foc_f2b` = FBTCS) |
+| Preprocessing / quality / windowing / features | **Implemented and unit-tested** on synthetic data; run on SeizeIT2 |
+| Baseline / multimodal model | **Not started** (Stage 4, needs authorization) |
+| Evaluation harness | Contracts only; nothing computed |
+| Real-time inference | Python reference only |
+| Mobile app | Simulated companion app exists |
+| Clinical validation / ethics | Not started |
+
 ### 13.2 Roadmap
 
 | Phase | Objective | Deliverables | Exit criteria |
@@ -1340,6 +1395,23 @@ Only these are supported by existing project material. Everything else is open.
 | U17 | **What is the minimum viable publication claim?** | Focuses the work | "Fusion improves specificity on SeizeIT2" | P4, P5 |
 
 **Do not resolve these silently in code.** Each must be recorded with a date and a rationale when decided.
+
+### 14.3 Decisions recorded 2026-11-21 `[DOC: owner briefs]`
+
+| # | Decision | Resolves |
+|---|---|---|
+| D9 | Scope: GTCS and FBTCS; non-convulsive, absence and focal non-motor seizures are outside v1 automated detection | U1 |
+| D10 | Hardware as in §5.8; one sEMG channel on the deltoid / proximal upper arm | U2, U3 |
+| D11 | Primary inference on the ESP32-S3; the phone does not run the detector | U5 |
+| D12 | BMI270 at 25 Hz ODR; MyoWare `ENV` sampled at 50 Hz | U4 |
+| D13 | Windows 4.0 s, 50% overlap, 2.0 s step | U8 |
+| D14 | **Locked Decision 1 — labelling:** positive = overlap with an FBTCS interval ≥ 50% of the window (≥ 2.0 s); negative = no overlap with any seizure and outside a ±30 s peri-ictal buffer; everything else `IGNORE` (excluded from supervised loss, kept for event-level evaluation). Fraction and buffer configurable. | U11 |
+| D15 | **Locked Decision 2 — Strategy D hybrid:** primary path `SIMULATED_ENV_FROM_RAW` = 20.8 Hz 1st-order HPF → full-wave rectification → 3.6 Hz 1st-order LPF → anti-aliased resampling to 50 Hz; secondary `RAW` research path kept. SeizeIT2 placement tags: `emg_placement=left_deltoid`, `imu_placement=chest_upper_back` (IMU placement mismatch is a known limitation). | — |
+| D16 | **Locked Decision 3 — bandwidth:** high-frequency raw-EMG spectral features (20–250 Hz) never computed for `ENV` / `SIMULATED_ENV_FROM_RAW`; envelope modulation features in 1.5–5.0 Hz enabled when the envelope rate ≥ 20 Hz | — |
+| D17 | **Locked Decision 4 — confirmation defaults (unvalidated engineering parameters):** entry 0.65, exit 0.45, 3 consecutive valid positives, `invalid_window_policy="hold"`, max timestamp gap 6.0 s, `degraded_window_policy="allow_with_flag"`, refractory 60 s; `INVALID`/`MISSING`/`UNSYNCHRONIZED` → `SUPPRESSED` with no score | — |
+| D18 | Model roles for Stage 4: logistic regression baseline, random forest primary embedded candidate (research range 25–50 trees, depth 6–8), XGBoost offline comparison, SVM optional | U10 (partly) |
+
+Still open: U6, U7, U9, U12–U17.
 
 ---
 
@@ -1481,6 +1553,7 @@ Only these are supported by existing project material. Everything else is open.
 |---|---|---|
 | 2026-11-16 | 0.0 | Placeholder file created (0 bytes) |
 | 2026-11-16 | 1.0 | First substantive version: project identity, evidence base, dataset and literature review, proposed ML pipeline, data strategy, software architecture, workflow, landscape, safety, status, roadmap, decisions, references. Repository inspected and found to contain no implementation. |
+| 2026-11-21 | 1.1 | Finalized hardware (§5.8), implementation status (§9.7, §13.1a), decisions D9–D18 including the four locked Stage 3 decisions (§14.3); `src/services/ml/` marked legacy. Earlier sections kept and marked superseded. |
 
 ---
 
