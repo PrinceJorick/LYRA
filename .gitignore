@@ -49,3 +49,10 @@ __pycache__/
 
 # datasets and model artifacts never go in git
 mlm/data/
+
+# Local training datasets (SeizeIT2 / prototype recordings)
+pj-training-data/
+
+# SeizeIT2 ML pipeline (ml/seizeit2/): experiment runs/checkpoints, compiled Python
+ml/seizeit2/runs/
+*.py[cod]
