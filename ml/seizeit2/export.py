@@ -1,13 +1,19 @@
-"""Export the frozen, test-evaluated model into models/seizeit2/ for the app's TypeScript runtime.
+"""Export the final random forest for the pod (D11: inference on the ESP32-S3) into models/seizeit2/.
 
     python -m ml.seizeit2.export --run ml/seizeit2/runs/<id>
 
-Why JSON and not .tflite: LYRA has no native inference runtime (Expo Go compatible, no native ML
-module), and the selected model is a small feature-based classifier. A JSON tree ensemble / linear
-model evaluated in TypeScript runs unchanged on iOS, Android and web without a development build.
+Writes:
+- lyra_seizeit2_model.h  C99 header: the forest as flat arrays + lyra_seizeit2_score().
+- model.json             the same arrays for any other runtime (reference evaluator: score_json).
+- model_config.json      lyra_mlm.model.ModelConfig (validated by ModelConfig.from_json).
+- export_manifest.json   lyra_mlm.model.ExportManifest.
+- config.json, labels.json, metadata.json, cv_folds.json, evaluation/*.
 
-Writes model.json, config.json, labels.json, metadata.json, evaluation/*, and the synthetic
-parity vectors used by ml/seizeit2/parity_check.mjs. Refuses to export a run without test metrics.
+Thresholds are stored as float32 rounded toward -inf. sklearn trees compare float32(x) <= t
+(t float64); for any float32 x that is identical to x <= floor32(t), so the C code reproduces
+sklearn's splits exactly while using single-precision floats (native on the ESP32-S3 FPU).
+The header is compiled with gcc and checked against sklearn's predict_proba before anything
+is written to models/seizeit2/.
 """
 
 from __future__ import annotations
@@ -17,101 +23,129 @@ import json
 import pickle
 import shutil
 import subprocess
+from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
 import sklearn
-from sklearn.ensemble import HistGradientBoostingClassifier
-from sklearn.pipeline import Pipeline
+from lyra_mlm.model import ExportManifest, ModelConfig, ModelFamily
+from lyra_mlm.prep import PrepConfig
+from lyra_mlm.seizeit2 import ACC_SCALE_VALID, GYRO_DPS_PER_UNIT
 
 from . import config as C
-from . import data_loader as D
-from . import evaluate as E
-from .preprocessing import FEATURE_NAMES, feature_path, window_features
-from .train import SkModel, training_pool
+from .train import FEATURES, PRIMARY, load_all, pool
 
-FORMAT = "lyra-seizeit2-model/1"
 MODEL_ID = "lyra-seizeit2-fbtcs"
-MODEL_VERSION = "1.0.0"
+MODEL_VERSION = "2.0.0"
+FORMAT = "lyra-seizeit2-forest/1"
 
 
-def to_json(m) -> dict:
-    if isinstance(m, SkModel) and isinstance(m.est, HistGradientBoostingClassifier):
-        if m.est.n_trees_per_iteration_ != 1:
-            raise ValueError("binary classifier expected")
-        trees = []
-        for (pred,) in m.est._predictors:  # sklearn internals; parity is verified below
-            n = pred.nodes
-            if n["is_categorical"].any():
-                raise ValueError("categorical splits are not supported by the TS runtime")
-            leaf = n["is_leaf"].astype(bool)
-            trees.append({"feature": np.where(leaf, -1, n["feature_idx"]).tolist(),
-                          "threshold": np.where(leaf, 0.0, n["num_threshold"]).tolist(),
-                          "left": n["left"].tolist(), "right": n["right"].tolist(),
-                          "value": np.where(leaf, n["value"], 0.0).tolist()})
-        return {"format": FORMAT, "kind": "gbt", "feature_names": list(FEATURE_NAMES),
-                "columns": m.cols, "baseline": float(np.ravel(m.est._baseline_prediction)[0]),
-                "trees": trees}
-    if isinstance(m, SkModel) and isinstance(m.est, Pipeline):
-        sc, lr = m.est.named_steps["standardscaler"], m.est.named_steps["logisticregression"]
-        return {"format": FORMAT, "kind": "logreg", "feature_names": list(FEATURE_NAMES),
-                "columns": m.cols, "mean": sc.mean_.tolist(), "scale": sc.scale_.tolist(),
-                "coef": lr.coef_[0].tolist(), "intercept": float(lr.intercept_[0])}
-    # shortcut: the rule baseline has no exporter; add one only if it is ever selected
-    raise NotImplementedError(f"no exporter for {type(m).__name__}")
+def floor32(t: np.ndarray) -> np.ndarray:
+    f = t.astype(np.float32)
+    up = f.astype(np.float64) > t
+    f[up] = np.nextafter(f[up], np.float32(-np.inf))
+    return f
+
+
+def to_json(model) -> dict:
+    trees = []
+    for est in model.est.estimators_:
+        tr = est.tree_
+        leaf = tr.children_left < 0
+        v = tr.value[:, 0, :]
+        p1 = v[:, 1] / v.sum(axis=1)
+        trees.append({"feature": np.where(leaf, -1, tr.feature).tolist(),
+                      "threshold": [float(x) for x in np.where(leaf, 0.0, floor32(tr.threshold))],
+                      "left": np.where(leaf, 0, tr.children_left).tolist(),
+                      "right": np.where(leaf, 0, tr.children_right).tolist(),
+                      "value": [float(x) for x in np.where(leaf, p1, 0.0).astype(np.float32)]})
+    return {"format": FORMAT, "model_id": MODEL_ID, "version": MODEL_VERSION, "feature_names": list(FEATURES),
+            "columns": model.cols, "trees": trees}
 
 
 def score_json(mj: dict, X: np.ndarray) -> np.ndarray:
-    """Reference evaluator of model.json (the TS runtime mirrors this)."""
-    Z = np.asarray(X, np.float64)[:, mj["columns"]]
-    if mj["kind"] == "logreg":
-        raw = mj["intercept"] + ((Z - mj["mean"]) / mj["scale"]) @ np.asarray(mj["coef"])
-    else:
-        raw = np.full(Z.shape[0], mj["baseline"])
-        for t in mj["trees"]:
-            f, thr, left, right, val = (np.asarray(t[k]) for k in ("feature", "threshold", "left", "right", "value"))
-            node = np.zeros(Z.shape[0], int)
-            while True:
-                inner = f[node] >= 0
-                if not inner.any():
-                    break
-                i = np.flatnonzero(inner)
-                go_left = Z[i, f[node[i]]] <= thr[node[i]]
-                node[i] = np.where(go_left, left[node[i]], right[node[i]])
-            raw += val[node]
-    return 1 / (1 + np.exp(-raw))
+    """Reference evaluator of model.json: float32 features, float32 thresholds and leaf values."""
+    Z = np.asarray(X)[:, mj["columns"]].astype(np.float32)
+    total = np.zeros(Z.shape[0], np.float64)
+    for t in mj["trees"]:
+        f, thr = np.asarray(t["feature"]), np.asarray(t["threshold"], np.float32)
+        left, right, val = np.asarray(t["left"]), np.asarray(t["right"]), np.asarray(t["value"], np.float32)
+        node = np.zeros(Z.shape[0], int)
+        while (inner := f[node] >= 0).any():
+            i = np.flatnonzero(inner)
+            node[i] = np.where(Z[i, f[node[i]]] <= thr[node[i]], left[node[i]], right[node[i]])
+        total += val[node]
+    return total / len(mj["trees"])
 
 
-def synthetic_windows(W: int, rng: np.random.Generator) -> list[dict]:
-    """Deterministic synthetic signals only (never dataset samples), rounded so TS sees the same input."""
-    ne, ni = C.EMG_FS * W, C.IMU_FS * W
-    te, ti = np.arange(ne) / C.EMG_FS, np.arange(ni) / C.IMU_FS
-    cases = []
-    for name, emg_amp, burst_hz, mov_amp, mov_hz in [
-        ("rest", 5, 0, 0.002, 0.3), ("rhythmic_3hz", 200, 3, 0.15, 3),
-        ("walking_like", 30, 0, 0.08, 1.8), ("strong_tonic", 400, 0, 0.02, 5)]:
-        burst = (0.5 + 0.5 * np.sign(np.sin(2 * np.pi * burst_hz * te))) if burst_hz else 1.0
-        emg = emg_amp * rng.normal(size=ne) * burst + 300 * np.sin(2 * np.pi * 1.2 * te)
-        osc = mov_amp * np.sin(2 * np.pi * mov_hz * ti)
-        acc = np.stack([0.80 + osc, 0.30 + 0.5 * osc, -0.52 + 0.3 * osc], 1) + 0.003 * rng.normal(size=(ni, 3))
-        gyr = np.stack([osc, -0.7 * osc, 0.4 * osc], 1) + 0.002 * rng.normal(size=(ni, 3))
-        cases.append({"name": name, "emg": np.round(emg, 3), "acc": np.round(acc, 5), "gyr": np.round(gyr, 5)})
-    return cases
+def to_c(mj: dict) -> str:
+    feat, thr, left, right, val, root = [], [], [], [], [], []
+    for t in mj["trees"]:
+        root.append(len(feat))
+        feat += t["feature"]
+        thr += t["threshold"]
+        left += t["left"]
+        right += t["right"]
+        val += t["value"]
+    if max(len(t["feature"]) for t in mj["trees"]) > 65535 or len(mj["columns"]) > 127:
+        raise ValueError("tree too large for uint16 local node indices")
+
+    def arr(ctype, name, xs, fmt):
+        body = ",".join(fmt(x) for x in xs)
+        return f"static const {ctype} {name}[{len(xs)}] = {{{body}}};\n"
+
+    f32 = lambda x: f"{np.float32(x)}f"  # noqa: E731  shortest repr that round-trips in float32
+    cols = mj["columns"]
+    return (
+        f"/* {MODEL_ID} v{MODEL_VERSION}: random forest for the LYRA pod (ESP32-S3, C99).\n"
+        f" * Generated by ml/seizeit2/export.py on {datetime.now(timezone.utc):%Y-%m-%d}. Do not edit.\n"
+        " * Experimental research component: not clinically validated, not a diagnostic device.\n"
+        " * Input: the 22 lyra_mlm primary features (feature_names in model_config.json), in order,\n"
+        " * computed from a 4 s window of MyoWare ENV (50 Hz) and BMI270 IMU (25 Hz; acc in g, gyro in deg/s).\n"
+        " * Output: score in [0, 1] for lyra_mlm EventConfirmation (thresholds in config.json). */\n"
+        "#ifndef LYRA_SEIZEIT2_MODEL_H\n#define LYRA_SEIZEIT2_MODEL_H\n\n#include <stdint.h>\n\n"
+        f"#define LYRA_SEIZEIT2_N_FEATURES {len(FEATURES)}\n#define LYRA_SEIZEIT2_N_TREES {len(mj['trees'])}\n\n"
+        + arr("uint8_t", "lyra_seizeit2_column", cols, str)
+        + arr("int32_t", "lyra_seizeit2_root", root, str)
+        + arr("int8_t", "lyra_seizeit2_feature", feat, str)
+        + arr("float", "lyra_seizeit2_threshold", thr, f32)
+        + arr("uint16_t", "lyra_seizeit2_left", left, str)
+        + arr("uint16_t", "lyra_seizeit2_right", right, str)
+        + arr("float", "lyra_seizeit2_value", val, f32)
+        + "\n/* x: all LYRA_SEIZEIT2_N_FEATURES features, every one available (else the window is suppressed). */\n"
+        "static inline float lyra_seizeit2_score(const float x[LYRA_SEIZEIT2_N_FEATURES]) {\n"
+        "    double sum = 0.0;\n"
+        "    for (int t = 0; t < LYRA_SEIZEIT2_N_TREES; t++) {\n"
+        "        const int32_t base = lyra_seizeit2_root[t];\n"
+        "        int32_t n = 0;\n"
+        "        while (lyra_seizeit2_feature[base + n] >= 0) {\n"
+        "            const float v = x[lyra_seizeit2_column[lyra_seizeit2_feature[base + n]]];\n"
+        "            n = (v <= lyra_seizeit2_threshold[base + n]) ? lyra_seizeit2_left[base + n]\n"
+        "                                                          : lyra_seizeit2_right[base + n];\n"
+        "        }\n"
+        "        sum += lyra_seizeit2_value[base + n];\n"
+        "    }\n"
+        "    return (float)(sum / LYRA_SEIZEIT2_N_TREES);\n"
+        "}\n\n#endif\n"
+    )
 
 
-def stream_alarms(t_end, scores, k: int, thr: float) -> list[int]:
-    """Window-by-window detector exactly as the app runs it (createDetector in src/services/ml/seizeit2/model.ts)."""
-    buf, out, prev, last = [], [], None, None
-    for t, sc in zip(t_end, scores):
-        if prev is not None and t - prev > 1.5 * C.HOP_S:
-            buf = []
-        prev = t
-        buf = (buf + [float(sc)])[-k:]
-        if sum(buf) / len(buf) >= thr and (last is None or t - last >= C.REFRACTORY_S):
-            out.append(int(t))
-            last = t
-    return out
+def c_parity(header: Path, X: np.ndarray, work: Path) -> np.ndarray:
+    """Compile a host harness against the header and score X (float32 rows) with it."""
+    src = work / "parity.c"
+    src.write_text(
+        f'#include <stdio.h>\n#include "{header.name}"\n'
+        "int main(void) {\n  float x[LYRA_SEIZEIT2_N_FEATURES];\n"
+        "  for (;;) {\n    for (int i = 0; i < LYRA_SEIZEIT2_N_FEATURES; i++)\n"
+        "      if (fread(&x[i], sizeof(float), 1, stdin) != 1) return 0;\n"
+        '    printf("%.9g\\n", (double)lyra_seizeit2_score(x));\n  }\n}\n')
+    exe = work / "parity"
+    subprocess.run(["gcc", "-std=c99", "-O2", "-Wall", "-Wextra", "-Werror", "-pedantic", f"-I{header.parent}",
+                    str(src), "-o", str(exe)], check=True)
+    out = subprocess.run([str(exe)], input=np.ascontiguousarray(X, np.float32).tobytes(),
+                         capture_output=True, check=True).stdout.decode().split()
+    return np.array(out, float)
 
 
 def git_commit() -> str | None:
@@ -123,115 +157,127 @@ def git_commit() -> str | None:
 
 
 def main(argv: list[str] | None = None) -> None:
-    ap = argparse.ArgumentParser(description="Export the selected model to models/seizeit2/")
+    ap = argparse.ArgumentParser(description="Export the final forest to models/seizeit2/")
     ap.add_argument("--run", type=Path, required=True)
-    args = ap.parse_args(argv)
-    run = args.run
-    if not (run / "test_metrics.json").exists():
-        raise SystemExit("evaluate the test set first (python -m ml.seizeit2.evaluate --run ...)")
+    run = ap.parse_args(argv).run
     sel = json.loads((run / "selection.json").read_text())
-    test = json.loads((run / "test_metrics.json").read_text())
-    split = json.loads((run / "split.json").read_text())
     cv = json.loads((run / "cv_results.json").read_text())
+    folds = json.loads((run / "folds.json").read_text())
     with (run / "final_model.pkl").open("rb") as fh:
         model = pickle.load(fh)
-    W, k, thr = sel["window_s"], sel["k"], sel["threshold"]
+    if model.name != PRIMARY:
+        raise SystemExit(f"expected {PRIMARY}, got {model.name}")
     mj = to_json(model)
+    entry, exit_ = sel["entry_threshold"], sel["exit_threshold"]
 
-    # 1. exported model == sklearn model, on real dev windows (checked locally, not exported)
-    dev = set().union(*map(set, split["folds"]))
-    X, _, _ = training_pool(D.list_runs(), dev, W)
-    X = X[np.random.default_rng(C.SEED).permutation(X.shape[0])[:200_000]]
-    ref, got = model.score(X), score_json(mj, X)
-    max_diff = float(np.abs(ref - got).max())
-    agree = float(((ref >= thr) == (got >= thr)).mean())
-    if max_diff > 1e-9 or agree < 1:
-        raise SystemExit(f"exported model disagrees with sklearn: max diff {max_diff}, decisions {agree}")
-
-    # 2. parity vectors for the TS runtime: synthetic signals + random in-range feature vectors
+    # 1. exported model == sklearn, on real windows (checked locally, never exported) + random rows
+    recs = load_all()
+    X, _ = pool(recs, {r.participant_id for r in recs})
     rng = np.random.default_rng(C.SEED)
-    wins = synthetic_windows(W, rng)
-    feats = window_features(np.stack([c["emg"] for c in wins]), np.stack([c["acc"] for c in wins]),
-                            np.stack([c["gyr"] for c in wins]), W)
-    lo, hi = np.percentile(X, 0.5, axis=0), np.percentile(X, 99.5, axis=0)
-    rand = rng.uniform(lo, hi, size=(500, X.shape[1]))
-    seq = np.clip(rng.normal(thr, 2 * thr + 0.05, size=400), 0, 1)
-    seq_t = np.arange(seq.size) * C.HOP_S + W
-    seq_t[200:] += 60  # one gap in the stream: the detector restarts its smoothing buffer
-    contiguous = stream_alarms(seq_t[:200], seq[:200], k, thr)
-    if contiguous != E.alarms(seq_t[:200], E.smooth(seq[:200], k), thr).tolist():
-        raise SystemExit("streaming detector disagrees with the evaluation post-processing")
-    kept = stream_alarms(seq_t, seq, k, thr)
-    parity = {
-        "window_s": W,
-        "windows": [{"name": c["name"], "emg": c["emg"].tolist(),
-                     "acc": {a: c["acc"][:, i].tolist() for i, a in enumerate("xyz")},
-                     "gyr": {a: c["gyr"][:, i].tolist() for i, a in enumerate("xyz")},
-                     "features": f.tolist(), "score": float(s)}
-                    for c, f, s in zip(wins, feats, score_json(mj, feats))],
-        "feature_vectors": rand.tolist(), "feature_vector_scores": score_json(mj, rand).tolist(),
-        "detector": {"k": k, "threshold": thr, "refractory_s": C.REFRACTORY_S, "hop_s": C.HOP_S,
-                     "t_end_s": seq_t.tolist(), "scores": seq.tolist(), "alarm_t_end_s": [int(t) for t in kept]},
-    }
-    (C.REPO / "ml" / "seizeit2" / "parity_vectors.json").write_text(json.dumps(parity))
+    X = X[rng.permutation(X.shape[0])[:200_000]]
+    X = np.vstack([X, rng.uniform(np.percentile(X, 0.5, 0), np.percentile(X, 99.5, 0), (5000, X.shape[1]))])
+    ref = model.score(X.astype(np.float32).astype(np.float64))
+    work = run / "export_check"
+    work.mkdir(exist_ok=True)
+    header = work / "lyra_seizeit2_model.h"
+    header.write_text(to_c(mj))
+    py, c = score_json(mj, X), c_parity(header, X, work)
+    d_py, d_c = float(np.abs(ref - py).max()), float(np.abs(ref - c).max())
+    far = np.abs(ref - entry) > 1e-6  # rows closer than float rounding to the threshold are not decidable
+    agree = float(((ref >= entry) == (c >= entry))[far].mean())
+    if d_py > 1e-6 or d_c > 1e-6 or agree < 1:
+        raise SystemExit(f"export mismatch: json {d_py}, C {d_c}, decision agreement {agree}")
+    print(f"parity on {len(X):,} rows: json max diff {d_py:.2e}, C max diff {d_c:.2e}, decisions {agree:.0%} "
+          f"({int((~far).sum())} rows within 1e-6 of the threshold)")
 
-    # 3. deployable assets
+    # 2. lyra_mlm contracts
+    prep = PrepConfig()
+    mc = ModelConfig(
+        model_id=MODEL_ID, family=ModelFamily.RANDOM_FOREST, feature_config=prep.primary,
+        feature_names=tuple(FEATURES), window=prep.window, decision_threshold=entry,
+        hyperparameters={k: v for k, v in model.est.get_params().items() if k in (
+            "n_estimators", "max_depth", "min_samples_leaf", "max_features", "class_weight", "random_state")},
+        trained=True,
+        training_record={"dataset": "SeizeIT2 OpenNeuro ds005873 v1.1.0", "participants": folds["participants"],
+                         "split": "all participants (no held-out); 5-fold nested participant-grouped CV",
+                         "training_run": run.name, "git_commit": git_commit(), "seed": C.SEED,
+                         "sklearn": sklearn.__version__},
+    )
+    assert ModelConfig.from_json(mc.to_json()) == mc
+    files = ("lyra_seizeit2_model.h", "model.json", "model_config.json", "config.json", "labels.json", "metadata.json")
+    manifest = ExportManifest(model_id=MODEL_ID, converter="ml/seizeit2/export.py (C99 tree arrays)",
+                              converter_version=MODEL_VERSION, feature_names=tuple(FEATURES), normalization=None,
+                              files=files)
+
+    # 3. write models/seizeit2/
     md = C.MODEL_DIR
+    for old in ("split.json", "evaluation/cv_operating_curves.png"):  # v1 artefacts superseded by v2
+        (md / old).unlink(missing_ok=True)
     (md / "evaluation").mkdir(parents=True, exist_ok=True)
+    shutil.copy(header, md / "lyra_seizeit2_model.h")
     (md / "model.json").write_text(json.dumps(mj, separators=(",", ":")))
+    (md / "model_config.json").write_text(mc.to_json())
+    (md / "export_manifest.json").write_text(json.dumps(asdict(manifest), indent=1))
+    (md / "cv_folds.json").write_text(json.dumps(folds, indent=1))
     (md / "labels.json").write_text(json.dumps({
         "window_classes": {"0": "background", "1": "convulsive_pattern"},
-        "app_event_types": {
-            "no_event": "No alarm from the post-processed score stream.",
-            "possible_event": "Smoothed score reached the threshold: a pattern resembling the annotated "
-                              "focal-to-bilateral tonic-clonic seizures in SeizeIT2. Not a diagnosis; the app's "
-                              "cancel countdown and caregiver workflow still apply."},
-        "class_1_definition": "window overlapping an annotated sz_foc_f2b event by >= 50%",
+        "class_1_definition": "D14: window overlaps an annotated sz_foc_f2b event by >= 50% (>= 2.0 s of 4 s)",
+        "confirmation_states": ["idle", "accumulating", "possible_event", "refractory"],
+        "possible_event": "D17 evidence rule met. Shown as 'Possible convulsive seizure detected. This is not a "
+                          "diagnosis.' Never a confirmed seizure; the cancel countdown and caregiver workflow apply.",
     }, indent=1))
     (md / "config.json").write_text(json.dumps({
-        "format": FORMAT, "model_file": "model.json",
+        "format": FORMAT, "model_file": "lyra_seizeit2_model.h", "runtime": "ESP32-S3 firmware (D11), C99",
         "input": {
-            "window_s": W, "hop_s": C.HOP_S,
-            "emg": {"samples": C.EMG_FS * W, "rate_hz": C.EMG_FS, "unit": "uV",
-                    "source": "single sEMG channel, SeizeIT2 left deltoid placement"},
-            "accelerometer": {"samples_per_axis": C.IMU_FS * W, "rate_hz": C.IMU_FS, "unit": "g",
-                              "note": "training data rescaled per run so that median |acc| = 1 g"},
-            "gyroscope": {"samples_per_axis": C.IMU_FS * W, "rate_hz": C.IMU_FS,
-                          "unit": "any fixed unit (only scale-invariant gyroscope features are used)"},
-            "axes": "any orientation: all features are rotation invariant",
-            "timestamp": "ms of the last sample in the window; windows arrive every hop_s",
+            "window_s": prep.window.length_s, "step_s": prep.window.step_s,
+            "emg": {"signal": "MyoWare 2.0 ENV (D12)", "rate_hz": prep.sim_env.target_rate_hz,
+                    "training_source": "SIMULATED_ENV_FROM_RAW from SeizeIT2 RAW sEMG (D15)",
+                    "unit": "sensor units (training: simulated envelope of µV RAW)"},
+            "imu": {"sensor": "BMI270 (D12)", "rate_hz": 25.0, "acc_unit": "g", "gyro_unit": "deg/s",
+                    "training_calibration": {"acc": "per-recording gravity scale -> g",
+                                             "gyro_deg_s_per_unit": GYRO_DPS_PER_UNIT,
+                                             "acc_scale_valid": list(ACC_SCALE_VALID)}},
+            "placement": "EMG left deltoid, IMU left chest (SeizeIT2); LYRA placement: D10",
         },
-        "features": list(FEATURE_NAMES),
-        "quality": {"flat_std": C.FLAT_STD, "rule": "a flat EMG or IMU window scores 0"},
-        "postprocessing": {"smoothing_k": k, "threshold": thr, "refractory_s": C.REFRACTORY_S,
-                           "gap_reset_s": 1.5 * C.HOP_S,
-                           "rule": "alarm when the mean of the last k scores >= threshold and no alarm "
-                                   "in the previous refractory_s seconds; a gap in the stream restarts the mean"},
-        "output": {"score": "internal only, never shown to users", "event_types": ["no_event", "possible_event"]},
+        "features": {"names": list(FEATURES), "implementation": "lyra_mlm.features (Python); C99 port pending",
+                     "float_type": "float32"},
+        "routing": {"rule": "lyra_mlm.inference: both modalities VALID/DEGRADED and every feature available, "
+                            "else SUPPRESSED (no score, never negative)",
+                    "degraded_window_policy": "allow_with_flag", "missing_modality_policy": "suppress"},
+        "confirmation": {"entry_threshold": entry, "exit_threshold": exit_, "consecutive_positive_required":
+                         C.CONSECUTIVE, "max_timestamp_gap_s": C.MAX_GAP_S, "refractory_cooldown_s": C.REFRACTORY_S,
+                         "invalid_window_policy": "hold", "degraded_window_policy": "allow_with_flag",
+                         "note": "D17 structure; entry/exit chosen on training data (D17 defaults 0.65/0.45 are "
+                                 "reported for comparison in evaluation/metrics.json)"},
     }, indent=1))
+    nested = cv[PRIMARY]["nested_outer"]
     (md / "metadata.json").write_text(json.dumps({
         "model_id": MODEL_ID, "version": MODEL_VERSION, "format": FORMAT,
         "created_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "training_run": run.name, "git_commit_at_export": git_commit(),
-        "model": sel["candidate"], "kind": mj["kind"],
-        "trees": len(mj.get("trees", [])), "sklearn": sklearn.__version__, "numpy": np.__version__,
-        "dataset": "SeizeIT2, OpenNeuro ds005873 v1.1.0 (CC0); trained only on subjects in split.json folds",
-        "task": "window-level detection of focal-to-bilateral tonic-clonic (convulsive) seizure patterns "
-                "from one sEMG channel + one 6-axis IMU",
-        "selection": {k_: sel[k_] for k_ in ("candidate", "window_s", "k", "threshold", "sensitivity",
-                                             "far_per_24h", "latency_s_median", "met_far_cap")},
-        "export_check": {"dev_windows_compared": int(X.shape[0]), "max_abs_score_diff": max_diff,
-                         "decision_agreement": agree},
+        "family": "random_forest (D18 primary embedded candidate)",
+        "hyperparameters": mc.hyperparameters, "sklearn": sklearn.__version__, "numpy": np.__version__,
+        "trees": len(mj["trees"]), "nodes": sum(len(t["feature"]) for t in mj["trees"]),
+        "header_bytes": (md / "lyra_seizeit2_model.h").stat().st_size,
+        # const arrays in flash: per node int8 feature + float threshold + 2 x uint16 child + float value
+        "flash_bytes_arrays": sum(len(t["feature"]) for t in mj["trees"]) * 13 + 4 * len(mj["trees"])
+                              + len(mj["columns"]),
+        "trained_on": f"all {folds['participants']} participants with usable windows ({sel['fit_windows']:,} windows, "
+                      f"{sel['fit_positive_windows']:,} positive)",
+        "performance_estimate": "nested 5-fold participant-grouped CV (no held-out set); see evaluation/metrics.json",
+        "nested_cv_summary": {k: nested[k] for k in ("detected", "evaluable_events", "event_sensitivity",
+                                                     "event_sensitivity_95ci", "far_per_24h", "far_per_24h_95ci",
+                                                     "latency_s_median", "valid_monitored_hours")},
+        "export_check": {"rows": int(len(X)), "json_max_abs_diff": d_py, "c_max_abs_diff": d_c,
+                         "decision_agreement_outside_1e-6_of_threshold": agree, "compiler": "gcc -std=c99 -Wall -Wextra -Werror -pedantic",
+                         "on_device": "not run (no ESP32-S3 firmware yet)"},
         "status": "experimental research component; not clinically validated; not a diagnostic device",
     }, indent=1))
-    (md / "split.json").write_text(json.dumps(split, indent=1))
-    metrics = {"test": test, "cv_out_of_fold": cv, "selected": sel["candidate"] + f"@W{W}"}
-    (md / "evaluation" / "metrics.json").write_text(json.dumps(metrics, indent=1))
-    for f in ("confusion_matrix.png", "training_history.png", "cv_operating_curves.png"):
-        if (run / f).exists():
-            shutil.copy(run / f, md / "evaluation" / f)
-    print(f"exported {MODEL_ID} {MODEL_VERSION}: {mj['kind']}, {(md / 'model.json').stat().st_size / 1e3:.0f} kB, "
-          f"max diff vs sklearn {max_diff:.2e}")
+    (md / "evaluation" / "metrics.json").write_text(json.dumps({"selection": sel, "cv": cv}, indent=1))
+    for f in ("confusion_matrix.png", "training_history.png", "cv_operating_curve.png"):
+        shutil.copy(run / f, md / "evaluation" / f)
+    print(f"exported {MODEL_ID} {MODEL_VERSION}: {len(mj['trees'])} trees, "
+          f"header {(md / 'lyra_seizeit2_model.h').stat().st_size / 1e3:.0f} kB")
 
 
 if __name__ == "__main__":

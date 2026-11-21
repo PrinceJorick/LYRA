@@ -1,8 +1,8 @@
-"""Aggregate dataset summary from the annotations and the feature-cache index.
+"""Aggregate summary of SeizeIT2 and of the regenerated lyra_mlm Stage 3 windows.
 
     python -m ml.seizeit2.dataset_analysis   # -> models/seizeit2/dataset_summary.json
 
-Only counts and distributions are written; no raw samples and no per-recording signal values.
+Only counts and distributions are written; no raw samples and no per-window values.
 """
 
 from __future__ import annotations
@@ -12,101 +12,88 @@ import csv
 import json
 
 import numpy as np
+from lyra_mlm.annotations import AnnotationKind
+from lyra_mlm.seizeit2 import ACC_SCALE_VALID, GYRO_DPS_PER_UNIT, SeizeIT2Adapter
 
 from . import config as C
-from . import data_loader as D
+from .data_loader import load_windows, window_file
 
-
-def _stats(x) -> dict:
-    x = np.asarray(x, float)
-    if not x.size:
-        return {}
-    return {"n": int(x.size), "min": float(x.min()), "median": float(np.median(x)),
-            "mean": round(float(x.mean()), 2), "max": float(x.max())}
+QUALITY = ("VALID", "DEGRADED", "INVALID", "MISSING", "UNSYNCHRONIZED")
 
 
 def main() -> None:
-    runs = D.list_runs()
-    index = json.loads((C.CACHE / "features" / "index.json").read_text())
-    missing_index = [r.run for r in runs if r.run not in index]
-    by_label = collections.Counter(a.raw_label for r in runs for a in r.annotations)
-    by_kind = collections.Counter(a.kind.value for r in runs for a in r.annotations)
-    tgt = [(r, a) for r in runs for a in r.annotations if a.kind in D.TARGET_KINDS]
+    ad = SeizeIT2Adapter(C.DATASET)
+    rids = ad.recording_ids()
+    labels, skipped, durations, hours = collections.Counter(), [], [], 0.0
+    fbtcs_by_part = collections.Counter()
+    for rid in rids:
+        anns, sk = ad.parse_annotations(rid)
+        skipped += sk
+        hours += float(ad._rows(rid)[0]["recordingDuration"]) / 3600
+        for a in anns:
+            labels[a.raw_label] += 1
+            if a.kind is AnnotationKind.SEIZURE_FBTCS:
+                fbtcs_by_part[rid.split("_")[0]] += 1
+                durations.append(a.duration_s)
     with (C.DATASET / "participants.tsv").open() as fh:
-        sex = collections.Counter(row["sex"] for row in csv.DictReader(fh, delimiter="\t"))
+        sex = collections.Counter(r["sex"] for r in csv.DictReader(fh, delimiter="\t"))
 
-    def both(r: D.Run) -> bool:
-        m = index.get(r.run, {})
-        return bool(m.get("has_emg") and m.get("has_imu"))
-
-    vig = collections.Counter()
-    with_both = sum(both(r) for r, _ in tgt)
-    for ev in C.DATASET.glob("sub-*/ses-*/eeg/*_events.tsv"):
-        with ev.open() as fh:
-            vig.update(row["vigilance"] for row in csv.DictReader(fh, delimiter="\t")
-                       if row["eventType"] in C.TARGET_LABELS)
-
-    windows = {}
-    for W in C.WINDOWS_S:
-        tot = collections.Counter()
-        for m in index.values():
-            w = m.get("windows", {}).get(str(W))
-            if w:
-                tot.update(w)
-        windows[f"W{W}"] = dict(tot)
-
+    win, states, imu_states = collections.Counter(), collections.Counter(), collections.Counter()
+    no_windows, imu_never_usable, ev = [], 0, {"in_recordings_with_windows": 0, "with_evidence": 0, "without": 0}
+    evidence_windows = monitored = 0
+    for rid in rids:
+        if not window_file(rid).exists():
+            no_windows.append(rid)
+            continue
+        with np.load(window_file(rid)) as z:
+            win.update({{1: "positive", 0: "negative", -1: "ignore"}[int(k)]: int(v)
+                        for k, v in zip(*np.unique(z["label"], return_counts=True))})
+            states.update(QUALITY[int(k)] for k in z["overall"])
+            imu_states.update(QUALITY[int(k)] for k in z["imu_state"])
+            imu_never_usable += int(not np.isin(z["imu_state"], (0, 1)).any())
+        r = load_windows(rid, ad)
+        evidence_windows += int(r.evidence.sum())
+        for on, off in r.fbtcs:
+            ev["in_recordings_with_windows"] += 1
+            covered = r.evidence[(r.t_end > on) & (r.t_end - C.WINDOW_S < off)].any()
+            ev["with_evidence" if covered else "without"] += 1
+    ev["in_recordings_without_windows"] = sum(
+        1 for rid in no_windows for a in ad.annotations(rid) if a.kind is AnnotationKind.SEIZURE_FBTCS)
+    monitored = evidence_windows * C.HOP_S / 3600
+    d = np.asarray(durations)
     summary = {
         "dataset": "SeizeIT2, BIDS (OpenNeuro ds005873 v1.1.0, CC0)",
-        "subjects": len({r.subject for r in runs}), "sex": dict(sex),
-        "recordings_runs": len(runs),
-        "recorded_hours": round(sum(r.duration_s for r in runs) / 3600, 1),
-        "modality_files": {
-            "runs_without_emg_file": sum(r.emg_path is None for r in runs),
-            "runs_without_mov_file": sum(r.mov_path is None for r in runs),
-            "runs_with_mov_file_but_no_chest_imu": sum(
-                1 for r in runs if r.mov_path is not None and r.emg_path is not None
-                and r.run in index and not index[r.run]["has_imu"]),
-            "runs_with_emg_and_chest_imu": sum(both(r) for r in runs),
-            "runs_with_invalid_acc_scale": sum(1 for m in index.values() if m.get("acc_scale_invalid")),
-            "hours_usable_after_quality_checks": round(sum(m.get("usable_duration_s", 0) for m in index.values()) / 3600, 1),
-            "runs_not_processed": missing_index,
+        "participants": len({r.split("_")[0] for r in rids}), "sex": dict(sex), "recordings": len(rids),
+        "recorded_hours": round(hours, 1),
+        "annotations_by_raw_label": dict(labels.most_common()),
+        "dropped_corrupt_annotation_rows": skipped,
+        "target_fbtcs": {"events": int(d.size), "participants": len(fbtcs_by_part),
+                         "duration_s": {"min": float(d.min()), "median": float(np.median(d)), "max": float(d.max())},
+                         **ev},
+        "stage3": {
+            "pipeline": "lyra_mlm prepare_recording via ml/seizeit2/prepare.py (D12-D16; 4 s windows, 2 s step)",
+            "recordings_with_windows": len(rids) - len(no_windows),
+            "recordings_without_windows (no EMG and no chest IMU)": len(no_windows),
+            "recordings_with_imu_never_usable": imu_never_usable,
+            "windows_by_label": dict(win), "windows_by_overall_quality": dict(states),
+            "windows_by_imu_quality": dict(imu_states),
+            "evidence_windows (both modalities usable, all features available)": evidence_windows,
+            "valid_monitored_hours": round(monitored, 1),
         },
-        "annotations_by_raw_label": dict(by_label.most_common()),
-        "annotations_by_lyra_kind": dict(by_kind),
-        "dropped_corrupt_rows": [i for r in runs for i in r.issues],
-        "target_fbtcs": {
-            "events": len(tgt), "subjects": len({r.subject for r, _ in tgt}),
-            "events_with_emg_and_chest_imu": with_both,
-            "events_usable_after_quality_checks": sum(
-                len(r.intervals(D.TARGET_KINDS)) for r in runs if index.get(r.run, {}).get("windows")),
-            "duration_s": _stats([a.duration_s for _, a in tgt]),
-            "vigilance": dict(vig),
+        "imu_calibration": {
+            "rule": "lyra_mlm.seizeit2.calibrate_imu: ACC and GYR / median |acc|; GYR x deg/s per unit; "
+                    "median |acc| outside ACC_SCALE_VALID -> all IMU samples INVALID",
+            "acc_scale_valid": list(ACC_SCALE_VALID), "gyro_deg_s_per_unit": GYRO_DPS_PER_UNIT,
+            "acc_scale_regimes_from_full_scan": {"~1/2": 245, "~1/6": 1837, "pinned_32.768": 347, "other_invalid": 58,
+                                                 "scanned_recordings": 2487,
+                                                 "source": "session 4 scan of every EMG+MOV recording (same rule)"},
+            "gyro_unit_evidence": "evaluation/gyro_calibration.json",
         },
-        "windows": windows,
-        "acc_scale_regimes_runs": dict(collections.Counter(
-            "~1/2" if 0.3 <= a <= 0.7 else "~1/6" if 0.12 <= a < 0.3 else "pinned_32.768" if a > 32 else "other_invalid"
-            for a in (m["acc_norm_median"] for m in index.values() if "acc_norm_median" in m))),
-        "gyr_norm_median_per_run_file_units": _stats([m["gyr_norm_median"] for m in index.values() if "gyr_norm_median" in m]),
-        "quality_notes": [
-            "EDF content is git-annexed and absent from the local clone; it is fetched from the public bucket "
-            "and verified against the SHA256 in each annex key.",
-            "Annotation onsets are relative to the run start; all modality files of a run share that origin "
-            "(EDF+C, 1 s records, record counts equal recordingDuration).",
-            "Accelerometer files are labelled g but use per-file scales: median |acc| (gravity) is ~1/2 or ~1/6 "
-            "in valid runs; in others it is pinned at 32.768 or zero. Valid runs are rescaled to g by their own "
-            "gravity estimate; the rest are excluded (ACC_SCALE_VALID). Gyroscope channels are labelled 'g', their "
-            "unit is undocumented and their scale differs between runs, so only scale-invariant gyro features are used.",
-            "EMG is a single left-deltoid channel at 256 Hz with strong low-frequency (ECG/motion) content.",
-            "No age, centre or medication metadata is distributed; only sex.",
-            "Seizure annotations come from vEEG review; FBTCS onset is the focal onset, so the convulsive "
-            "phase starts some time after the annotated onset.",
-        ],
     }
     out = C.MODEL_DIR / "dataset_summary.json"
     out.write_text(json.dumps(summary, indent=1))
-    print(json.dumps({k: summary[k] for k in ("subjects", "recordings_runs", "recorded_hours",
-                                              "modality_files", "target_fbtcs", "windows",
-                                              "acc_scale_regimes_runs")}, indent=1))
+    print(json.dumps({k: summary[k] for k in ("participants", "recordings", "recorded_hours", "target_fbtcs",
+                                              "stage3")}, indent=1))
 
 
 if __name__ == "__main__":
