@@ -215,6 +215,8 @@ def test_prepare_recording_labels_every_window_and_fits_nothing():
     np.testing.assert_array_equal(out["primary_available"], ~np.isnan(out["primary"]))
     assert out["artifact_overlap"].sum() == 6 and (out["overall"] == 0).all()
     assert out["primary_available"].all() and out["secondary_available"].all()
+    assert str(out["primary_emg_signal_type"]) == "SIMULATED_ENV_FROM_RAW"
+    assert "SIMULATED_ENV_FROM_RAW: butterworth highpass order 1 at 20.8 Hz" in str(out["primary_emg_provenance"])
 
 
 def test_prepare_marks_a_missing_modality_instead_of_dropping_the_recording():
@@ -237,3 +239,13 @@ def test_split_manifest_is_disjoint_and_complete():
         split_manifest(inventory + ["sub-200"], {}, SEIZEIT2_PLANNED_SPLIT)
     with pytest.raises(LeakageError):
         ParticipantSplit(frozenset({"sub-001"}), frozenset({"sub-001"}), "synthetic", False)
+
+
+def test_malformed_annotation_rows(tmp_path):
+    from lyra_mlm.seizeit2 import MalformedAnnotation
+    ok = bids(tmp_path, "sub-001", events=[(10, 5, "impd"), (51968, -40258, "impd"), (20, 15, "sz_foc_f2b")])
+    anns, skipped = SeizeIT2Adapter(tmp_path).parse_annotations(ok)
+    assert [a.raw_label for a in anns] == ["impd", "sz_foc_f2b"] and len(skipped) == 1 and "row 1" in skipped[0]
+    bad = bids(tmp_path, "sub-002", events=[(20, -15, "sz_foc_f2b")])
+    with pytest.raises(MalformedAnnotation):
+        SeizeIT2Adapter(tmp_path).load_recording(bad)

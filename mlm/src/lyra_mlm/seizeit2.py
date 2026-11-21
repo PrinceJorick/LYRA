@@ -22,7 +22,7 @@ from pathlib import Path
 
 import numpy as np
 
-from .annotations import Annotation, AnnotationKind
+from .annotations import SEIZURE_LIKE, Annotation, AnnotationKind
 from .datasets import SOURCES, RecordingInfo
 from .edf import EdfError, read_edf, read_edf_header
 from .signals import IMU_CHANNELS, DataOrigin, EmgSignalType, Modality, Recording, SignalStream
@@ -37,6 +37,10 @@ IMU_UNITS = ("g [EDF label; scale unverified]",) * 3 + ("unverified [EDF label '
 
 class MissingRecordingData(ValueError):
     pass
+
+
+class MalformedAnnotation(ValueError):
+    """A seizure-like annotation row cannot be parsed, so the recording cannot be labelled safely."""
 
 
 class SeizeIT2Mapper:
@@ -119,11 +123,25 @@ class SeizeIT2Adapter:
         with open(self._paths(recording_id)["events"], newline="") as f:
             return list(csv.DictReader(f, delimiter="\t"))
 
+    def parse_annotations(self, recording_id: str) -> tuple[tuple[Annotation, ...], list[str]]:
+        """(annotations, skipped-row notes). Malformed non-seizure rows (e.g. negative-duration 'impd'
+        rows in the v1.1.0 files) are skipped and reported; a malformed seizure-like row raises,
+        because the recording can then not be labelled safely."""
+        good, skipped = [], []
+        for i, r in enumerate(self._rows(recording_id)):
+            kind = self.mapper.map_label(r["eventType"])
+            try:
+                good.append(Annotation(f"{recording_id}#{i}", float(r["onset"]), float(r["duration"]), kind,
+                                       r["eventType"], source="SeizeIT2 events.tsv"))
+            except ValueError as e:
+                if kind in SEIZURE_LIKE:
+                    raise MalformedAnnotation(f"{recording_id} row {i} ({r['eventType']}): {e}") from e
+                skipped.append(f"{recording_id} row {i}: {r['eventType']} onset {r['onset']} "
+                               f"duration {r['duration']} skipped (malformed)")
+        return tuple(good), skipped
+
     def annotations(self, recording_id: str) -> tuple[Annotation, ...]:
-        return tuple(
-            Annotation(f"{recording_id}#{i}", float(r["onset"]), float(r["duration"]),
-                       self.mapper.map_label(r["eventType"]), r["eventType"], source="SeizeIT2 events.tsv")
-            for i, r in enumerate(self._rows(recording_id)))
+        return self.parse_annotations(recording_id)[0]
 
     def load_recording(self, recording_id: str) -> Recording:
         info = self.info(recording_id)

@@ -56,8 +56,9 @@ def _subs(lo: int, hi: int) -> frozenset[str]:
 SEIZEIT2_PLANNED_SPLIT = ParticipantSplit(
     train=_subs(1, 96),
     held_out=_subs(97, 125),
-    source="SeizeIT2 paper's suggested split (context.md §7, R1). Not yet checked against release files.",
-    verified=False,
+    source="SeizeIT2 paper's suggested split (context.md §7, R1); verified 2026-11-21 against the v1.1.0 "
+           "participants.tsv and subject folders (125 participants, sub-001..sub-125)",
+    verified=True,
 )
 
 
