@@ -29,6 +29,9 @@ src/state/       In-memory app state (resets on restart)
 src/components/  Reusable UI + brand graphics (logo from assets/lyra-mark.png, abstract pod SVG)
 ```
 
+The multimodal ML foundation (Python, pre-training phase, no trained model) lives in
+[`mlm/`](mlm/README.md).
+
 To integrate real parts, replace the exports in `services/device/index.ts` (BLE),
 `services/ml/index.ts` (model) and `services/notifications/index.ts` (SMS/push); screens only
 depend on those interfaces.
