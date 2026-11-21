@@ -1,71 +1,73 @@
 {
- "format": "lyra-seizeit2-model/1",
- "model_file": "model.json",
+ "format": "lyra-seizeit2-forest/1",
+ "model_file": "lyra_seizeit2_model.h",
+ "runtime": "ESP32-S3 firmware (D11), C99",
  "input": {
-  "window_s": 5,
-  "hop_s": 2,
+  "window_s": 4.0,
+  "step_s": 2.0,
   "emg": {
-   "samples": 1280,
-   "rate_hz": 256,
-   "unit": "uV",
-   "source": "single sEMG channel, SeizeIT2 left deltoid placement"
+   "signal": "MyoWare 2.0 ENV (D12)",
+   "rate_hz": 50.0,
+   "training_source": "SIMULATED_ENV_FROM_RAW from SeizeIT2 RAW sEMG (D15)",
+   "unit": "sensor units (training: simulated envelope of \u00b5V RAW)"
   },
-  "accelerometer": {
-   "samples_per_axis": 125,
-   "rate_hz": 25,
-   "unit": "g",
-   "note": "training data rescaled per run so that median |acc| = 1 g"
+  "imu": {
+   "sensor": "BMI270 (D12)",
+   "rate_hz": 25.0,
+   "acc_unit": "g",
+   "gyro_unit": "deg/s",
+   "training_calibration": {
+    "acc": "per-recording gravity scale -> g",
+    "gyro_deg_s_per_unit": 125.0,
+    "acc_scale_valid": [
+     0.12,
+     1.2
+    ]
+   }
   },
-  "gyroscope": {
-   "samples_per_axis": 125,
-   "rate_hz": 25,
-   "unit": "any fixed unit (only scale-invariant gyroscope features are used)"
-  },
-  "axes": "any orientation: all features are rotation invariant",
-  "timestamp": "ms of the last sample in the window; windows arrive every hop_s"
+  "placement": "EMG left deltoid, IMU left chest (SeizeIT2); LYRA placement: D10"
  },
- "features": [
-  "emg_hf_logpow",
-  "emg_frac_20_45",
-  "emg_frac_55_90",
-  "emg_low_ratio",
-  "emg_mains_ratio",
-  "emg_median_freq",
-  "emg_spectral_entropy",
-  "emg_frame_logpow_std",
-  "env_cv",
-  "env_peak",
-  "env_rhythm_1_5",
-  "env_dom_freq",
-  "acc_mag_std",
-  "acc_var_trace",
-  "acc_jerk",
-  "acc_frac_1_6",
-  "acc_dom_freq",
-  "acc_peak",
-  "gyr_cv",
-  "gyr_frac_1_6",
-  "gyr_dom_freq",
-  "gyr_peak",
-  "orient_change_deg",
-  "xmod_freq_diff"
- ],
- "quality": {
-  "flat_std": 1e-06,
-  "rule": "a flat EMG or IMU window scores 0"
+ "features": {
+  "names": [
+   "emg_simenv_rms",
+   "emg_simenv_mav",
+   "emg_simenv_var",
+   "emg_simenv_std",
+   "emg_simenv_wl_per_s",
+   "emg_simenv_autocorr_peak",
+   "emg_simenv_mod_band_power",
+   "emg_simenv_mod_band_ratio",
+   "emg_simenv_mod_peak_freq_hz",
+   "imu_acc_mag_mean",
+   "imu_acc_mag_std",
+   "imu_gyr_mag_mean",
+   "imu_gyr_mag_std",
+   "imu_gyr_mag_rms",
+   "imu_acc_jerk_rms",
+   "imu_acc_dominant_freq_hz",
+   "imu_acc_band_power",
+   "imu_orientation_change_deg",
+   "xmod_env_accmag_corr",
+   "xmod_energy_log_ratio",
+   "xmod_lag_s",
+   "xmod_coherence_band"
+  ],
+  "implementation": "lyra_mlm.features (Python); C99 port pending",
+  "float_type": "float32"
  },
- "postprocessing": {
-  "smoothing_k": 5,
-  "threshold": 0.9867026171888409,
-  "refractory_s": 300,
-  "gap_reset_s": 3.0,
-  "rule": "alarm when the mean of the last k scores >= threshold and no alarm in the previous refractory_s seconds; a gap in the stream restarts the mean"
+ "routing": {
+  "rule": "lyra_mlm.inference: both modalities VALID/DEGRADED and every feature available, else SUPPRESSED (no score, never negative)",
+  "degraded_window_policy": "allow_with_flag",
+  "missing_modality_policy": "suppress"
  },
- "output": {
-  "score": "internal only, never shown to users",
-  "event_types": [
-   "no_event",
-   "possible_event"
-  ]
+ "confirmation": {
+  "entry_threshold": 0.968365,
+  "exit_threshold": 0.768365,
+  "consecutive_positive_required": 3,
+  "max_timestamp_gap_s": 6.0,
+  "refractory_cooldown_s": 60.0,
+  "invalid_window_policy": "hold",
+  "degraded_window_policy": "allow_with_flag",
+  "note": "D17 structure; entry/exit chosen on training data (D17 defaults 0.65/0.45 are reported for comparison in evaluation/metrics.json)"
  }
 }

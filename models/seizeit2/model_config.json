@@ -1,0 +1,72 @@
+{
+  "decision_threshold": 0.968365,
+  "family": "random_forest",
+  "feature_config": {
+    "emg_signal_type": "SIMULATED_ENV_FROM_RAW",
+    "envelope_band_hz": [
+      1.5,
+      5.0
+    ],
+    "gap_factor": 3.0,
+    "max_xcorr_lag_s": 0.5,
+    "min_envelope_rate_hz": 20.0,
+    "min_paired_samples": 20,
+    "mode": "multimodal",
+    "movement_band_hz": [
+      1.0,
+      8.0
+    ],
+    "raw_spectral_band_hz": [
+      20.0,
+      250.0
+    ]
+  },
+  "feature_names": [
+    "emg_simenv_rms",
+    "emg_simenv_mav",
+    "emg_simenv_var",
+    "emg_simenv_std",
+    "emg_simenv_wl_per_s",
+    "emg_simenv_autocorr_peak",
+    "emg_simenv_mod_band_power",
+    "emg_simenv_mod_band_ratio",
+    "emg_simenv_mod_peak_freq_hz",
+    "imu_acc_mag_mean",
+    "imu_acc_mag_std",
+    "imu_gyr_mag_mean",
+    "imu_gyr_mag_std",
+    "imu_gyr_mag_rms",
+    "imu_acc_jerk_rms",
+    "imu_acc_dominant_freq_hz",
+    "imu_acc_band_power",
+    "imu_orientation_change_deg",
+    "xmod_env_accmag_corr",
+    "xmod_energy_log_ratio",
+    "xmod_lag_s",
+    "xmod_coherence_band"
+  ],
+  "hyperparameters": {
+    "class_weight": "balanced_subsample",
+    "max_depth": 8,
+    "max_features": "sqrt",
+    "min_samples_leaf": 20,
+    "n_estimators": 50,
+    "random_state": 20261121
+  },
+  "model_id": "lyra-seizeit2-fbtcs",
+  "normalization": null,
+  "trained": true,
+  "training_record": {
+    "dataset": "SeizeIT2 OpenNeuro ds005873 v1.1.0",
+    "git_commit": "93a3f24335721b53b80d755f0194496f65d5400d",
+    "participants": 124,
+    "seed": 20261121,
+    "sklearn": "1.9.1",
+    "split": "all participants (no held-out); 5-fold nested participant-grouped CV",
+    "training_run": "20261122-022006"
+  },
+  "window": {
+    "length_s": 4.0,
+    "step_s": 2.0
+  }
+}

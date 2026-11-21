@@ -1,22 +1,14 @@
 {
  "dataset": "SeizeIT2, BIDS (OpenNeuro ds005873 v1.1.0, CC0)",
- "subjects": 125,
+ "participants": 125,
  "sex": {
   "f": 62,
   "m": 63
  },
- "recordings_runs": 2850,
+ "recordings": 2850,
  "recorded_hours": 11626.2,
- "modality_files": {
-  "runs_without_emg_file": 46,
-  "runs_without_mov_file": 299,
-  "runs_with_mov_file_but_no_chest_imu": 21,
-  "runs_with_emg_and_chest_imu": 2487,
-  "runs_with_invalid_acc_scale": 405,
-  "hours_usable_after_quality_checks": 10034.1,
-  "runs_not_processed": []
- },
  "annotations_by_raw_label": {
+  "bckg": 2313,
   "impd": 459,
   "sz_foc_ia_nm": 160,
   "sz_foc_a_m_hyperkinetic": 158,
@@ -44,67 +36,66 @@
   "sz_uo_m_myoclonic": 1,
   "sz_uo_m_tonicMyio": 1
  },
- "annotations_by_lyra_kind": {
-  "artifact": 459,
-  "seizure_out_of_scope": 828,
-  "seizure_fbtcs": 55
- },
- "dropped_corrupt_rows": [
-  "sub-031_ses-01_task-szMonitoring_run-07 row 2: impd with negative duration -40258.00 dropped",
-  "sub-031_ses-01_task-szMonitoring_run-07 row 3: impd with negative duration -35020.00 dropped",
-  "sub-043_ses-01_task-szMonitoring_run-02 row 1: impd with negative duration -28796.00 dropped",
-  "sub-043_ses-01_task-szMonitoring_run-02 row 2: impd with negative duration -82.00 dropped",
-  "sub-043_ses-01_task-szMonitoring_run-02 row 3: impd with negative duration -11.00 dropped"
+ "dropped_corrupt_annotation_rows": [
+  "sub-031_ses-01_task-szMonitoring_run-07 row 2: impd onset 51968.00 duration -40258.00 skipped (malformed)",
+  "sub-031_ses-01_task-szMonitoring_run-07 row 3: impd onset 52025.00 duration -35020.00 skipped (malformed)",
+  "sub-043_ses-01_task-szMonitoring_run-02 row 1: impd onset 37799.00 duration -28796.00 skipped (malformed)",
+  "sub-043_ses-01_task-szMonitoring_run-02 row 2: impd onset 37895.00 duration -82.00 skipped (malformed)",
+  "sub-043_ses-01_task-szMonitoring_run-02 row 3: impd onset 38306.00 duration -11.00 skipped (malformed)"
  ],
  "target_fbtcs": {
   "events": 55,
-  "subjects": 37,
-  "events_with_emg_and_chest_imu": 47,
-  "events_usable_after_quality_checks": 44,
+  "participants": 37,
   "duration_s": {
-   "n": 55,
    "min": 30.0,
    "median": 108.0,
-   "mean": 147.73,
    "max": 661.0
   },
-  "vigilance": {
-   "asleep": 25,
-   "awake": 23,
-   "un": 7
-  }
+  "in_recordings_with_windows": 51,
+  "with_evidence": 44,
+  "without": 7,
+  "in_recordings_without_windows": 4
  },
- "windows": {
-  "W5": {
-   "n": 18057695,
-   "ok": 17779916,
-   "pos": 2966
+ "stage3": {
+  "pipeline": "lyra_mlm prepare_recording via ml/seizeit2/prepare.py (D12-D16; 4 s windows, 2 s step)",
+  "recordings_with_windows": 2806,
+  "recordings_without_windows (no EMG and no chest IMU)": 44,
+  "recordings_with_imu_never_usable": 723,
+  "windows_by_label": {
+   "negative": 20244889,
+   "ignore": 47879,
+   "positive": 3716
   },
-  "W10": {
-   "n": 18052515,
-   "ok": 17821439,
-   "pos": 2981
-  }
+  "windows_by_overall_quality": {
+   "VALID": 15254579,
+   "DEGRADED": 2721162,
+   "INVALID": 100877,
+   "MISSING": 2219866
+  },
+  "windows_by_imu_quality": {
+   "VALID": 15261489,
+   "DEGRADED": 2728194,
+   "INVALID": 72344,
+   "MISSING": 2234457
+  },
+  "evidence_windows (both modalities usable, all features available)": 17973050,
+  "valid_monitored_hours": 9985.0
  },
- "acc_scale_regimes_runs": {
-  "~1/2": 245,
-  "~1/6": 1837,
-  "other_invalid": 58,
-  "pinned_32.768": 347
- },
- "gyr_norm_median_per_run_file_units": {
-  "n": 2487,
-  "min": 1.5259021896696368e-05,
-  "median": 0.0013821001753840498,
-  "mean": 0.0,
-  "max": 0.9141654978809957
- },
- "quality_notes": [
-  "EDF content is git-annexed and absent from the local clone; it is fetched from the public bucket and verified against the SHA256 in each annex key.",
-  "Annotation onsets are relative to the run start; all modality files of a run share that origin (EDF+C, 1 s records, record counts equal recordingDuration).",
-  "Accelerometer files are labelled g but use per-file scales: median |acc| (gravity) is ~1/2 or ~1/6 in valid runs; in others it is pinned at 32.768 or zero. Valid runs are rescaled to g by their own gravity estimate; the rest are excluded (ACC_SCALE_VALID). Gyroscope channels are labelled 'g', their unit is undocumented and their scale differs between runs, so only scale-invariant gyro features are used.",
-  "EMG is a single left-deltoid channel at 256 Hz with strong low-frequency (ECG/motion) content.",
-  "No age, centre or medication metadata is distributed; only sex.",
-  "Seizure annotations come from vEEG review; FBTCS onset is the focal onset, so the convulsive phase starts some time after the annotated onset."
- ]
+ "imu_calibration": {
+  "rule": "lyra_mlm.seizeit2.calibrate_imu: ACC and GYR / median |acc|; GYR x deg/s per unit; median |acc| outside ACC_SCALE_VALID -> all IMU samples INVALID",
+  "acc_scale_valid": [
+   0.12,
+   1.2
+  ],
+  "gyro_deg_s_per_unit": 125.0,
+  "acc_scale_regimes_from_full_scan": {
+   "~1/2": 245,
+   "~1/6": 1837,
+   "pinned_32.768": 347,
+   "other_invalid": 58,
+   "scanned_recordings": 2487,
+   "source": "session 4 scan of every EMG+MOV recording (same rule)"
+  },
+  "gyro_unit_evidence": "evaluation/gyro_calibration.json"
+ }
 }

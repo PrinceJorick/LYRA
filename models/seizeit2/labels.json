@@ -3,9 +3,12 @@
   "0": "background",
   "1": "convulsive_pattern"
  },
- "app_event_types": {
-  "no_event": "No alarm from the post-processed score stream.",
-  "possible_event": "Smoothed score reached the threshold: a pattern resembling the annotated focal-to-bilateral tonic-clonic seizures in SeizeIT2. Not a diagnosis; the app's cancel countdown and caregiver workflow still apply."
- },
- "class_1_definition": "window overlapping an annotated sz_foc_f2b event by >= 50%"
+ "class_1_definition": "D14: window overlaps an annotated sz_foc_f2b event by >= 50% (>= 2.0 s of 4 s)",
+ "confirmation_states": [
+  "idle",
+  "accumulating",
+  "possible_event",
+  "refractory"
+ ],
+ "possible_event": "D17 evidence rule met. Shown as 'Possible convulsive seizure detected. This is not a diagnosis.' Never a confirmed seizure; the cancel countdown and caregiver workflow apply."
 }
