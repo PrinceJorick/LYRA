@@ -4,6 +4,19 @@
 produced `mlm/data/processed/` (gitignored): raw feature vectors, availability masks, quality states,
 labels and split manifests. No model was trained and no statistic was fitted on real data.
 
+## Stage 3 hand-over facts (see DATASETS.md)
+
+- 20,296,484 windows from 2,806 recordings; 44 recordings excluded (no EMG and no ECGEMG IMU).
+- Usable: 3,456 positive, 19,112,674 negative and 42,468 ignore windows; 1,137,886 signal-excluded.
+- FBTCS with usable positive windows: **30 of 33 in Train/CV, 17 of 22 held-out**.
+- Train/CV has only 2,070 positive windows (28 participants). Held-out holds 22 of the 55 events,
+  11 of them from sub-115 and sub-116, so per-participant reporting is essential.
+- sub-097 (held-out) has no usable recordings.
+- Positive:negative among usable Train/CV windows is about 1:7,000 (2,070 vs 14,589,150). Plan class
+  weighting or subsampling of negatives inside training folds only.
+- `mlm/data/processed_superseded/` holds the 378 pre-fix files from the quality-inheritance defect.
+  They can be deleted.
+
 ## 0. Already decided (locked in Stage 3)
 
 - **Labels:** POSITIVE ≥ 50% FBTCS overlap, NEGATIVE outside ±30 s of any seizure, IGNORE otherwise.

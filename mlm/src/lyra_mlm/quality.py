@@ -113,6 +113,20 @@ def assess_modality(stream: SignalStream | None, modality: Modality, start_s: fl
     return result(QualityState.DEGRADED if degraded else QualityState.VALID, degraded, coverage)
 
 
+QUALITY_RANK = {s: i for i, s in enumerate(reversed(_WORST_FIRST))}  # VALID=0 .. UNSYNCHRONIZED=4
+
+
+def inherit_source_quality(derived: ModalityQuality, source: ModalityQuality) -> ModalityQuality:
+    """A derived stream (e.g. a simulated envelope) is never rated better than the source it was
+    computed from: filtering a flatlined raw signal leaves a decaying transient that would
+    otherwise pass the flatline check."""
+    if QUALITY_RANK[source.state] <= QUALITY_RANK[derived.state]:
+        return derived
+    return ModalityQuality(derived.modality, source.state,
+                           tuple(f"source: {r}" for r in source.reasons) + derived.reasons,
+                           min(derived.coverage, source.coverage))
+
+
 @dataclass(frozen=True)
 class WindowQuality:
     per_modality: Mapping[Modality, ModalityQuality]

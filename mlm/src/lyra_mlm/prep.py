@@ -13,8 +13,9 @@ import numpy as np
 from .annotations import AnnotationKind, LabelConfig, label_window, positive_overlap_s
 from .features import FeatureConfig, extract_features, feature_names
 from .preprocess import SimulatedEnvConfig, raw_to_simulated_env
-from .quality import QualityConfig, QualityState, assess_modality, combine
+from .quality import QualityConfig, QualityState, assess_modality, combine, inherit_source_quality
 from .signals import EmgSignalType, Modality, Recording
+from .sync import SyncReport
 from .windows import WindowConfig, segment
 
 QUALITY_CODE = {s: i for i, s in enumerate(QualityState)}  # stored as int8: VALID=0 .. UNSYNCHRONIZED=4
@@ -43,8 +44,10 @@ def prepare_recording(rec: Recording, cfg: PrepConfig) -> dict[str, np.ndarray]:
         "raw_emg_state", "emg_coverage", "imu_coverage", "primary", "secondary")}
     both = (Modality.EMG, Modality.IMU)
     for w in segment(primary_rec, cfg.window, cfg.quality, both):
-        q = w.quality.per_modality
         raw_q = assess_modality(rec.emg, Modality.EMG, w.start_s, w.end_s, cfg.quality)
+        q = dict(w.quality.per_modality)
+        q[Modality.EMG] = inherit_source_quality(q[Modality.EMG], raw_q)  # simulated ENV never beats its RAW source
+        w = replace(w, quality=combine(q, both, SyncReport(not w.quality.sync_reasons, w.quality.sync_reasons)))
         raw_w = replace(w, emg=rec.emg.slice_time(w.start_s, w.end_s) if rec.emg is not None else None,
                         quality=combine({Modality.EMG: raw_q, Modality.IMU: q[Modality.IMU]}, (Modality.EMG,), None))
         cols["start_s"].append(w.start_s)

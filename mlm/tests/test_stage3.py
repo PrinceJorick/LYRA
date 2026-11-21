@@ -249,3 +249,29 @@ def test_malformed_annotation_rows(tmp_path):
     bad = bids(tmp_path, "sub-002", events=[(20, -15, "sz_foc_f2b")])
     with pytest.raises(MalformedAnnotation):
         SeizeIT2Adapter(tmp_path).load_recording(bad)
+
+
+def test_simulated_env_inherits_flatline_raw_quality():
+    """Regression (Stage 3 audit): a flat RAW segment must not yield a VALID simulated envelope."""
+    t = np.arange(256 * 40) / 256.0
+    v = 100 * (1 + 0.5 * np.sin(2 * np.pi * 3 * t)) * np.sin(2 * np.pi * 80 * t)
+    v[256 * 20:] = 7.0  # electrode output stuck from 20 s on
+    rec = Recording("SYN-P01", "SYN-R01", DataOrigin.SYNTHETIC, raw(40.0, values=v), imu(40.0), placement="synthetic")
+    out = prepare_recording(rec, PrepConfig())
+    flat = out["start_s"] >= 20.0
+    assert (out["raw_emg_state"][flat] == 2).all()  # 2 = INVALID
+    assert (out["emg_state"][flat] == 2).all() and (out["overall"][flat] == 2).all()
+    assert not out["primary_available"][flat][:, :9].any()  # 9 EMG features
+    assert not out["primary_available"][flat][:, -4:].any()  # 4 cross-modal features
+    assert out["primary_available"][flat][:, 9:-4].all()  # IMU features still computed from the IMU
+    assert (out["emg_state"][out["start_s"] <= 14.0] == 0).all()  # earlier windows unaffected
+
+
+def test_inherit_source_quality_only_ever_downgrades():
+    from lyra_mlm.quality import ModalityQuality, QualityState as Q, inherit_source_quality
+    from lyra_mlm.signals import Modality
+    valid = ModalityQuality(Modality.EMG, Q.VALID, (), 1.0)
+    flat = ModalityQuality(Modality.EMG, Q.INVALID, ("flatline signal",), 1.0)
+    assert inherit_source_quality(valid, flat).state is Q.INVALID
+    assert inherit_source_quality(valid, flat).reasons == ("source: flatline signal",)
+    assert inherit_source_quality(flat, valid) is flat
