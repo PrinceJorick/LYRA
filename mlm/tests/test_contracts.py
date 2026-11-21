@@ -50,9 +50,9 @@ def test_training_only_accepts_the_training_partition():
         require_training_partition(data)
 
 
-def test_planned_seizeit2_split_is_participant_independent_and_unverified():
+def test_planned_seizeit2_split_is_participant_independent_and_verified():
     s = SEIZEIT2_PLANNED_SPLIT
-    assert (len(s.train), len(s.held_out), s.verified) == (96, 29, False)
+    assert (len(s.train), len(s.held_out), s.verified) == (96, 29, True)
     assert s.partition_of("sub-096") is Partition.TRAIN and s.partition_of("sub-097") is Partition.TEST
     assert s.partition_of("sub-200") is None
     with pytest.raises(LeakageError):

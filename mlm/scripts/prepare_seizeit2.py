@@ -24,7 +24,7 @@ from lyra_mlm.annotations import AnnotationKind, WindowLabel
 from lyra_mlm.evaluation import SEIZEIT2_PLANNED_SPLIT, split_manifest
 from lyra_mlm.features import feature_specs
 from lyra_mlm.prep import QUALITY_CODE, PrepConfig, prepare_recording
-from lyra_mlm.seizeit2 import MissingRecordingData, SeizeIT2Adapter
+from lyra_mlm.seizeit2 import MalformedAnnotation, MissingRecordingData, SeizeIT2Adapter
 
 DATA = Path(__file__).resolve().parents[1] / "data"
 CFG = PrepConfig()
@@ -54,7 +54,7 @@ def work(rid: str, RAW: Path, OUT: Path) -> dict:
             return summarise(rid, z)
     try:
         rec = SeizeIT2Adapter(RAW).load_recording(rid)
-    except MissingRecordingData as e:
+    except (MissingRecordingData, MalformedAnnotation) as e:
         return {"recording_id": rid, "participant_id": rid.split("_")[0], "excluded": str(e)}
     arrays = prepare_recording(rec, CFG)
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -75,6 +75,20 @@ def sha256(p: Path) -> str:
     return h.hexdigest()
 
 
+def update_checksums(raw: Path) -> dict:
+    """SHA-256 of every file in download_listing.json; existing digests are kept, extras dropped."""
+    listed = [k.removeprefix("ds005873/") for k, _ in json.loads((raw / "download_listing.json").read_text())]
+    manifest = raw / "sha256_manifest.json"
+    old = json.loads(manifest.read_text()) if manifest.exists() else {}
+    todo = [k for k in listed if k not in old]
+    with ThreadPoolExecutor(8) as pool:
+        new = dict(zip(todo, pool.map(lambda k: sha256(raw / k), todo)))
+    digests = {k: old.get(k) or new[k] for k in sorted(listed)}
+    manifest.write_text(json.dumps(digests, indent=0))
+    print(f"checksums: {len(digests)} files ({len(todo)} newly hashed)", flush=True)
+    return digests
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--workers", type=int, default=5)
@@ -91,9 +105,15 @@ def main() -> None:
     with open(RAW / "participants.tsv", newline="") as f:
         participants = [r["participant_id"] for r in csv.DictReader(f, delimiter="\t")]
     raw_labels, fbtcs, gtcs = Counter(), Counter(), Counter()
-    seizures = 0
+    seizures, skipped_rows, unlabelable = 0, [], []
     for r in rids:
-        for a in adapter.annotations(r):
+        try:
+            anns, skipped = adapter.parse_annotations(r)
+        except MalformedAnnotation as e:
+            unlabelable.append(str(e))
+            continue
+        skipped_rows += skipped
+        for a in anns:
             raw_labels[a.raw_label] += 1
             seizures += a.kind in (AnnotationKind.SEIZURE_FBTCS, AnnotationKind.SEIZURE_GTCS,
                                    AnnotationKind.SEIZURE_OUT_OF_SCOPE)
@@ -113,19 +133,14 @@ def main() -> None:
         "annotated_seizures": seizures, "fbtcs_events": sum(fbtcs.values()), "gtcs_events": sum(gtcs.values()),
         "fbtcs_by_participant": {p: n for p, n in sorted(fbtcs.items()) if n},
         "event_labels": dict(raw_labels.most_common()),
+        "skipped_annotation_rows": skipped_rows, "unlabelable_recordings": unlabelable,
     }
     (OUT / "inventory.json").write_text(json.dumps(inventory, indent=2))
     print(json.dumps({k: v for k, v in inventory.items() if not isinstance(v, (dict, list))}, indent=1), flush=True)
 
-    # 2. checksums of every downloaded file
-    manifest = RAW / "sha256_manifest.json"
-    if not args.skip_checksums and not manifest.exists():
-        files = sorted(p for p in RAW.rglob("*") if p.is_file() and p.suffix in (".edf", ".json", ".tsv")
-                       and p.name != "sha256_manifest.json")
-        with ThreadPoolExecutor(8) as pool:
-            digests = list(pool.map(sha256, files))
-        manifest.write_text(json.dumps({str(p.relative_to(RAW)): d for p, d in zip(files, digests)}, indent=0))
-        print(f"checksummed {len(files)} files", flush=True)
+    # 2. checksums of exactly the downloaded files (from the download listing), incremental
+    if not args.skip_checksums:
+        update_checksums(RAW)
 
     # 3. feature schema and configuration
     (OUT / "feature_schema.json").write_text(json.dumps({

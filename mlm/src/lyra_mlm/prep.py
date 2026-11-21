@@ -73,4 +73,12 @@ def prepare_recording(rec: Recording, cfg: PrepConfig) -> dict[str, np.ndarray]:
     }
     out["primary_available"] = ~np.isnan(out["primary"])
     out["secondary_available"] = ~np.isnan(out["secondary"])
+    out.update(primary_emg_metadata(primary_rec))
     return out
+
+
+def primary_emg_metadata(primary_rec: Recording) -> dict[str, np.ndarray]:
+    """Signal type and full provenance of the EMG stream behind the primary features."""
+    e = primary_rec.emg
+    return {"primary_emg_signal_type": np.array(str(e.signal_type) if e is not None else ""),
+            "primary_emg_provenance": np.array("\n".join(e.provenance) if e is not None else "")}
