@@ -249,6 +249,7 @@ def test_malformed_annotation_rows(tmp_path):
     bad = bids(tmp_path, "sub-002", events=[(20, -15, "sz_foc_f2b")])
     with pytest.raises(MalformedAnnotation):
         SeizeIT2Adapter(tmp_path).load_recording(bad)
+<<<<<<< HEAD
 
 
 def test_simulated_env_inherits_flatline_raw_quality():
@@ -275,3 +276,5 @@ def test_inherit_source_quality_only_ever_downgrades():
     assert inherit_source_quality(valid, flat).state is Q.INVALID
     assert inherit_source_quality(valid, flat).reasons == ("source: flatline signal",)
     assert inherit_source_quality(flat, valid) is flat
+=======
+>>>>>>> 414a2140836e55fed760a18fff6c49fe2bc0082d

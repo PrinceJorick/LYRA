@@ -5,8 +5,13 @@
 | **Project name** | LYRA |
 | **Document purpose** | Central context, source of truth, and onboarding document for LYRA. Written so that developers, researchers, clinicians, and AI coding assistants can understand the project, its evidence base, its decisions, and its open questions without re-deriving the background. |
 | **Last updated** | 2026-11-21 |
+<<<<<<< HEAD
 | **Document version** | 1.2 (Stage 3 complete: verified SeizeIT2 inventory, processed windows, audit) |
 | **Project status** | **Stage 3 complete (dataset preparation); Stage 4 not authorized.** Hardware selected (§5.8, not yet built or tested). Python ML foundation and SeizeIT2 preparation pipeline in `mlm/` (§9.7). **No model trained, no performance measured.** Expo companion app with simulated data in `src/`. |
+=======
+| **Document version** | 1.1 (finalized hardware, four locked Stage 3 decisions, implementation status) |
+| **Project status** | **Stage 3 — dataset preparation.** Hardware selected (§5.8, not yet built or tested). Python ML foundation and SeizeIT2 preparation pipeline in `mlm/` (§9.7). **No model trained, no performance measured.** Expo companion app with simulated data in `src/`. |
+>>>>>>> 414a2140836e55fed760a18fff6c49fe2bc0082d
 | **Repository** | `https://github.com/PrinceJorick/LYRA` (branch `main`) |
 | **Owner / maintainer** | Kyle Masilang (git author on record) |
 
@@ -1316,9 +1321,15 @@ sequenceDiagram
 | Target seizure type | **Decided:** GTCS/FBTCS; v1 automated scope excludes non-convulsive, absence and focal non-motor seizures |
 | Hardware selection | **Decided** (§5.8); not built |
 | Firmware | Not started |
+<<<<<<< HEAD
 | Dataset download / inspection | **Done and verified** for the SeizeIT2 wearable subset: 13,568 files, 52.8 GB, SHA-256 recorded; 125 participants, 2,850 recordings, 11,626 h, 883 seizures, **55 FBTCS, 0 GTCS** `[VERIFIED: files]`; see `mlm/docs/DATASETS.md` |
 | Annotation parser | **Done** (SeizeIT2 mapper; `sz_foc_f2b` = FBTCS) |
 | Preprocessing / quality / windowing / features | **Implemented, unit-tested and run on SeizeIT2:** 20,296,484 windows from 2,806 recordings (44 excluded); 3,716 positive, 20,244,889 negative and 47,879 ignore windows; audit found 0 problems |
+=======
+| Dataset download / inspection | **Done** for the SeizeIT2 wearable subset (EMG, MOV, events); see `mlm/docs/DATASETS.md` |
+| Annotation parser | **Done** (SeizeIT2 mapper; `sz_foc_f2b` = FBTCS) |
+| Preprocessing / quality / windowing / features | **Implemented and unit-tested** on synthetic data; run on SeizeIT2 |
+>>>>>>> 414a2140836e55fed760a18fff6c49fe2bc0082d
 | Baseline / multimodal model | **Not started** (Stage 4, needs authorization) |
 | Evaluation harness | Contracts only; nothing computed |
 | Real-time inference | Python reference only |
@@ -1554,7 +1565,10 @@ Still open: U6, U7, U9, U12–U17.
 | 2026-11-16 | 0.0 | Placeholder file created (0 bytes) |
 | 2026-11-16 | 1.0 | First substantive version: project identity, evidence base, dataset and literature review, proposed ML pipeline, data strategy, software architecture, workflow, landscape, safety, status, roadmap, decisions, references. Repository inspected and found to contain no implementation. |
 | 2026-11-21 | 1.1 | Finalized hardware (§5.8), implementation status (§9.7, §13.1a), decisions D9–D18 including the four locked Stage 3 decisions (§14.3); `src/services/ml/` marked legacy. Earlier sections kept and marked superseded. |
+<<<<<<< HEAD
 | 2026-11-21 | 1.2 | Stage 3 complete: SeizeIT2 wearable subset verified (55 FBTCS in 37 participants, 0 GTCS; 5 malformed `impd` rows skipped), participant split verified against the real inventory, all windows processed and audited. FBTCS with usable windows: 30/33 Train/CV, 17/22 held-out. |
+=======
+>>>>>>> 414a2140836e55fed760a18fff6c49fe2bc0082d
 
 ---
 
