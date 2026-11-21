@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from enum import StrEnum
+from enum import IntEnum, StrEnum
 from typing import Protocol
 
 
@@ -18,8 +18,14 @@ class AnnotationKind(StrEnum):
     SEIZURE_GTCS = "seizure_gtcs"
     SEIZURE_OUT_OF_SCOPE = "seizure_out_of_scope"  # non-convulsive, absence, focal non-motor: outside v1
     HARD_NEGATIVE = "hard_negative"  # labelled non-seizure activity
+    BACKGROUND = "background"  # annotated non-seizure epoch (e.g. SeizeIT2 'bckg')
     ARTIFACT = "artifact"
     UNMAPPED = "unmapped"  # raw label not mapped yet; never silently treated as negative
+
+
+# Kinds that block a NEGATIVE label. UNMAPPED is included: an unknown label may be a seizure.
+SEIZURE_LIKE = frozenset({AnnotationKind.SEIZURE_FBTCS, AnnotationKind.SEIZURE_GTCS,
+                          AnnotationKind.SEIZURE_OUT_OF_SCOPE, AnnotationKind.UNMAPPED})
 
 
 HARD_NEGATIVE_CATEGORIES: dict[str, tuple[str, ...]] = {
@@ -69,6 +75,44 @@ class Annotation:
         if self.duration_s == 0:
             return start_s <= self.onset_s < end_s
         return self.onset_s < end_s and self.end_s > start_s
+
+
+class WindowLabel(IntEnum):
+    IGNORE = -1  # excluded from supervised loss; kept in the continuous timeline for event-level evaluation
+    NEGATIVE = 0
+    POSITIVE = 1
+
+
+@dataclass(frozen=True)
+class LabelConfig:
+    """Locked Decision 1 (window labelling). Applies to 4 s windows by default."""
+
+    positive_kinds: frozenset[AnnotationKind] = frozenset({AnnotationKind.SEIZURE_FBTCS})
+    min_positive_overlap_fraction: float = 0.5  # of window duration
+    peri_ictal_buffer_s: float = 30.0
+
+    def __post_init__(self) -> None:
+        if not (0 < self.min_positive_overlap_fraction <= 1 and self.peri_ictal_buffer_s >= 0):
+            raise ValueError("need 0 < min_positive_overlap_fraction <= 1 and peri_ictal_buffer_s >= 0")
+        if not self.positive_kinds <= SEIZURE_LIKE:
+            raise ValueError("positive kinds must be seizure kinds")
+
+
+def positive_overlap_s(start_s: float, end_s: float, annotations: tuple[Annotation, ...], cfg: LabelConfig) -> float:
+    return sum(max(0.0, min(end_s, a.end_s) - max(start_s, a.onset_s))
+               for a in annotations if a.kind in cfg.positive_kinds)
+
+
+def label_window(start_s: float, end_s: float, annotations: tuple[Annotation, ...], cfg: LabelConfig) -> WindowLabel:
+    """POSITIVE: overlap with positive-kind seizures >= fraction x window length.
+    NEGATIVE: no overlap with [onset - buffer, offset + buffer] of any seizure-like annotation
+    (touching the buffer edge counts as outside). Everything else: IGNORE."""
+    needed = cfg.min_positive_overlap_fraction * (end_s - start_s) - 1e-9  # tolerance for float edges
+    if positive_overlap_s(start_s, end_s, annotations, cfg) >= needed:
+        return WindowLabel.POSITIVE
+    b = cfg.peri_ictal_buffer_s
+    near = any(a.onset_s - b < end_s and a.end_s + b > start_s for a in annotations if a.kind in SEIZURE_LIKE)
+    return WindowLabel.IGNORE if near else WindowLabel.NEGATIVE
 
 
 class AnnotationMapper(Protocol):

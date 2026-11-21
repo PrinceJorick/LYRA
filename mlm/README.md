@@ -1,7 +1,8 @@
-# lyra-mlm: LYRA multimodal ML foundation (pre-training phase)
+# lyra-mlm: LYRA multimodal ML foundation (Stage 3: dataset preparation)
 
-> **Status: software foundation only.** No model has been trained, no dataset has been downloaded or
-> processed, and no detection performance exists or is claimed. LYRA is an experimental, unvalidated
+> **Status: Stage 3 (dataset preparation).** SeizeIT2's wearable subset is downloaded to the gitignored
+> `mlm/data/` and processed into labelled feature windows. **No model has been trained, no normalization
+> has been fitted, and no detection performance exists or is claimed.** LYRA is an experimental, unvalidated
 > research prototype, not a diagnostic, predictive or preventive medical device.
 
 Python package for LYRA's sEMG (MyoWare 2.0) + 6-axis IMU (BMI270) pipeline. It defines the data
@@ -29,6 +30,12 @@ mlm/
     evaluation.py         partitions, participant split, leakage guard, metric definitions
     datasets.py           dataset source registry, metadata schema, adapter contract, integrity checks
     ble.py                draft BLE payload layouts with a hardware/simulated origin byte
+    edf.py                minimal EDF/EDF+ reader (rates, units, scaling from each header)
+    seizeit2.py           SeizeIT2 BIDS adapter and label mapper
+    prep.py               Stage 3 per-recording preparation (simulated ENV, windows, labels, features)
+  scripts/
+    download_seizeit2.py  resumable, size-checked download of the wearable subset
+    prepare_seizeit2.py   inventory, checksums, window files, split manifest -> data/processed/
   tests/                  pytest suites on SYNTHETIC fixtures only (+ test-only StubScorePredictor)
   docs/                   ARCHITECTURE, DATASETS, TRAINING_PLAN, BLE_PROTOCOL
 ```
@@ -44,6 +51,15 @@ uv pip install --python .venv/bin/python -e ".[dev]"
 
 The tests check software behaviour on generated signals. They are not ML evaluation and say nothing
 about real-world detection.
+
+## Stage 3 data
+
+```bash
+.venv/bin/python scripts/download_seizeit2.py      # ~53 GB into data/seizeit2/
+.venv/bin/python scripts/prepare_seizeit2.py      # -> data/processed/
+```
+
+Never commit anything under `data/`.
 
 ## Docs
 

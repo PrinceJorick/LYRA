@@ -8,8 +8,13 @@ parity. Fusion is the concatenation of the EMG, IMU and cross-modal blocks in th
 keeping the window's quality metadata.
 
 Default parameters are initial research values, not optimised or validated for seizure
-detection. EMG feature names carry the signal type (emg_env_rms vs emg_raw_rms), so a model
-trained on one MyoWare output can never silently receive another.
+detection. EMG feature names carry the signal type (emg_env_*, emg_simenv_*, emg_raw_*), so a
+model trained on one signal type can never silently receive another.
+
+Bandwidth rules (locked Decision 3): envelope types (ENV, SIMULATED_ENV_FROM_RAW) get only
+low-frequency envelope-modulation features (1.5-5.0 Hz clonic band), and only when the envelope
+rate is >= 20 Hz. High-frequency raw-EMG spectral features (20-250 Hz) exist only in the RAW
+schema; they are never part of an envelope schema.
 """
 
 from __future__ import annotations
@@ -24,7 +29,7 @@ from scipy import signal as sps
 from scipy.integrate import trapezoid
 
 from .quality import USABLE, WindowQuality
-from .signals import EmgSignalType, Modality, check_timestamps
+from .signals import ENVELOPE_TYPES, FEATURE_PREFIX, EmgSignalType, Modality, check_timestamps
 from .windows import Window
 
 FeatureMode = Literal["emg", "imu", "multimodal"]
@@ -37,8 +42,10 @@ MODE_MODALITIES: dict[str, tuple[Modality, ...]] = {
 class FeatureConfig:
     mode: FeatureMode
     emg_signal_type: EmgSignalType | None = None  # required for emg/multimodal, None for imu
-    movement_band_hz: tuple[float, float] = (1.0, 8.0)
-    rhythm_lag_s: tuple[float, float] = (0.125, 1.0)  # envelope autocorrelation lags (8 Hz .. 1 Hz)
+    movement_band_hz: tuple[float, float] = (1.0, 8.0)  # IMU movement band
+    envelope_band_hz: tuple[float, float] = (1.5, 5.0)  # clonic burst rhythm band (Decision 3)
+    min_envelope_rate_hz: float = 20.0
+    raw_spectral_band_hz: tuple[float, float] = (20.0, 250.0)  # capped at the stream's bandwidth
     max_xcorr_lag_s: float = 0.5
     min_paired_samples: int = 20
     gap_factor: float = 3.0
@@ -48,11 +55,11 @@ class FeatureConfig:
             raise ValueError(f"unknown mode {self.mode!r}")
         if (self.mode != "imu") != (self.emg_signal_type is not None):
             raise ValueError("emg_signal_type is required for emg/multimodal modes and must be None for imu")
-        if self.mode == "multimodal" and self.emg_signal_type is not EmgSignalType.ENV:
-            raise ValueError("multimodal features currently use the ENV path only; RAW fusion is deferred research")
-        lo, hi = self.movement_band_hz
-        lag_lo, lag_hi = self.rhythm_lag_s
-        if not (0 < lo < hi and 0 < lag_lo < lag_hi and self.max_xcorr_lag_s > 0 and self.min_paired_samples >= 3):
+        if self.mode == "multimodal" and self.emg_signal_type not in ENVELOPE_TYPES:
+            raise ValueError("multimodal features need an envelope signal (ENV or SIMULATED_ENV_FROM_RAW); "
+                             "RAW fusion is deferred research")
+        bands = (self.movement_band_hz, self.envelope_band_hz, self.raw_spectral_band_hz)
+        if not (all(0 < lo < hi for lo, hi in bands) and self.max_xcorr_lag_s > 0 and self.min_paired_samples >= 3):
             raise ValueError("invalid band, lag or pairing parameters")
 
 
@@ -72,11 +79,27 @@ def _need(cond: bool, reason: str) -> None:
         raise FeatureUnavailable(reason)
 
 
+def _memo(fn: Callable[[_Ctx], object]) -> Callable[[_Ctx], object]:
+    """Compute a shared intermediate (e.g. a spectrum) once per window, including its unavailability."""
+    def wrapper(c: _Ctx):
+        if fn.__name__ not in c.memo:
+            try:
+                c.memo[fn.__name__] = fn(c)
+            except FeatureUnavailable as e:
+                c.memo[fn.__name__] = e
+        result = c.memo[fn.__name__]
+        if isinstance(result, FeatureUnavailable):
+            raise result
+        return result
+    return wrapper
+
+
 class _Ctx:
     """Usable samples of one window, prepared once for all features."""
 
     def __init__(self, window: Window, cfg: FeatureConfig):
         self.cfg = cfg
+        self.memo: dict[str, object] = {}
         e, i = window.emg, window.imu
         if e is not None and cfg.mode != "imu":
             ok = e.usable
@@ -120,17 +143,80 @@ def _emg_wl(c: _Ctx) -> float:
     return total / sum((r.size - 1) / c.emg_rate for r in runs)
 
 
-def _emg_autocorr(c: _Ctx) -> float:
-    lo, hi = c.cfg.rhythm_lag_s
-    _need(c.emg_bw is not None, "ENV bandwidth not declared; sensor-side smoothing unknown")
-    _need(c.emg_bw >= 1 / lo, f"ENV bandwidth {c.emg_bw:g} Hz is below the {1 / lo:g} Hz rhythm range")
+def _envelope_run(c: _Ctx) -> np.ndarray:
+    """Longest contiguous envelope run, after the Decision 3 rate and duration checks."""
+    lo, hi = c.cfg.envelope_band_hz
+    _need(c.emg_rate >= c.cfg.min_envelope_rate_hz and hi < c.emg_rate / 2,
+          f"envelope rate {c.emg_rate:g} Hz is below {c.cfg.min_envelope_rate_hz:g} Hz or cannot represent {hi:g} Hz")
     r = max(c.emg_runs, key=len, default=np.empty(0))
-    _need(r.size / c.emg_rate >= 2 * hi, f"longest contiguous EMG run shorter than {2 * hi:g} s")
+    _need(r.size / c.emg_rate >= 2 / lo, f"longest contiguous envelope run shorter than 2 cycles of {lo:g} Hz")
+    return r
+
+
+def _emg_autocorr(c: _Ctx) -> float:
+    r = _envelope_run(c)
+    lo, hi = c.cfg.envelope_band_hz
     x = r - r.mean()
     energy = float(x @ x)
     _need(energy > 0, "constant envelope")
-    ks = range(max(1, round(lo * c.emg_rate)), round(hi * c.emg_rate) + 1)
+    ks = range(max(1, round(c.emg_rate / hi)), round(c.emg_rate / lo) + 1)  # lags spanning the band's periods
     return max(float(x[:-k] @ x[k:]) / energy for k in ks)
+
+
+@_memo
+def _env_spectrum(c: _Ctx) -> tuple[np.ndarray, np.ndarray, float]:
+    r = _envelope_run(c)
+    f, p = sps.periodogram(r - r.mean(), fs=c.emg_rate, window="hann")
+    lo, hi = c.cfg.envelope_band_hz
+    band = (f >= lo) & (f <= hi)
+    _need(band.sum() >= 2, "too few frequency bins in the envelope band")
+    return f[band], p[band], float(trapezoid(p[1:], f[1:]))
+
+
+def _env_mod_power(c: _Ctx) -> float:
+    f, p, _ = _env_spectrum(c)
+    return float(trapezoid(p, f))
+
+
+def _env_mod_ratio(c: _Ctx) -> float:
+    f, p, total = _env_spectrum(c)
+    _need(total > 0, "constant envelope")
+    return float(trapezoid(p, f)) / total
+
+
+def _env_mod_peak(c: _Ctx) -> float:
+    f, p, _ = _env_spectrum(c)
+    _need(p.max() > 0, "no envelope modulation energy in the band")
+    return float(f[np.argmax(p)])
+
+
+@_memo
+def _raw_spectrum(c: _Ctx) -> tuple[np.ndarray, np.ndarray]:
+    lo, hi = c.cfg.raw_spectral_band_hz
+    _need(c.emg_bw is not None and c.emg_bw > 2 * lo, f"RAW bandwidth does not reach {2 * lo:g} Hz")
+    r = max(c.emg_runs, key=len, default=np.empty(0))
+    nperseg = int(c.emg_rate)  # 1 s segments
+    _need(r.size >= 2 * nperseg, "longest contiguous RAW run shorter than 2 s")
+    f, p = sps.welch(r - r.mean(), fs=c.emg_rate, nperseg=nperseg)
+    band = (f >= lo) & (f <= min(hi, c.emg_bw))
+    _need(band.sum() >= 2 and p[band].sum() > 0, "no RAW power in the spectral band")
+    return f[band], p[band]
+
+
+def _raw_median_freq(c: _Ctx) -> float:
+    f, p = _raw_spectrum(c)
+    cum = np.cumsum(p)
+    return float(f[np.searchsorted(cum, cum[-1] / 2)])
+
+
+def _raw_mean_freq(c: _Ctx) -> float:
+    f, p = _raw_spectrum(c)
+    return float((f * p).sum() / p.sum())
+
+
+def _raw_band_power(c: _Ctx) -> float:
+    f, p = _raw_spectrum(c)
+    return float(trapezoid(p, f))
 
 
 # --- IMU -------------------------------------------------------------------------------------
@@ -150,6 +236,7 @@ def _acc_jerk_rms(c: _Ctx) -> float:
     return float(np.sqrt(np.mean(j**2)))
 
 
+@_memo
 def _acc_spectrum(c: _Ctx) -> tuple[np.ndarray, np.ndarray]:
     lo, hi = c.cfg.movement_band_hz
     _need(c.imu_bw is not None and c.imu_bw >= hi, f"IMU bandwidth does not reach {hi:g} Hz")
@@ -183,6 +270,7 @@ def _orientation_change(c: _Ctx) -> float:
 
 # --- cross-modal (ENV + IMU) -----------------------------------------------------------------
 
+@_memo
 def _env_on_imu_grid(c: _Ctx) -> np.ndarray:
     """Mean ENV value within +-half an IMU period of each IMU sample (boxcar average, then
     decimation onto the IMU timeline). Local to these features; the streams are not resampled."""
@@ -195,6 +283,7 @@ def _env_on_imu_grid(c: _Ctx) -> np.ndarray:
         return np.where(n > 0, (cs[hi] - cs[lo]) / n, np.nan)
 
 
+@_memo
 def _paired_regular(c: _Ctx) -> tuple[np.ndarray, np.ndarray]:
     env = _env_on_imu_grid(c)
     _need(c.imu_regular and bool(np.isfinite(env).all()), "needs a gap-free IMU timeline fully covered by ENV")
@@ -229,8 +318,8 @@ def _xmod_lag(c: _Ctx) -> float:
 
 
 def _xmod_coherence(c: _Ctx) -> float:
-    lo, hi = c.cfg.movement_band_hz
-    _need(c.emg_bw is not None and c.emg_bw >= hi, f"ENV bandwidth not declared or below {hi:g} Hz")
+    lo, hi = c.cfg.envelope_band_hz
+    _need(c.emg_rate >= c.cfg.min_envelope_rate_hz, f"envelope rate below {c.cfg.min_envelope_rate_hz:g} Hz")
     _need(c.imu_bw is not None and c.imu_bw >= hi, f"IMU bandwidth does not reach {hi:g} Hz")
     a, b = _paired_regular(c)
     nperseg = round(2 * c.imu_rate / lo)
@@ -251,9 +340,19 @@ _EMG: list[_Entry] = [
     ("std", "sensor units", ">=2 usable samples", _emg_std),
     ("wl_per_s", "sensor units/s", "contiguous runs of >=2 samples; waveform length per second", _emg_wl),
 ]
+_ENV_REQ = "envelope types only; rate >= 20 Hz; contiguous run >= 2 cycles of 1.5 Hz"
 _EMG_ENV: list[_Entry] = [
-    ("autocorr_peak", "unitless", "ENV only; declared bandwidth >= 1/min lag; contiguous run >= 2x max lag; "
-     "peak normalised autocorrelation over rhythm_lag_s", _emg_autocorr),
+    ("autocorr_peak", "unitless", _ENV_REQ + "; peak normalised autocorrelation at lags of 1/5..1/1.5 s",
+     _emg_autocorr),
+    ("mod_band_power", "units^2", _ENV_REQ + "; envelope power in 1.5-5.0 Hz", _env_mod_power),
+    ("mod_band_ratio", "fraction", _ENV_REQ + "; 1.5-5.0 Hz power / total envelope power", _env_mod_ratio),
+    ("mod_peak_freq_hz", "Hz", _ENV_REQ + "; spectral peak in 1.5-5.0 Hz", _env_mod_peak),
+]
+_RAW_REQ = "RAW only; bandwidth > 40 Hz; contiguous run >= 2 s; Welch 1 s segments; band 20-250 Hz capped at bandwidth"
+_EMG_RAW: list[_Entry] = [
+    ("median_freq_hz", "Hz", _RAW_REQ, _raw_median_freq),
+    ("mean_freq_hz", "Hz", _RAW_REQ, _raw_mean_freq),
+    ("high_band_power", "units^2", _RAW_REQ, _raw_band_power),
 ]
 _IMU: list[_Entry] = [
     ("acc_mag_mean", "g", ">=2 usable samples; includes gravity", _imu_stat("acc_mag", np.mean)),
@@ -275,8 +374,8 @@ _XMOD: list[_Entry] = [
      _xmod_energy_ratio),
     ("lag_s", "s", "gap-free IMU timeline fully covered by ENV; timing agreement only, not proof of physical sync",
      _xmod_lag),
-    ("coherence_band", "unitless", "both bandwidths >= band top; >= 2 coherence segments; few segments bias it high",
-     _xmod_coherence),
+    ("coherence_band", "unitless", "envelope rate >= 20 Hz; IMU bandwidth >= 5 Hz; mean coherence in 1.5-5.0 Hz; "
+     ">= 2 segments; few segments bias it high", _xmod_coherence),
 ]
 
 
@@ -284,7 +383,8 @@ def _groups(cfg: FeatureConfig) -> list[tuple[tuple[Modality, ...], str, list[_E
     out = []
     if cfg.mode != "imu":
         t = cfg.emg_signal_type
-        out.append(((Modality.EMG,), f"emg_{t.lower()}_", _EMG + (_EMG_ENV if t is EmgSignalType.ENV else [])))
+        extra = _EMG_ENV if t in ENVELOPE_TYPES else _EMG_RAW if t is EmgSignalType.RAW else []
+        out.append(((Modality.EMG,), f"emg_{FEATURE_PREFIX[t]}_", _EMG + extra))
     if cfg.mode != "emg":
         out.append(((Modality.IMU,), "imu_", _IMU))
     if cfg.mode == "multimodal":

@@ -1,8 +1,8 @@
 """Quality-gated, window-by-window inference (the interface the ESP32-S3 port will mirror).
 
 Routing:
-- Required modalities usable -> primary model. DEGRADED follows degraded_policy and keeps the
-  DEGRADED status.
+- Required modalities usable -> primary model. DEGRADED follows degraded_window_policy and keeps
+  the DEGRADED status.
 - Multimodal primary with exactly one modality unusable -> missing_modality_policy: "suppress",
   or "fallback_unimodal" when a model for the remaining modality is configured.
 - Cross-modality clock problems, unusable required modalities or unavailable features ->
@@ -26,8 +26,10 @@ from .windows import Window
 
 @dataclass(frozen=True)
 class InferenceConfig:
-    degraded_policy: Literal["proceed", "suppress"]  # no default: must be chosen explicitly
-    missing_modality_policy: Literal["suppress", "fallback_unimodal"]
+    """Locked Decision 4 defaults: unvalidated engineering parameters, not clinical thresholds."""
+
+    degraded_window_policy: Literal["allow_with_flag", "suppress"] = "allow_with_flag"
+    missing_modality_policy: Literal["suppress", "fallback_unimodal"] = "suppress"
 
 
 class QualityGatedInference:
@@ -56,8 +58,8 @@ class QualityGatedInference:
                 return None, detail
         used = MODE_MODALITIES[predictor.config.feature_config.mode]
         degraded = [m for m in used if q.per_modality[m].state is QualityState.DEGRADED]
-        if degraded and self.cfg.degraded_policy == "suppress":
-            return None, f"degraded {', '.join(degraded)} (degraded_policy=suppress)"
+        if degraded and self.cfg.degraded_window_policy == "suppress":
+            return None, f"degraded {', '.join(degraded)} (degraded_window_policy=suppress)"
         return predictor, reason
 
     def process(self, window: Window) -> Prediction:
