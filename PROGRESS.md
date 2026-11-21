@@ -134,5 +134,14 @@ cd mlm && .venv/bin/python -m pytest -q
 - macOS uses spawn: pass paths to workers explicitly. Background runs from the Claude session die with it unless detached (PPID 1).
 - SeizeIT2 IMU: the EDF labels the gyro "g" and resting |acc| ≈ 0.5, so units are kept as given (unverified).
 
+### Git incident after Stage 3 (fixed)
+- A rebase followed by a pull produced merge `0a50a6e` ("Initial Commit"), which was pushed with unresolved conflict markers in 9 files. `lyra_mlm` stopped importing and pytest collected nothing.
+- Fixed in `5919031` (pushed): the 9 files were restored from `1c1a9a6`. The tree now matches `1c1a9a6` exactly, and 134 tests pass on a clean checkout of `origin/main`.
+- History now shows each Stage 2–3 commit twice (identical trees, different commit dates). That's cosmetic; it was deliberately left alone, with no force-push.
+- A local `.git/hooks/pre-commit` runs `git diff --cached --check` and blocks commits with conflict markers or trailing whitespace. It isn't versioned, so other clones need it added by hand.
+
+### State at end of session
+`main` = `origin/main` = `5919031`, working tree clean, 134 tests passing, Stage 3 complete.
+
 ### Next
-Stage 4 needs explicit authorization. See `mlm/docs/TRAINING_PLAN.md`. `mlm/data/processed_superseded/` (384 MB) can be deleted.
+Stage 4 needs explicit authorization. See `mlm/docs/TRAINING_PLAN.md` for the open decisions: IGNORE/artifact windows in the loss, the event-matching rule, unavailable-feature handling, and the active-event gap rule. `mlm/data/processed_superseded/` (384 MB) can be deleted.
