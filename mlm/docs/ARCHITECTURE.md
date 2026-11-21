@@ -83,13 +83,10 @@ side, and a test enforces this).
 | `MISSING` | modality not recorded, no samples, or coverage < 50% | disconnection, dropout, file absent |
 | `UNSYNCHRONIZED` | duplicate/out-of-order timestamps, or cross-modality clock disagreement | swapped samples, misdeclared rate |
 
-<<<<<<< HEAD
 A derived stream is never rated better than its source (`inherit_source_quality`): the simulated
 envelope of a flatlined RAW window is `INVALID`, because filtering leaves a decaying transient that would
 otherwise pass the flatline check. This was found in the Stage 3 audit (92,382 windows) and fixed.
 
-=======
->>>>>>> 414a2140836e55fed760a18fff6c49fe2bc0082d
 The overall window state is the worst state among the required modalities. The per-modality
 breakdown and `available_modalities` are always kept, and poor quality is never turned into a
 negative prediction. Saturation limits are only meaningful with known sensor full-scale values:
@@ -112,11 +109,8 @@ SeizeIT2's EDF physical ranges are fitted to each file's data, so no saturation 
   2. Gain, rectifier non-idealities and output offset of the real MyoWare are not modelled.
   3. The default zero padding in `resample_poly` distorted the first and last ~0.5 s of every run
      by up to ~40%. Edge padding is used instead (found and fixed in Stage 3).
-<<<<<<< HEAD
   4. Coherence on a constant segment divides by zero (scipy warning). The result is NaN, so the feature
      is marked unavailable, as intended.
-=======
->>>>>>> 414a2140836e55fed760a18fff6c49fe2bc0082d
 - **Sensor-side vs software-side filtering.** RECT, ENV and SIMULATED_ENV_FROM_RAW are already
   rectified/smoothed, so `FilterConfig` accepts only `lowpass` for them. RAW stays a separate path.
 - **Filter validation:** cutoffs must lie strictly inside (0, fs/2), order 1–8, and a rationale is
