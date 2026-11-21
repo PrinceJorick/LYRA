@@ -161,3 +161,39 @@ Developed in parallel with Sessions 2–3 (`mlm/`), from the older base `9ef25ed
 
 ### Not verified
 - No run on a phone; no LYRA pod data; MyoWare/BMI270 units and placement not matched to SeizeIT2.
+
+## Session 5 (2026-11-22): v2 retrained on all participants under D9–D18 (branch `seizeit2-model`)
+
+Owner instruction: retrain on all participants and all seizures, follow Kyle's locked hardware decisions, fix the bug in Kyle's prepared data, push and open a PR (do not merge).
+
+### What exists
+- **`lyra_mlm` IMU fix (`218a656`):** `seizeit2.calibrate_imu` puts ACC in g (per-recording median |acc|) and GYR in deg/s (125 deg/s per unit, estimated by `ml/seizeit2/gyro_calibration.py`). Impossible scales are marked INVALID. 7 new tests; 141 pass.
+- **App follows D11 (`93a3f24`):** `src/services/ml/seizeit2/` is removed and `services/ml/index.ts` is the mock again. Insights/About wording is restored.
+- **`ml/seizeit2/` v2 pipeline:**
+  - `prepare.py`: streams and verifies EDFs, then runs Kyle's Stage 3 worker. All 2,850 recordings were regenerated, 0 failed.
+  - `train.py`: nested participant-grouped CV over all 124 usable participants. Thresholds are chosen in inner CV only.
+  - `evaluate.py`: `confirm_alarms` is an exact, fast replica of `EventConfirmation`, checked by `test_evaluate.py` on 300 streams.
+  - `export.py`: writes the C99 header and checks it with gcc parity.
+  - `preprocessing.py` and the TS parity files are deleted.
+- **`models/seizeit2/` v2.0.0:** RF 50 × 8 (D18), with `lyra_seizeit2_model.h`, `model_config.json`/`export_manifest.json` (Kyle's contracts) and the model card.
+
+### Results (nested 5-fold CV, no held-out set)
+- **Primary RF:**
+  - 42/44 evaluable FBTCS (CI 0.85–0.99).
+  - 0.32 FA/24 h (CI 0.27–0.38) over 9,985 valid hours.
+  - Median latency 54 s.
+- **Fusion vs single modality:** ENV-only reaches 2.0 FA/24 h and IMU-only 0.71.
+- **HGB:** 0.21 FA/24 h at 41/44.
+- **D17 default thresholds (0.65/0.45):** 37 FA/24 h. Final thresholds are entry 0.9684, exit 0.7684.
+
+### Decisions worth remembering
+- All participants are used, so no SeizeIT2 test set remains. The next independent check needs new data.
+- D17 entry/exit are tuned, because the defaults are unusable with uncalibrated forest scores. HGB stands in for XGBoost.
+- Python 3.14 uses forkserver. Set `OMP_NUM_THREADS=1` for the Stage 3 worker pool, or each worker spawns about 34 threads and runs about 15× slower.
+
+### Not verified
+- The 22 features have no C99 port.
+- The header has never run on an ESP32-S3.
+- The MyoWare ENV gain has not been calibrated against the simulated envelope.
+- The gyro unit is an estimate.
+- There is no pod data.
