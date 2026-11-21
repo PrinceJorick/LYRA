@@ -4,7 +4,6 @@
 produced `mlm/data/processed/` (gitignored): raw feature vectors, availability masks, quality states,
 labels and split manifests. No model was trained and no statistic was fitted on real data.
 
-<<<<<<< HEAD
 ## Stage 3 hand-over facts (see DATASETS.md)
 
 - 20,296,484 windows from 2,806 recordings; 44 recordings excluded (no EMG and no ECGEMG IMU).
@@ -18,8 +17,6 @@ labels and split manifests. No model was trained and no statistic was fitted on 
 - `mlm/data/processed_superseded/` holds the 378 pre-fix files from the quality-inheritance defect.
   They can be deleted.
 
-=======
->>>>>>> 414a2140836e55fed760a18fff6c49fe2bc0082d
 ## 0. Already decided (locked in Stage 3)
 
 - **Labels:** POSITIVE ≥ 50% FBTCS overlap, NEGATIVE outside ±30 s of any seizure, IGNORE otherwise.
