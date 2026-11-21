@@ -141,7 +141,24 @@ cd mlm && .venv/bin/python -m pytest -q
 - A local `.git/hooks/pre-commit` runs `git diff --cached --check` and blocks commits with conflict markers or trailing whitespace. It isn't versioned, so other clones need it added by hand.
 
 ### State at end of session
-`main` = `origin/main` = `5919031`, working tree clean, 134 tests passing, Stage 3 complete.
+`main` = `origin/main`, working tree clean, 134 tests passing. Stage 3 processing and audit are done, but two blockers (below) were found afterwards, so **Stage 4 must not start yet**.
+
+### Stage 4 blockers (found after the Stage 3 audit)
+1. **SeizeIT2 accelerometer scale is inconsistent between recordings.** This is a Stage 3 data defect, verified on Train/CV recordings only. The median |acc| per recording falls into clusters instead of one value: ~0.167 (1,403 recordings, 62 participants; likely ±6 g scaled to ±1), ~0.5 (203; ±2 g), 32.768 (203, 6 participants: **ACC Z corrupted**, swinging between the ±32.768 rails) and other (49, e.g. sub-083 ~0.07).
+   - Stage 3 missed it: there are no known SeizeIT2 saturation limits, and "resting |acc| ≈ 0.5" came from a single recording. Corrupted-Z windows were rated DEGRADED/VALID.
+   - The positive rate differs ~2.7× between clusters (176 vs 65 positives per 1M negatives), so a model could learn device configuration instead of seizures.
+   - Affected: `imu_acc_mag_mean/std`, `imu_acc_jerk_rms`, `imu_acc_band_power`, `xmod_energy_log_ratio`, and anything using ACC Z. EMG is not affected. Gyro scale is also unverified.
+   - Proposed fix (needs sign-off): mark ACC samples at the ±32.768 rails INVALID; calibrate each recording so gravity at rest = 1 g (that recording's data only, same rule for all, nothing fitted across participants); add an audit check; first check `github.com/biomedepi/seizeit2` for official scaling. Then rerun the IMU features only.
+2. **Branch `origin/seizeit2-model` (PrinceJorick) uses a different participant split.** It adds a second pipeline (`ml/seizeit2/`), a trained HGB model (`models/seizeit2/`, 5 s windows) and phone-side app integration (`src/services/ml/seizeit2/`).
+   - 22 of our 29 locked held-out participants (sub-097..sub-125) are in its training folds and the other 7 are in its test set. 18 of its 25 test participants come from our Train/CV.
+   - Using its window length, hyperparameters, threshold, findings or metrics in our Stage 4 would leak held-out information, and its model cannot be fairly scored on our held-out set.
+   - Phone-side inference conflicts with D11 (inference on the ESP32-S3).
+   - Its fix of the `0a50a6e` conflicts matches ours.
+   - Recommendation: keep the locked split, tune Stage 4 only by CV within sub-001..sub-096, and don't merge `seizeit2-model` into `main` until the split and the inference location are agreed.
 
 ### Next
-Stage 4 needs explicit authorization. See `mlm/docs/TRAINING_PLAN.md` for the open decisions: IGNORE/artifact windows in the loss, the event-matching rule, unavailable-feature handling, and the active-event gap rule. `mlm/data/processed_superseded/` (384 MB) can be deleted.
+1. Decide on blocker 1 (accelerometer fix) and blocker 2 (keep the locked split; the branch stays independent).
+2. Decide the open training choices in `mlm/docs/TRAINING_PLAN.md`: IGNORE/artifact windows in the loss, the event-matching rule, unavailable-feature handling, and the active-event gap rule.
+3. Only then authorize Stage 4.
+
+`mlm/data/processed_superseded/` (384 MB) can be deleted.
