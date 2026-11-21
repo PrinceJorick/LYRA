@@ -145,17 +145,10 @@ class SignalStream:
         """[start, stop) index ranges of usable samples with forward steps <= gap_factor periods."""
         ok = self.usable
         d = np.diff(self.timestamps)
-        step_ok = (d > 0) & (d <= gap_factor / self.nominal_rate_hz)
-        runs, start = [], None
-        for i in range(self.n):
-            if ok[i] and start is not None and step_ok[i - 1]:
-                continue
-            if start is not None:
-                runs.append((start, i))
-            start = i if ok[i] else None
-        if start is not None:
-            runs.append((start, self.n))
-        return runs
+        joins = ok[1:] & ok[:-1] & (d > 0) & (d <= gap_factor / self.nominal_rate_hz)  # i joins i+1
+        starts = np.flatnonzero(ok & ~np.concatenate(([False], joins)))
+        stops = np.flatnonzero(ok & ~np.concatenate((joins, [False]))) + 1
+        return list(zip(starts.tolist(), stops.tolist()))
 
 
 @dataclass(frozen=True)
