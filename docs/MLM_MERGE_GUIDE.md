@@ -20,6 +20,36 @@ The plan is to turn them into **one MLM**. This document has three parts:
 
 ---
 
+## Update 2026-11-22 (Session 5): merge status
+
+Owner instruction: *"retrain my model on all participants and all seizures, follow his locked hardware
+decisions, fix bug in kyle's prepared data."* §1–§3 below still describe v1 (commit `ff1373d`) and are
+kept as the record. The decisions in §4 are now taken as follows:
+
+| # | Decision taken | Notes |
+|---|---|---|
+| D-A | **All 125 participants, no held-out set.** Estimate = nested 5-fold participant-grouped CV; thresholds chosen in an inner 4-fold CV of each training part only | Departs from `SEIZEIT2_PLANNED_SPLIT`. No untouched SeizeIT2 test set remains: the next independent check must use new data (e.g. LYRA pod recordings) |
+| D-B | **SIMULATED_ENV_FROM_RAW** (D12/D15/D16) only | The RAW 256 Hz path is dropped from the deployable model |
+| D-C | **4 s windows, 2 s step** (D13) | |
+| D-D | **D14 labels** from `lyra_mlm.prep.label_window` | Alarms near out-of-scope seizures and in impedance checks are still reported separately, not as false alarms |
+| D-E | **`EventConfirmation` (D17)**: 3 consecutive, max gap 6 s, refractory 60 s, hold | Entry threshold chosen in training folds (exit = entry − 0.20); D17 defaults 0.65/0.45 reported for comparison. `ml/seizeit2/evaluate.confirm_alarms` is a fast replica, tested equal to `EventConfirmation` on 300 random streams |
+| D-F | **Pod only (D11).** `src/services/ml/seizeit2/` removed; `services/ml/index.ts` is the mock again | Model exported as a C99 header (`models/seizeit2/lyra_seizeit2_model.h`) |
+| D-G | **RF 50 trees, depth 8 (D18) is the primary model**, fixed in advance. LR, RF 25×6, HGB (XGBoost stand-in) and ENV-only / IMU-only ablations are compared | |
+| D-H | Data stays in `pj-training-data/`; `ml/seizeit2/prepare.py` streams + verifies EDFs and runs Kyle's `scripts/prepare_seizeit2.py` worker on them | One venv: `ml/seizeit2/.venv` (Python 3.14, `-e ./mlm`) |
+| D-I | Guard test unchanged: no training code was added to `lyra_mlm` | Training stays in `ml/seizeit2/` |
+
+The §3.1 bug is fixed in `lyra_mlm` itself (`seizeit2.calibrate_imu`, commit `218a656`, with tests):
+ACC and GYR are divided by each recording's median |acc|. The gyro is then converted to deg/s with
+125 deg/s per unit, a factor estimated from the rigid-body relation du/dt = −ω × u on 24 recordings
+(`models/seizeit2/evaluation/gyro_calibration.json`). Recordings with an impossible gravity scale are
+flagged INVALID. All Stage 3 windows were regenerated with the fix.
+
+What is left of §5: Phase 1 (move `ml/seizeit2/` into `lyra_mlm.training`) is optional now that it
+consumes `lyra_mlm` directly; the C99 port of the 22 features and the ESP32-S3 firmware do not exist
+yet.
+
+---
+
 ## 0. TL;DR
 
 - **Branch:** `seizeit2-model` = `origin/main` (`0a50a6e`) + 2 commits. It fast-forwards onto `main`.

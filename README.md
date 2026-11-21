@@ -8,8 +8,8 @@ Expo + React Native + TypeScript companion app for the **LYRA Pod**, an experime
 
 **Everything in this app is simulated demo data:** pod pairing and battery, the possible-event alert
 and caregiver notification. No Bluetooth, SMS or calls. An experimental model trained on the public
-SeizeIT2 dataset is bundled (`models/seizeit2/`, see its README), but no live pod data reaches it yet
-and it is not clinically validated.
+SeizeIT2 dataset is exported for the pod firmware (`models/seizeit2/`, see its README). Per decision
+D11 it runs on the pod, not in the app, so the app does not use it yet. It is not clinically validated.
 
 ## Run
 
@@ -30,16 +30,16 @@ src/services/    device/ (BLE seam), ml/ (model seam), events/, notifications/, 
 src/state/       In-memory app state (resets on restart)
 src/components/  Reusable UI + brand graphics (logo from assets/lyra-mark.png, abstract pod SVG)
 ml/seizeit2/     Reproducible SeizeIT2 training pipeline (Python); dataset stays in pj-training-data/
-models/seizeit2/ Trained model, inference config, metrics and model card (git-tracked)
+models/seizeit2/ Trained model (C99 header for the pod), inference config, metrics, model card
 mlm/             lyra_mlm: multimodal ML foundation (contracts, quality, features, Stage 3 prep)
 ```
 
-Two ML pipelines currently coexist and are planned to merge into one (see
-[`docs/MLM_MERGE_GUIDE.md`](docs/MLM_MERGE_GUIDE.md)):
-[`mlm/`](mlm/README.md) is the multimodal ML foundation (Stage 3 dataset preparation, no trained
-model), and `ml/seizeit2/` + `models/seizeit2/` hold a trained SeizeIT2 baseline.
+[`mlm/`](mlm/README.md) (`lyra_mlm`) prepares the data: quality states, simulated MyoWare ENV,
+features, labels and event confirmation. `ml/seizeit2/` trains and exports a model on its Stage 3
+windows into `models/seizeit2/`. The merge status of the two pipelines is in
+[`docs/MLM_MERGE_GUIDE.md`](docs/MLM_MERGE_GUIDE.md).
 
 To integrate real parts, replace the exports in `services/device/index.ts` (BLE) and
 `services/notifications/index.ts` (SMS/push); screens only depend on those interfaces.
-`services/ml/index.ts` already serves the SeizeIT2 model (`services/ml/seizeit2/`); a BLE stream
-must call `mlService.detect()` with the window contract in `models/seizeit2/config.json`.
+`services/ml/index.ts` stays the mock: the detector runs on the pod (D11), and the app will receive
+possible events over BLE.
