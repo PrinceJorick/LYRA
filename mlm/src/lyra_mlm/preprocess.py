@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, replace
+from fractions import Fraction
 from typing import Literal
 
 import numpy as np
@@ -58,7 +59,7 @@ class FilterConfig:
             errs.append("band edges must be increasing")
         if (self.modality is Modality.EMG) != (self.signal_type is not None):
             errs.append("signal_type is required for EMG and must be None for IMU")
-        if self.signal_type in (EmgSignalType.RECT, EmgSignalType.ENV) and self.kind != "lowpass":
+        if self.signal_type not in (None, EmgSignalType.RAW) and self.kind != "lowpass":
             errs.append(f"{self.signal_type} is already rectified on the sensor; only lowpass smoothing is "
                         "allowed (high-pass or band-pass would remove the envelope level being measured)")
         if not self.rationale.strip():
@@ -101,6 +102,66 @@ def apply_filter(stream: SignalStream, cfg: FilterConfig, gap_factor: float = 3.
             short += b - a
     note = cfg.describe() + (f"; {short} samples in runs too short to filter flagged INVALID" if short else "")
     return replace(stream, values=out, flags=flags, provenance=stream.provenance + (note,))
+
+
+@dataclass(frozen=True)
+class SimulatedEnvConfig:
+    """Software model of the MyoWare 2.0 ENV chain (locked Decision 2). It approximates, not
+    reproduces, the analog stages: real ENV gain, rectifier non-idealities and output offset
+    are not modelled."""
+
+    hpf_hz: float = 20.8  # MyoWare input high-pass
+    lpf_hz: float = 3.6  # MyoWare passive 1st-order envelope filter
+    order: int = 1
+    target_rate_hz: float = 50.0  # locked ESP32-S3 ENV ADC rate (Decision 3)
+
+
+def simulated_env_filters(rate_hz: float, cfg: SimulatedEnvConfig) -> tuple[np.ndarray, np.ndarray]:
+    """Validated HPF and LPF designs. Raises instead of adjusting anything out of range."""
+    nyq = rate_hz / 2
+    if not (0 < cfg.lpf_hz < cfg.hpf_hz < nyq):
+        raise FilterConfigError(f"need 0 < LPF {cfg.lpf_hz} < HPF {cfg.hpf_hz} < Nyquist {nyq:g} Hz")
+    if not (cfg.lpf_hz < cfg.target_rate_hz / 2 and cfg.target_rate_hz <= rate_hz):
+        raise FilterConfigError(f"target {cfg.target_rate_hz} Hz must not exceed the source rate {rate_hz:g} Hz "
+                                f"and its Nyquist must exceed the LPF cutoff")
+    return (sps.butter(cfg.order, cfg.hpf_hz, "highpass", fs=rate_hz, output="sos"),
+            sps.butter(cfg.order, cfg.lpf_hz, "lowpass", fs=rate_hz, output="sos"))
+
+
+def raw_to_simulated_env(stream: SignalStream, cfg: SimulatedEnvConfig = SimulatedEnvConfig(),
+                         gap_factor: float = 3.0) -> SignalStream:
+    """RAW sEMG -> causal HPF -> full-wave rectification -> causal LPF -> anti-aliased decimation.
+
+    Causal filters model the analog hardware. resample_poly's FIR suppresses rectifier harmonics
+    above the target Nyquist before decimation. Each contiguous run is processed separately, so
+    gaps are never bridged. The output is tagged SIMULATED_ENV_FROM_RAW, never hardware ENV.
+    """
+    if stream.modality is not Modality.EMG or stream.signal_type is not EmgSignalType.RAW:
+        raise FilterConfigError("raw_to_simulated_env needs a RAW EMG stream")
+    hpf, lpf = simulated_env_filters(stream.nominal_rate_hz, cfg)
+    ratio = Fraction(cfg.target_rate_hz / stream.nominal_rate_hz).limit_denominator(1000)
+    if not math.isclose(float(ratio) * stream.nominal_rate_hz, cfg.target_rate_hz):
+        raise FilterConfigError(f"{stream.nominal_rate_hz:g} -> {cfg.target_rate_hz:g} Hz is not a usable ratio")
+    ts_out, v_out, dropped = [], [], 0
+    for a, b in stream.contiguous_runs(gap_factor):
+        y = sps.sosfilt(lpf, np.abs(sps.sosfilt(hpf, stream.values[a:b, 0])))
+        # edge padding: default zero padding distorts each run's first/last ~0.5 s by up to ~40%
+        y = sps.resample_poly(y, ratio.numerator, ratio.denominator, padtype="edge")
+        if y.size == 0:
+            dropped += b - a
+            continue
+        ts_out.append(stream.timestamps[a] + np.arange(y.size) / cfg.target_rate_hz)
+        v_out.append(y)
+    note = (f"SIMULATED_ENV_FROM_RAW: butterworth highpass order {cfg.order} at {cfg.hpf_hz} Hz (causal) -> |x| -> "
+            f"lowpass order {cfg.order} at {cfg.lpf_hz} Hz (causal) -> resample_poly {stream.nominal_rate_hz:g} Hz "
+            f"-> {cfg.target_rate_hz:g} Hz ({ratio.numerator}/{ratio.denominator})"
+            + (f"; {dropped} samples in runs too short to decimate dropped" if dropped else ""))
+    return replace(
+        stream, timestamps=np.concatenate(ts_out) if ts_out else np.empty(0),
+        values=np.concatenate(v_out) if v_out else np.empty(0), nominal_rate_hz=cfg.target_rate_hz,
+        channels=("simulated_env_from_raw",), signal_type=EmgSignalType.SIMULATED_ENV_FROM_RAW,
+        bandwidth_hz=cfg.target_rate_hz / 2, flags=None, provenance=stream.provenance + (note,),
+    )
 
 
 def apply_fixed_scale(stream: SignalStream, scale: float, offset: float, units: tuple[str, ...],

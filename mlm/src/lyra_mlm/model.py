@@ -87,15 +87,11 @@ class ModelConfig:
     @classmethod
     def from_json(cls, text: str) -> ModelConfig:
         d = json.loads(text)
-        fc = d["feature_config"]
-        t = fc["emg_signal_type"]
+        fc = {k: tuple(v) if isinstance(v, list) else v for k, v in d["feature_config"].items()}
+        t = fc.pop("emg_signal_type")
         return cls(
             model_id=d["model_id"], family=ModelFamily(d["family"]),
-            feature_config=FeatureConfig(
-                mode=fc["mode"], emg_signal_type=EmgSignalType(t) if t else None,
-                movement_band_hz=tuple(fc["movement_band_hz"]), rhythm_lag_s=tuple(fc["rhythm_lag_s"]),
-                max_xcorr_lag_s=fc["max_xcorr_lag_s"], min_paired_samples=fc["min_paired_samples"],
-                gap_factor=fc["gap_factor"]),
+            feature_config=FeatureConfig(emg_signal_type=EmgSignalType(t) if t else None, **fc),
             feature_names=tuple(d["feature_names"]), window=WindowConfig(**d["window"]),
             decision_threshold=d["decision_threshold"],
             normalization=NormalizationParams.from_dict(d["normalization"]) if d["normalization"] else None,

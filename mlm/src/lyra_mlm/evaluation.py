@@ -61,6 +61,29 @@ SEIZEIT2_PLANNED_SPLIT = ParticipantSplit(
 )
 
 
+def split_manifest(participants: Iterable[str], fbtcs_events: Mapping[str, int], split: ParticipantSplit) -> dict:
+    """Check a split against the real participant inventory and describe each partition.
+    Every inventory participant must be assigned; partitions must be disjoint."""
+    inventory = set(participants)
+    unassigned = sorted(p for p in inventory if split.partition_of(p) is None)
+    if unassigned:
+        raise LeakageError(f"participants not covered by the split: {unassigned}")
+    parts = {Partition.TRAIN: sorted(inventory & split.train), Partition.TEST: sorted(inventory & split.held_out)}
+    check_participant_independence(parts)
+    assert not set(parts[Partition.TRAIN]) & set(parts[Partition.TEST])
+
+    def describe(ids: list[str]) -> dict:
+        with_fbtcs = [p for p in ids if fbtcs_events.get(p, 0) > 0]
+        return {"participants": ids, "n_participants": len(ids), "with_fbtcs": with_fbtcs,
+                "interictal_only": [p for p in ids if p not in with_fbtcs],
+                "fbtcs_events": sum(fbtcs_events.get(p, 0) for p in ids)}
+
+    return {"split_source": split.source,
+            "in_split_but_not_in_inventory": sorted((split.train | split.held_out) - inventory),
+            "train_cv": describe(parts[Partition.TRAIN]), "held_out_test": describe(parts[Partition.TEST]),
+            "disjoint": True}
+
+
 @dataclass(frozen=True)
 class MetricSpec:
     name: str

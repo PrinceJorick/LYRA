@@ -11,8 +11,8 @@ from lyra_mlm.signals import Modality
 from lyra_mlm.windows import WindowConfig, segment
 
 BOTH = (Modality.EMG, Modality.IMU)
-SUPPRESS = InferenceConfig(degraded_policy="suppress", missing_modality_policy="suppress")
-FALLBACK = InferenceConfig(degraded_policy="proceed", missing_modality_policy="fallback_unimodal")
+SUPPRESS = InferenceConfig(degraded_window_policy="suppress", missing_modality_policy="suppress")
+FALLBACK = InferenceConfig(degraded_window_policy="allow_with_flag", missing_modality_policy="fallback_unimodal")
 
 
 def first_window(rec=None, required=BOTH):
@@ -58,9 +58,13 @@ def test_degraded_policies():
     assert QualityGatedInference(SUPPRESS, stub).process(w).status is PredictionStatus.SUPPRESSED
 
 
+def test_decision4_inference_defaults():
+    assert InferenceConfig() == InferenceConfig("allow_with_flag", "suppress")
+
+
 def test_unavailable_features_suppress_instead_of_guessing():
     p = QualityGatedInference(SUPPRESS, StubScorePredictor(model_config())).process(
-        first_window(recording(emg(bandwidth_hz=None))))
+        first_window(recording(emg(rate=10.0))))  # envelope below the 20 Hz Decision 3 minimum
     assert p.status is PredictionStatus.SUPPRESSED
     assert "emg_env_autocorr_peak" in p.reason and "xmod_coherence_band" in p.reason
 

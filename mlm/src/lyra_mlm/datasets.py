@@ -112,6 +112,9 @@ class RecordingInfo:
     duration_s: float | None = None
     sha256: str | None = None  # of the source file(s), when published
     notes: str = ""
+    emg_placement: str = ""
+    imu_placement: str = ""
+    missing: tuple[str, ...] = ()  # e.g. ("emg: no EMG file",); such modalities load as None
 
 
 class DatasetAdapter(Protocol):

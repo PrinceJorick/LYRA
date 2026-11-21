@@ -67,6 +67,34 @@ class StubScorePredictor:
         return self.score
 
 
+def write_edf(path, signals, record_s=1.0, variant="EDF+C", onsets=None):
+    """Write a small 16-bit EDF+ file. signals: [(label, unit, rate_hz, values)]. SYNTHETIC."""
+    n_rec = int(len(signals[0][3]) / (signals[0][2] * record_s))
+    onsets = np.arange(n_rec) * record_s if onsets is None else np.asarray(onsets)
+    spr = [int(round(rate * record_s)) for _, _, rate, _ in signals] + [30]
+    digs, rows = [], []
+    for label, unit, _, v in signals:
+        lo, hi = float(np.min(v)) - 1e-6, float(np.max(v)) + 1e-6
+        digs.append(np.round((np.asarray(v) - lo) / (hi - lo) * 65535 - 32768).astype("<i2"))
+        rows.append((label, unit, f"{lo:.6g}"[:8], f"{hi:.6g}"[:8], "-32768", "32767"))
+    rows.append(("EDF Annotations", "", "-1", "1", "-32768", "32767"))
+    ns = len(rows)
+    pad = lambda s, w: s.ljust(w)[:w].encode("latin-1")  # noqa: E731
+    head = (pad("0", 8) + pad("X", 80) + pad("Startdate X", 80) + pad("01.01.00", 8) + pad("00.00.00", 8)
+            + pad(str(256 * (ns + 1)), 8) + pad(variant, 44) + pad(str(n_rec), 8) + pad(f"{record_s:g}", 8)
+            + pad(str(ns), 4))
+    for col, width in ((0, 16), (None, 80), (1, 8), (2, 8), (3, 8), (4, 8), (5, 8), (None, 80)):
+        head += b"".join(pad("" if col is None else r[col], width) for r in rows)
+    head += b"".join(pad(str(s), 8) for s in spr) + pad("", 32) * ns
+    body = bytearray()
+    for k in range(n_rec):
+        for d, n in zip(digs, spr[:-1]):
+            body += d[k * n:(k + 1) * n].tobytes()
+        body += f"+{onsets[k]:g}\x14\x14\x00".encode().ljust(60, b"\x00")
+    with open(path, "wb") as f:
+        f.write(head + bytes(body))
+
+
 def window_quality(emg_state=QualityState.VALID, imu_state=QualityState.VALID) -> WindowQuality:
     per = {Modality.EMG: ModalityQuality(Modality.EMG, emg_state, (), 1.0),
            Modality.IMU: ModalityQuality(Modality.IMU, imu_state, (), 1.0)}

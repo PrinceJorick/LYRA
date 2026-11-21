@@ -2,20 +2,22 @@
 
 Turns per-window predictions into possible-event state. It never claims that a seizure
 occurred: POSSIBLE_EVENT only means the configured evidence rule was met. The phone then shows
-"Possible convulsive seizure detected. This is not a diagnosis." Parameter defaults are
-software placeholders, not clinically validated values.
+"Possible convulsive seizure detected. This is not a diagnosis." Defaults follow locked
+Decision 4: unvalidated engineering parameters, not clinical thresholds.
 
 Evidence rules:
-- VALID predictions are evidence. DEGRADED ones are evidence only if degraded_policy == "use".
+- VALID predictions are evidence. DEGRADED ones are evidence only with
+  degraded_window_policy == "allow_with_flag" (the default).
 - SUPPRESSED (and ignored DEGRADED) predictions are never negative evidence. They follow
   invalid_window_policy: "hold" (default) keeps the positive count, "reset" clears it.
-- If the time since the last evidence-bearing prediction exceeds max_gap_s, evidence is not
-  continuous: the count resets and an active possible event ends.
+- If the time since the last evidence-bearing prediction exceeds max_timestamp_gap_s, evidence is
+  not continuous: an accumulating run resets to IDLE, and an active possible event ends in
+  REFRACTORY (not IDLE), so a data gap cannot re-notify the same episode.
 - Out-of-order/duplicate timestamps and stale predictions (older than max_latency_s at now_s)
   are rejected without changing state.
 - Hysteresis: a score >= entry_threshold starts or extends the positive run; an active possible
   event continues while score >= exit_threshold.
-- After a possible event ends, REFRACTORY lasts refractory_s from the end, so the same episode
+- After a possible event ends, REFRACTORY lasts refractory_cooldown_s from the end, so the same episode
   cannot notify twice.
 """
 
@@ -38,19 +40,19 @@ class ConfirmationState(StrEnum):
 
 @dataclass(frozen=True)
 class ConfirmationConfig:
-    entry_threshold: float = 0.5  # classification threshold for a positive window
-    exit_threshold: float = 0.4
-    consecutive_required: int = 2
-    max_gap_s: float = 4.0  # tolerates one isolated missing/suppressed window at the default 2 s step
-    refractory_s: float = 60.0
+    entry_threshold: float = 0.65  # classification threshold for a positive window
+    exit_threshold: float = 0.45
+    consecutive_positive_required: int = 3  # >= 8 s confirmation latency at 4 s / 2 s
+    max_timestamp_gap_s: float = 6.0  # tolerates up to two consecutive missing windows at the 2 s step
+    refractory_cooldown_s: float = 60.0
     max_latency_s: float | None = 10.0
-    degraded_policy: Literal["use", "ignore"] = "use"
+    degraded_window_policy: Literal["allow_with_flag", "ignore"] = "allow_with_flag"
     invalid_window_policy: Literal["hold", "reset"] = "hold"
 
     def __post_init__(self) -> None:
         if not 0 <= self.exit_threshold <= self.entry_threshold <= 1:
             raise ValueError("need 0 <= exit_threshold <= entry_threshold <= 1")
-        if self.consecutive_required < 1 or self.max_gap_s <= 0 or self.refractory_s < 0:
+        if self.consecutive_positive_required < 1 or self.max_timestamp_gap_s <= 0 or self.refractory_cooldown_s < 0:
             raise ValueError("invalid count, gap or refractory parameters")
 
 
@@ -87,7 +89,7 @@ class EventConfirmation:
     def _end_run(self, ts: float, reason: str, quality) -> None:
         self.positive_count = 0
         if self.state is ConfirmationState.POSSIBLE_EVENT:
-            self._refractory_until = ts + self.cfg.refractory_s
+            self._refractory_until = ts + self.cfg.refractory_cooldown_s
             self._log(ts, ConfirmationState.REFRACTORY, "possible event ended: " + reason, quality)
         elif self.state is ConfirmationState.ACCUMULATING:
             self._log(ts, ConfirmationState.IDLE, reason, quality)
@@ -108,12 +110,13 @@ class EventConfirmation:
 
         if self.state is ConfirmationState.REFRACTORY and ts >= self._refractory_until:
             self._log(ts, ConfirmationState.IDLE, "refractory period over", quality)
-        if self._last_evidence_ts is not None and ts - self._last_evidence_ts > cfg.max_gap_s:
-            self._end_run(ts, f"{ts - self._last_evidence_ts:.1f} s since last valid prediction exceeds max_gap_s",
+        if self._last_evidence_ts is not None and ts - self._last_evidence_ts > cfg.max_timestamp_gap_s:
+            gap = ts - self._last_evidence_ts
+            self._end_run(ts, f"{gap:.1f} s since last valid prediction exceeds max_timestamp_gap_s",
                           quality)
 
         evidence = p.status is PredictionStatus.VALID or (
-            p.status is PredictionStatus.DEGRADED and cfg.degraded_policy == "use")
+            p.status is PredictionStatus.DEGRADED and cfg.degraded_window_policy == "allow_with_flag")
         if not evidence:
             note = f"{p.status} window carries no evidence"
             if cfg.invalid_window_policy == "reset" and self.state in (
@@ -133,7 +136,7 @@ class EventConfirmation:
             return self.history[-1]
         if score >= cfg.entry_threshold:
             self.positive_count += 1
-            if self.positive_count >= cfg.consecutive_required:
+            if self.positive_count >= cfg.consecutive_positive_required:
                 return self._log(ts, ConfirmationState.POSSIBLE_EVENT,
                                  f"{self.positive_count} consecutive valid positive windows", quality, started=True)
             return self._log(ts, ConfirmationState.ACCUMULATING, "valid positive window", quality)

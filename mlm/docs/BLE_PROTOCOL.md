@@ -41,7 +41,7 @@ and starts the cancellation countdown.
 | Field | Type | Notes |
 |---|---|---|
 | version, origin | u8, u8 | |
-| emg_rate_hz | u16 | MyoWare ENV acquisition rate: **not yet specified** |
+| emg_rate_hz | u16 | MyoWare ENV ADC rate; **50 Hz** (locked Decision 3) |
 | imu_odr_hz | u8 | 25 (initial) or 50 (experimental) only |
 | window_ms, step_ms | u16, u16 | 0 < step ≤ window |
 | countdown_s | u8 | 7–10. App default 8 s vs pod spec 10 s is unresolved |
