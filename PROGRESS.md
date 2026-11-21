@@ -136,3 +136,28 @@ cd mlm && .venv/bin/python -m pytest -q
 
 ### Next
 Stage 4 needs explicit authorization. See `mlm/docs/TRAINING_PLAN.md`. `mlm/data/processed_superseded/` (384 MB) can be deleted.
+
+## Session 4 (2026-11-21): SeizeIT2 model trained and integrated (branch `seizeit2-model`)
+
+Developed in parallel with Sessions 2–3 (`mlm/`), from the older base `9ef25ed`. How the two pipelines differ and how to merge them: `docs/MLM_MERGE_GUIDE.md`.
+
+### What exists
+- `ml/seizeit2/`: reproducible pipeline (fetch + SHA256-verify EDFs, features, subject-level split, 5-fold grouped CV, one-time test evaluation, JSON export, Python↔TS parity check). Reuses `lyra_mlm.annotations` for label mapping.
+- `models/seizeit2/`: `lyra-seizeit2-fbtcs` v1.0.0 (HGB, 300 trees, 5 s windows), config, labels, metadata, metrics, plots, model card (`README.md`).
+- `src/services/ml/seizeit2/`: TS feature extractor, tree evaluator + streaming detector, `MlService` implementation. `services/ml/index.ts` now serves it (falls back to the mock if the bundled assets are incompatible).
+- Insights/About wording updated: "experimental, not clinically validated, no live pod data".
+
+### Decisions worth remembering
+- Target = FBTCS (`sz_foc_f2b`); other seizures are excluded from training negatives and from the false-alarm count. `context.md` U1 still needs owner sign-off.
+- Model shipped as JSON evaluated in TypeScript, not `.tflite`: no native runtime in the app, keeps Expo Go working.
+- SeizeIT2 accelerometer files use per-file scales (~1/2, ~1/6, or pinned at 32.768): runs are rescaled to g by their median |acc|; invalid runs excluded. Gyro unit unknown → only scale-invariant gyro features.
+- Held-out test (25 subjects, 1,983 h): 11/12 FBTCS (CI 0.62–1.00), 0.22 false alarms/24 h, median latency 43 s from annotated onset. Hospital data only.
+- `detect()` is not called anywhere yet (no real sensor stream); the alert flow is unchanged.
+
+### Gotchas
+- `pj-training-data/ds005873` is a DataLad clone without EDF content; `preprocessing.py` downloads from the public bucket. Don't `git annex`/`datalad` inside it.
+- Run Python modules from the repo root (`python -m ml.seizeit2.<module>`); pickled models need `ml.seizeit2.train` importable.
+- `evaluate.py` refuses to evaluate the test set twice for the same run.
+
+### Not verified
+- No run on a phone; no LYRA pod data; MyoWare/BMI270 units and placement not matched to SeizeIT2.

@@ -27,7 +27,7 @@ export default function About() {
       <SectionHeader title="Current status" />
       <Card style={{ gap: space.sm }}>
         <Txt v="small">• Pod pairing, battery and caregiver notification are simulated.</Txt>
-        <Txt v="small">• ML model: {meta.status === 'mock' ? 'not integrated' : `${meta.modelId} v${meta.version}`}.</Txt>
+        <Txt v="small">• ML model: {meta.status === 'mock' ? 'not integrated' : `${meta.modelId} v${meta.version} (experimental, not clinically validated, no live pod data yet)`}.</Txt>
         <Txt v="small">• All records are sample or simulated data unless stated otherwise.</Txt>
       </Card>
       <SafetyNotice long />

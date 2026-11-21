@@ -1,0 +1,31 @@
+{
+ "model_id": "lyra-seizeit2-fbtcs",
+ "version": "1.0.0",
+ "format": "lyra-seizeit2-model/1",
+ "created_utc": "2026-11-21T15:11:28+00:00",
+ "training_run": "20261121-225256",
+ "git_commit_at_export": "9ef25edfe207fe6b5c8eace355df1ffe6eeb757a",
+ "model": "M2_hgb_300x15",
+ "kind": "gbt",
+ "trees": 300,
+ "sklearn": "1.9.1",
+ "numpy": "2.5.5",
+ "dataset": "SeizeIT2, OpenNeuro ds005873 v1.1.0 (CC0); trained only on subjects in split.json folds",
+ "task": "window-level detection of focal-to-bilateral tonic-clonic (convulsive) seizure patterns from one sEMG channel + one 6-axis IMU",
+ "selection": {
+  "candidate": "M2_hgb_300x15",
+  "window_s": 5,
+  "k": 5,
+  "threshold": 0.9867026171888409,
+  "sensitivity": 0.96875,
+  "far_per_24h": 0.23257876607494735,
+  "latency_s_median": 59.0,
+  "met_far_cap": true
+ },
+ "export_check": {
+  "dev_windows_compared": 200000,
+  "max_abs_score_diff": 2.220446049250313e-16,
+  "decision_agreement": 1.0
+ },
+ "status": "experimental research component; not clinically validated; not a diagnostic device"
+}

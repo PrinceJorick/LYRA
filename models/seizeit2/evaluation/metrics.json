@@ -1,0 +1,1172 @@
+{
+ "test": {
+  "dataset": "SeizeIT2 (OpenNeuro ds005873 v1.1.0)",
+  "split": "held-out test subjects",
+  "test_subjects": 25,
+  "model": "M2_hgb_300x15",
+  "window_s": 5,
+  "k": 5,
+  "threshold": 0.9867026171888409,
+  "event": {
+   "events": 12,
+   "detected": 11,
+   "event_sensitivity": 0.9166666666666666,
+   "event_sensitivity_95ci": [
+    0.6152038348490559,
+    0.9978924067681397
+   ],
+   "false_alarms": 18,
+   "evaluated_hours": 1983.17,
+   "far_per_24h": 0.21783343138078862,
+   "far_per_24h_95ci": [
+    0.12910189699785984,
+    0.3442707352318712
+   ],
+   "alarms_near_out_of_scope_seizures": 0,
+   "alarms_during_impedance_checks": 1,
+   "latency_s_median": 43.0,
+   "latency_s_iqr": [
+    26.0,
+    77.0
+   ],
+   "latency_s_all": [
+    122.0,
+    109.0,
+    45.0,
+    43.0,
+    33.0,
+    20.0,
+    111.0,
+    21.0,
+    31.0,
+    21.0,
+    45.0
+   ]
+  },
+  "events_in_runs_missing_or_invalid_modality": 1,
+  "event_sensitivity_counting_unevaluable_as_missed": 0.8461538461538461,
+  "window": {
+   "windows": 3452238,
+   "positive_windows": 638,
+   "confusion_matrix": {
+    "tn": 3451459,
+    "fp": 141,
+    "fn": 387,
+    "tp": 251
+   },
+   "accuracy_not_meaningful_under_imbalance": 0.9998470557360182,
+   "precision": 0.6403061224489796,
+   "recall_sensitivity": 0.3934169278996865,
+   "specificity": 0.9999591493799976,
+   "f1": 0.487378640776699,
+   "roc_auc": 0.8595217360464512,
+   "pr_auc": 0.4016520960028537
+  },
+  "per_subject": {
+   "sub-010": {
+    "events": 0,
+    "detected": 0,
+    "false_alarms": 0,
+    "hours": 102.08,
+    "far_per_24h": 0.0
+   },
+   "sub-014": {
+    "events": 0,
+    "detected": 0,
+    "false_alarms": 1,
+    "hours": 50.77,
+    "far_per_24h": 0.4727201103013591
+   },
+   "sub-015": {
+    "events": 1,
+    "detected": 0,
+    "false_alarms": 2,
+    "hours": 88.61,
+    "far_per_24h": 0.5416995824399052
+   },
+   "sub-019": {
+    "events": 1,
+    "detected": 1,
+    "false_alarms": 1,
+    "hours": 121.08,
+    "far_per_24h": 0.19821605550049554
+   },
+   "sub-021": {
+    "events": 0,
+    "detected": 0,
+    "false_alarms": 0,
+    "hours": 111.76,
+    "far_per_24h": 0.0
+   },
+   "sub-022": {
+    "events": 0,
+    "detected": 0,
+    "false_alarms": 0,
+    "hours": 113.45,
+    "far_per_24h": 0.0
+   },
+   "sub-026": {
+    "events": 0,
+    "detected": 0,
+    "false_alarms": 0,
+    "hours": 90.53,
+    "far_per_24h": 0.0
+   },
+   "sub-029": {
+    "events": 1,
+    "detected": 1,
+    "false_alarms": 1,
+    "hours": 116.89,
+    "far_per_24h": 0.20532124219351527
+   },
+   "sub-037": {
+    "events": 0,
+    "detected": 0,
+    "false_alarms": 0,
+    "hours": 21.13,
+    "far_per_24h": 0.0
+   },
+   "sub-042": {
+    "events": 0,
+    "detected": 0,
+    "false_alarms": 7,
+    "hours": 45.29,
+    "far_per_24h": 3.7094281298299845
+   },
+   "sub-044": {
+    "events": 0,
+    "detected": 0,
+    "false_alarms": 1,
+    "hours": 99.4,
+    "far_per_24h": 0.2414486921529175
+   },
+   "sub-053": {
+    "events": 0,
+    "detected": 0,
+    "false_alarms": 2,
+    "hours": 25.79,
+    "far_per_24h": 1.8611865063978286
+   },
+   "sub-070": {
+    "events": 2,
+    "detected": 2,
+    "false_alarms": 0,
+    "hours": 141.69,
+    "far_per_24h": 0.0
+   },
+   "sub-083": {
+    "events": 1,
+    "detected": 1,
+    "false_alarms": 0,
+    "hours": 48.14,
+    "far_per_24h": 0.0
+   },
+   "sub-084": {
+    "events": 0,
+    "detected": 0,
+    "false_alarms": 1,
+    "hours": 15.01,
+    "far_per_24h": 1.5989340439706863
+   },
+   "sub-086": {
+    "events": 0,
+    "detected": 0,
+    "false_alarms": 0,
+    "hours": 0.68,
+    "far_per_24h": 0.0
+   },
+   "sub-095": {
+    "events": 0,
+    "detected": 0,
+    "false_alarms": 0,
+    "hours": 103.71,
+    "far_per_24h": 0.0
+   },
+   "sub-100": {
+    "events": 0,
+    "detected": 0,
+    "false_alarms": 0,
+    "hours": 112.31,
+    "far_per_24h": 0.0
+   },
+   "sub-103": {
+    "events": 1,
+    "detected": 1,
+    "false_alarms": 0,
+    "hours": 89.59,
+    "far_per_24h": 0.0
+   },
+   "sub-105": {
+    "events": 0,
+    "detected": 0,
+    "false_alarms": 0,
+    "hours": 111.52,
+    "far_per_24h": 0.0
+   },
+   "sub-108": {
+    "events": 0,
+    "detected": 0,
+    "false_alarms": 0,
+    "hours": 20.76,
+    "far_per_24h": 0.0
+   },
+   "sub-115": {
+    "events": 5,
+    "detected": 5,
+    "false_alarms": 2,
+    "hours": 271.32,
+    "far_per_24h": 0.17691287041132242
+   },
+   "sub-123": {
+    "events": 0,
+    "detected": 0,
+    "false_alarms": 0,
+    "hours": 81.64,
+    "far_per_24h": 0.0
+   }
+  }
+ },
+ "cv_out_of_fold": {
+  "M0_rule_emg_and_acc@W5": {
+   "candidate": "M0_rule_emg_and_acc",
+   "window_s": 5,
+   "k": 5,
+   "threshold": 3.128061691648113,
+   "sensitivity": 0.5,
+   "far_per_24h": 0.7364994259039999,
+   "latency_s_median": 61.5,
+   "met_far_cap": true,
+   "selectable": true,
+   "event": {
+    "events": 32,
+    "detected": 16,
+    "event_sensitivity": 0.5,
+    "event_sensitivity_95ci": [
+     0.318874964234164,
+     0.681125035765836
+    ],
+    "false_alarms": 247,
+    "evaluated_hours": 8048.89,
+    "far_per_24h": 0.7364994259039999,
+    "far_per_24h_95ci": [
+     0.6475069112454128,
+     0.8343062839511066
+    ],
+    "alarms_near_out_of_scope_seizures": 15,
+    "alarms_during_impedance_checks": 1,
+    "latency_s_median": 61.5,
+    "latency_s_iqr": [
+     55.0,
+     86.0
+    ],
+    "latency_s_all": [
+     234.0,
+     257.0,
+     82.0,
+     59.0,
+     41.0,
+     296.0,
+     62.0,
+     55.0,
+     37.0,
+     61.0,
+     55.0,
+     56.0,
+     80.0,
+     38.0,
+     98.0,
+     65.0
+    ]
+   },
+   "window": {
+    "windows": 14225974,
+    "positive_windows": 2306,
+    "confusion_matrix": {
+     "tn": 14222572,
+     "fp": 1096,
+     "fn": 2131,
+     "tp": 175
+    },
+    "accuracy_not_meaningful_under_imbalance": 0.9997731614018134,
+    "precision": 0.13768686073957515,
+    "recall_sensitivity": 0.07588898525585429,
+    "specificity": 0.9999229453330885,
+    "f1": 0.09784735812133072,
+    "roc_auc": 0.7853857580396615,
+    "pr_auc": 0.023117665241018645
+   }
+  },
+  "M1_logreg@W5": {
+   "candidate": "M1_logreg",
+   "window_s": 5,
+   "k": 5,
+   "threshold": 0.9929978680244944,
+   "sensitivity": 0.65625,
+   "far_per_24h": 0.9154061690385747,
+   "latency_s_median": 66.0,
+   "met_far_cap": true,
+   "selectable": true,
+   "event": {
+    "events": 32,
+    "detected": 21,
+    "event_sensitivity": 0.65625,
+    "event_sensitivity_95ci": [
+     0.4680689637197313,
+     0.8142809082834338
+    ],
+    "false_alarms": 307,
+    "evaluated_hours": 8048.89,
+    "far_per_24h": 0.9154061690385747,
+    "far_per_24h_95ci": [
+     0.8158606548313629,
+     1.0237472259845233
+    ],
+    "alarms_near_out_of_scope_seizures": 5,
+    "alarms_during_impedance_checks": 2,
+    "latency_s_median": 66.0,
+    "latency_s_iqr": [
+     52.0,
+     93.0
+    ],
+    "latency_s_all": [
+     220.0,
+     93.0,
+     257.0,
+     88.0,
+     59.0,
+     35.0,
+     292.0,
+     50.0,
+     73.0,
+     35.0,
+     61.0,
+     123.0,
+     51.0,
+     52.0,
+     66.0,
+     52.0,
+     56.0,
+     70.0,
+     78.0,
+     557.0,
+     39.0
+    ]
+   },
+   "window": {
+    "windows": 14225974,
+    "positive_windows": 2306,
+    "confusion_matrix": {
+     "tn": 14220737,
+     "fp": 2931,
+     "fn": 2059,
+     "tp": 247
+    },
+    "accuracy_not_meaningful_under_imbalance": 0.9996492331561972,
+    "precision": 0.0777218376337319,
+    "recall_sensitivity": 0.10711188204683435,
+    "specificity": 0.9997939350102941,
+    "f1": 0.09008023340627279,
+    "roc_auc": 0.88847813405935,
+    "pr_auc": 0.025465040429686475
+   }
+  },
+  "M2_hgb_100x15@W5": {
+   "candidate": "M2_hgb_100x15",
+   "window_s": 5,
+   "k": 5,
+   "threshold": 0.983813222428709,
+   "sensitivity": 0.9375,
+   "far_per_24h": 0.2623965565973765,
+   "latency_s_median": 63.0,
+   "met_far_cap": true,
+   "selectable": true,
+   "event": {
+    "events": 32,
+    "detected": 30,
+    "event_sensitivity": 0.9375,
+    "event_sensitivity_95ci": [
+     0.7919305701049926,
+     0.9923392636535436
+    ],
+    "false_alarms": 88,
+    "evaluated_hours": 8048.89,
+    "far_per_24h": 0.2623965565973765,
+    "far_per_24h_95ci": [
+     0.21044971131694817,
+     0.3232798966091605
+    ],
+    "alarms_near_out_of_scope_seizures": 10,
+    "alarms_during_impedance_checks": 1,
+    "latency_s_median": 63.0,
+    "latency_s_iqr": [
+     49.0,
+     84.75
+    ],
+    "latency_s_all": [
+     53.0,
+     220.0,
+     85.0,
+     98.0,
+     79.0,
+     80.0,
+     85.0,
+     249.0,
+     80.0,
+     37.0,
+     57.0,
+     35.0,
+     292.0,
+     42.0,
+     49.0,
+     31.0,
+     63.0,
+     135.0,
+     49.0,
+     63.0,
+     50.0,
+     70.0,
+     50.0,
+     41.0,
+     58.0,
+     45.0,
+     38.0,
+     84.0,
+     575.0,
+     63.0
+    ]
+   },
+   "window": {
+    "windows": 14225974,
+    "positive_windows": 2306,
+    "confusion_matrix": {
+     "tn": 14223245,
+     "fp": 423,
+     "fn": 1839,
+     "tp": 467
+    },
+    "accuracy_not_meaningful_under_imbalance": 0.9998409950700037,
+    "precision": 0.5247191011235955,
+    "recall_sensitivity": 0.20251517779705117,
+    "specificity": 0.999970260835672,
+    "f1": 0.29224030037546933,
+    "roc_auc": 0.8816382041150284,
+    "pr_auc": 0.2181166703541072
+   }
+  },
+  "M2_hgb_300x15@W5": {
+   "candidate": "M2_hgb_300x15",
+   "window_s": 5,
+   "k": 5,
+   "threshold": 0.9867026171888409,
+   "sensitivity": 0.96875,
+   "far_per_24h": 0.23257876607494735,
+   "latency_s_median": 59.0,
+   "met_far_cap": true,
+   "selectable": true,
+   "event": {
+    "events": 32,
+    "detected": 31,
+    "event_sensitivity": 0.96875,
+    "event_sensitivity_95ci": [
+     0.8378290058184884,
+     0.9992091314020475
+    ],
+    "false_alarms": 78,
+    "evaluated_hours": 8048.89,
+    "far_per_24h": 0.23257876607494735,
+    "far_per_24h_95ci": [
+     0.18384386317477908,
+     0.2902688258932712
+    ],
+    "alarms_near_out_of_scope_seizures": 8,
+    "alarms_during_impedance_checks": 0,
+    "latency_s_median": 59.0,
+    "latency_s_iqr": [
+     44.5,
+     85.0
+    ],
+    "latency_s_all": [
+     37.0,
+     218.0,
+     85.0,
+     80.0,
+     79.0,
+     80.0,
+     85.0,
+     243.0,
+     80.0,
+     47.0,
+     51.0,
+     33.0,
+     290.0,
+     42.0,
+     47.0,
+     31.0,
+     59.0,
+     133.0,
+     49.0,
+     57.0,
+     40.0,
+     64.0,
+     48.0,
+     39.0,
+     64.0,
+     54.0,
+     41.0,
+     90.0,
+     86.0,
+     573.0,
+     39.0
+    ]
+   },
+   "window": {
+    "windows": 14225974,
+    "positive_windows": 2306,
+    "confusion_matrix": {
+     "tn": 14223357,
+     "fp": 311,
+     "fn": 1742,
+     "tp": 564
+    },
+    "accuracy_not_meaningful_under_imbalance": 0.9998556865069484,
+    "precision": 0.6445714285714286,
+    "recall_sensitivity": 0.2445793581960104,
+    "specificity": 0.9999781350352104,
+    "f1": 0.3546054699779943,
+    "roc_auc": 0.8787823466048095,
+    "pr_auc": 0.2653675430026651
+   }
+  },
+  "A_hgb_emg_only@W5": {
+   "candidate": "A_hgb_emg_only",
+   "window_s": 5,
+   "k": 3,
+   "threshold": 0.9803017950893237,
+   "sensitivity": 0.90625,
+   "far_per_24h": 0.5188295550902671,
+   "latency_s_median": 73.0,
+   "met_far_cap": true,
+   "selectable": false,
+   "event": {
+    "events": 32,
+    "detected": 29,
+    "event_sensitivity": 0.90625,
+    "event_sensitivity_95ci": [
+     0.7497730493162054,
+     0.9802328198267152
+    ],
+    "false_alarms": 174,
+    "evaluated_hours": 8048.89,
+    "far_per_24h": 0.5188295550902671,
+    "far_per_24h_95ci": [
+     0.44460139039970337,
+     0.6019068848373028
+    ],
+    "alarms_near_out_of_scope_seizures": 1,
+    "alarms_during_impedance_checks": 7,
+    "latency_s_median": 73.0,
+    "latency_s_iqr": [
+     50.0,
+     97.0
+    ],
+    "latency_s_all": [
+     25.0,
+     242.0,
+     85.0,
+     76.0,
+     73.0,
+     82.0,
+     97.0,
+     237.0,
+     92.0,
+     43.0,
+     49.0,
+     298.0,
+     50.0,
+     67.0,
+     51.0,
+     73.0,
+     175.0,
+     53.0,
+     50.0,
+     74.0,
+     70.0,
+     47.0,
+     46.0,
+     62.0,
+     41.0,
+     118.0,
+     134.0,
+     573.0,
+     61.0
+    ]
+   },
+   "window": {
+    "windows": 14225974,
+    "positive_windows": 2306,
+    "confusion_matrix": {
+     "tn": 14222437,
+     "fp": 1231,
+     "fn": 2044,
+     "tp": 262
+    },
+    "accuracy_not_meaningful_under_imbalance": 0.999769787291893,
+    "precision": 0.17548559946416611,
+    "recall_sensitivity": 0.11361665221162186,
+    "specificity": 0.9999134541104305,
+    "f1": 0.13793103448275862,
+    "roc_auc": 0.75510538296683,
+    "pr_auc": 0.10175836435935065
+   }
+  },
+  "A_hgb_imu_only@W5": {
+   "candidate": "A_hgb_imu_only",
+   "window_s": 5,
+   "k": 5,
+   "threshold": 0.9832146405263741,
+   "sensitivity": 0.96875,
+   "far_per_24h": 0.7573718792697004,
+   "latency_s_median": 54.0,
+   "met_far_cap": true,
+   "selectable": false,
+   "event": {
+    "events": 32,
+    "detected": 31,
+    "event_sensitivity": 0.96875,
+    "event_sensitivity_95ci": [
+     0.8378290058184884,
+     0.9992091314020475
+    ],
+    "false_alarms": 254,
+    "evaluated_hours": 8048.89,
+    "far_per_24h": 0.7573718792697004,
+    "far_per_24h_95ci": [
+     0.6670865316112315,
+     0.8564690406903626
+    ],
+    "alarms_near_out_of_scope_seizures": 15,
+    "alarms_during_impedance_checks": 1,
+    "latency_s_median": 54.0,
+    "latency_s_iqr": [
+     44.5,
+     81.5
+    ],
+    "latency_s_all": [
+     37.0,
+     218.0,
+     85.0,
+     94.0,
+     77.0,
+     78.0,
+     85.0,
+     243.0,
+     78.0,
+     49.0,
+     49.0,
+     33.0,
+     292.0,
+     42.0,
+     47.0,
+     31.0,
+     57.0,
+     113.0,
+     43.0,
+     51.0,
+     46.0,
+     60.0,
+     48.0,
+     39.0,
+     46.0,
+     54.0,
+     41.0,
+     68.0,
+     76.0,
+     555.0,
+     37.0
+    ]
+   },
+   "window": {
+    "windows": 14225974,
+    "positive_windows": 2306,
+    "confusion_matrix": {
+     "tn": 14221466,
+     "fp": 2202,
+     "fn": 1743,
+     "tp": 563
+    },
+    "accuracy_not_meaningful_under_imbalance": 0.9997226903409214,
+    "precision": 0.20361663652802894,
+    "recall_sensitivity": 0.24414570685169124,
+    "specificity": 0.9998451876126467,
+    "f1": 0.22204693354367974,
+    "roc_auc": 0.8925494680890772,
+    "pr_auc": 0.18554527973573814
+   }
+  },
+  "M0_rule_emg_and_acc@W10": {
+   "candidate": "M0_rule_emg_and_acc",
+   "window_s": 10,
+   "k": 5,
+   "threshold": 3.005415169167851,
+   "sensitivity": 0.4375,
+   "far_per_24h": 0.8917969839023897,
+   "latency_s_median": 66.5,
+   "met_far_cap": true,
+   "selectable": true,
+   "event": {
+    "events": 32,
+    "detected": 14,
+    "event_sensitivity": 0.4375,
+    "event_sensitivity_95ci": [
+     0.2636381244109847,
+     0.6233742684099061
+    ],
+    "false_alarms": 299,
+    "evaluated_hours": 8046.67,
+    "far_per_24h": 0.8917969839023897,
+    "far_per_24h_95ci": [
+     0.7935678353951598,
+     0.998826270664642
+    ],
+    "alarms_near_out_of_scope_seizures": 17,
+    "alarms_during_impedance_checks": 3,
+    "latency_s_median": 66.5,
+    "latency_s_iqr": [
+     59.75,
+     151.75
+    ],
+    "latency_s_all": [
+     239.0,
+     260.0,
+     83.0,
+     62.0,
+     46.0,
+     299.0,
+     65.0,
+     64.0,
+     168.0,
+     56.0,
+     59.0,
+     37.0,
+     103.0,
+     68.0
+    ]
+   },
+   "window": {
+    "windows": 14251328,
+    "positive_windows": 2328,
+    "confusion_matrix": {
+     "tn": 14247527,
+     "fp": 1473,
+     "fn": 2173,
+     "tp": 155
+    },
+    "accuracy_not_meaningful_under_imbalance": 0.9997441641929791,
+    "precision": 0.0952088452088452,
+    "recall_sensitivity": 0.0665807560137457,
+    "specificity": 0.999896624324514,
+    "f1": 0.07836198179979778,
+    "roc_auc": 0.7987127445821844,
+    "pr_auc": 0.016446481106683265
+   }
+  },
+  "M1_logreg@W10": {
+   "candidate": "M1_logreg",
+   "window_s": 10,
+   "k": 5,
+   "threshold": 0.9969184115584067,
+   "sensitivity": 0.3125,
+   "far_per_24h": 0.9633793505032503,
+   "latency_s_median": 74.0,
+   "met_far_cap": true,
+   "selectable": true,
+   "event": {
+    "events": 32,
+    "detected": 10,
+    "event_sensitivity": 0.3125,
+    "event_sensitivity_95ci": [
+     0.16118472408820053,
+     0.5000775816321696
+    ],
+    "false_alarms": 323,
+    "evaluated_hours": 8046.67,
+    "far_per_24h": 0.9633793505032503,
+    "far_per_24h_95ci": [
+     0.8611705815138722,
+     1.074381967486206
+    ],
+    "alarms_near_out_of_scope_seizures": 3,
+    "alarms_during_impedance_checks": 1,
+    "latency_s_median": 74.0,
+    "latency_s_iqr": [
+     56.25,
+     97.75
+    ],
+    "latency_s_all": [
+     227.0,
+     104.0,
+     40.0,
+     42.0,
+     56.0,
+     75.0,
+     57.0,
+     73.0,
+     79.0,
+     560.0
+    ]
+   },
+   "window": {
+    "windows": 14251328,
+    "positive_windows": 2328,
+    "confusion_matrix": {
+     "tn": 14245776,
+     "fp": 3224,
+     "fn": 2245,
+     "tp": 83
+    },
+    "accuracy_not_meaningful_under_imbalance": 0.9996162462894687,
+    "precision": 0.02509827638342909,
+    "recall_sensitivity": 0.03565292096219931,
+    "specificity": 0.9997737385079655,
+    "f1": 0.02945874001774623,
+    "roc_auc": 0.8935228349659312,
+    "pr_auc": 0.014234545161394283
+   }
+  },
+  "M2_hgb_100x15@W10": {
+   "candidate": "M2_hgb_100x15",
+   "window_s": 10,
+   "k": 5,
+   "threshold": 0.9844633394329387,
+   "sensitivity": 0.9375,
+   "far_per_24h": 0.5279199536813477,
+   "latency_s_median": 62.0,
+   "met_far_cap": true,
+   "selectable": true,
+   "event": {
+    "events": 32,
+    "detected": 30,
+    "event_sensitivity": 0.9375,
+    "event_sensitivity_95ci": [
+     0.7919305701049926,
+     0.9923392636535436
+    ],
+    "false_alarms": 177,
+    "evaluated_hours": 8046.67,
+    "far_per_24h": 0.5279199536813477,
+    "far_per_24h_95ci": [
+     0.45300916616047093,
+     0.6116804973747576
+    ],
+    "alarms_near_out_of_scope_seizures": 13,
+    "alarms_during_impedance_checks": 1,
+    "latency_s_median": 62.0,
+    "latency_s_iqr": [
+     48.75,
+     87.5
+    ],
+    "latency_s_all": [
+     56.0,
+     221.0,
+     88.0,
+     91.0,
+     82.0,
+     83.0,
+     86.0,
+     248.0,
+     81.0,
+     40.0,
+     60.0,
+     38.0,
+     293.0,
+     43.0,
+     52.0,
+     34.0,
+     62.0,
+     122.0,
+     48.0,
+     62.0,
+     51.0,
+     63.0,
+     51.0,
+     42.0,
+     59.0,
+     46.0,
+     41.0,
+     89.0,
+     576.0,
+     62.0
+    ]
+   },
+   "window": {
+    "windows": 14251328,
+    "positive_windows": 2328,
+    "confusion_matrix": {
+     "tn": 14247955,
+     "fp": 1045,
+     "fn": 1838,
+     "tp": 490
+    },
+    "accuracy_not_meaningful_under_imbalance": 0.9997977030631812,
+    "precision": 0.31921824104234525,
+    "recall_sensitivity": 0.2104810996563574,
+    "specificity": 0.9999266615201067,
+    "f1": 0.2536888428682371,
+    "roc_auc": 0.8927625386052291,
+    "pr_auc": 0.15468631436683192
+   }
+  },
+  "M2_hgb_300x15@W10": {
+   "candidate": "M2_hgb_300x15",
+   "window_s": 10,
+   "k": 5,
+   "threshold": 0.9905754221953667,
+   "sensitivity": 0.96875,
+   "far_per_24h": 0.2386078886695357,
+   "latency_s_median": 63.0,
+   "met_far_cap": true,
+   "selectable": true,
+   "event": {
+    "events": 32,
+    "detected": 31,
+    "event_sensitivity": 0.96875,
+    "event_sensitivity_95ci": [
+     0.8378290058184884,
+     0.9992091314020475
+    ],
+    "false_alarms": 80,
+    "evaluated_hours": 8046.67,
+    "far_per_24h": 0.2386078886695357,
+    "far_per_24h_95ci": [
+     0.18920121606695356,
+     0.29696817184748214
+    ],
+    "alarms_near_out_of_scope_seizures": 8,
+    "alarms_during_impedance_checks": 1,
+    "latency_s_median": 63.0,
+    "latency_s_iqr": [
+     50.0,
+     87.5
+    ],
+    "latency_s_all": [
+     40.0,
+     219.0,
+     88.0,
+     87.0,
+     80.0,
+     83.0,
+     86.0,
+     248.0,
+     81.0,
+     52.0,
+     56.0,
+     36.0,
+     293.0,
+     45.0,
+     50.0,
+     34.0,
+     74.0,
+     130.0,
+     50.0,
+     58.0,
+     45.0,
+     63.0,
+     51.0,
+     42.0,
+     67.0,
+     59.0,
+     46.0,
+     91.0,
+     91.0,
+     574.0,
+     58.0
+    ]
+   },
+   "window": {
+    "windows": 14251328,
+    "positive_windows": 2328,
+    "confusion_matrix": {
+     "tn": 14248621,
+     "fp": 379,
+     "fn": 1777,
+     "tp": 551
+    },
+    "accuracy_not_meaningful_under_imbalance": 0.9998487158530068,
+    "precision": 0.5924731182795699,
+    "recall_sensitivity": 0.23668384879725085,
+    "specificity": 0.9999734016422205,
+    "f1": 0.338244321669736,
+    "roc_auc": 0.8880653005823764,
+    "pr_auc": 0.2504418169835224
+   }
+  },
+  "A_hgb_emg_only@W10": {
+   "candidate": "A_hgb_emg_only",
+   "window_s": 10,
+   "k": 3,
+   "threshold": 0.9783569630511704,
+   "sensitivity": 0.9375,
+   "far_per_24h": 0.8440754061684825,
+   "latency_s_median": 75.5,
+   "met_far_cap": true,
+   "selectable": false,
+   "event": {
+    "events": 32,
+    "detected": 30,
+    "event_sensitivity": 0.9375,
+    "event_sensitivity_95ci": [
+     0.7919305701049926,
+     0.9923392636535436
+    ],
+    "false_alarms": 283,
+    "evaluated_hours": 8046.67,
+    "far_per_24h": 0.8440754061684825,
+    "far_per_24h_95ci": [
+     0.7485887917692376,
+     0.9483667868854715
+    ],
+    "alarms_near_out_of_scope_seizures": 4,
+    "alarms_during_impedance_checks": 16,
+    "latency_s_median": 75.5,
+    "latency_s_iqr": [
+     49.0,
+     92.75
+    ],
+    "latency_s_all": [
+     30.0,
+     227.0,
+     86.0,
+     79.0,
+     78.0,
+     81.0,
+     82.0,
+     236.0,
+     105.0,
+     46.0,
+     36.0,
+     295.0,
+     49.0,
+     72.0,
+     52.0,
+     74.0,
+     180.0,
+     84.0,
+     58.0,
+     49.0,
+     77.0,
+     63.0,
+     40.0,
+     47.0,
+     49.0,
+     28.0,
+     95.0,
+     99.0,
+     574.0,
+     56.0
+    ]
+   },
+   "window": {
+    "windows": 14251328,
+    "positive_windows": 2328,
+    "confusion_matrix": {
+     "tn": 14246805,
+     "fp": 2195,
+     "fn": 1970,
+     "tp": 358
+    },
+    "accuracy_not_meaningful_under_imbalance": 0.9997077465342177,
+    "precision": 0.14022718370544457,
+    "recall_sensitivity": 0.15378006872852235,
+    "specificity": 0.9998459541020422,
+    "f1": 0.14669125179266543,
+    "roc_auc": 0.7765263244493675,
+    "pr_auc": 0.09718711431348942
+   }
+  },
+  "A_hgb_imu_only@W10": {
+   "candidate": "A_hgb_imu_only",
+   "window_s": 10,
+   "k": 5,
+   "threshold": 0.9852242002144165,
+   "sensitivity": 0.96875,
+   "far_per_24h": 0.8231972159098981,
+   "latency_s_median": 57.0,
+   "met_far_cap": true,
+   "selectable": false,
+   "event": {
+    "events": 32,
+    "detected": 31,
+    "event_sensitivity": 0.96875,
+    "event_sensitivity_95ci": [
+     0.8378290058184884,
+     0.9992091314020475
+    ],
+    "false_alarms": 276,
+    "evaluated_hours": 8046.67,
+    "far_per_24h": 0.8231972159098981,
+    "far_per_24h_95ci": [
+     0.7289348176571512,
+     0.9262665298277166
+    ],
+    "alarms_near_out_of_scope_seizures": 19,
+    "alarms_during_impedance_checks": 1,
+    "latency_s_median": 57.0,
+    "latency_s_iqr": [
+     46.5,
+     82.0
+    ],
+    "latency_s_all": [
+     54.0,
+     217.0,
+     88.0,
+     83.0,
+     76.0,
+     81.0,
+     86.0,
+     244.0,
+     81.0,
+     52.0,
+     44.0,
+     36.0,
+     291.0,
+     43.0,
+     50.0,
+     34.0,
+     58.0,
+     110.0,
+     46.0,
+     54.0,
+     47.0,
+     61.0,
+     51.0,
+     42.0,
+     51.0,
+     57.0,
+     42.0,
+     73.0,
+     77.0,
+     558.0,
+     40.0
+    ]
+   },
+   "window": {
+    "windows": 14251328,
+    "positive_windows": 2328,
+    "confusion_matrix": {
+     "tn": 14247050,
+     "fp": 1950,
+     "fn": 1740,
+     "tp": 588
+    },
+    "accuracy_not_meaningful_under_imbalance": 0.9997410767614078,
+    "precision": 0.23167848699763594,
+    "recall_sensitivity": 0.25257731958762886,
+    "specificity": 0.9998631482911081,
+    "f1": 0.24167694204685575,
+    "roc_auc": 0.8988185881163904,
+    "pr_auc": 0.20919551158628977
+   }
+  }
+ },
+ "selected": "M2_hgb_300x15@W5"
+}
