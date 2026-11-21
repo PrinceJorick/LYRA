@@ -13,7 +13,8 @@ from lyra_mlm.evaluation import SEIZEIT2_PLANNED_SPLIT, LeakageError, Participan
 from lyra_mlm.features import feature_names
 from lyra_mlm.prep import PrepConfig, prepare_recording
 from lyra_mlm.preprocess import FilterConfigError, SimulatedEnvConfig, raw_to_simulated_env, simulated_env_filters
-from lyra_mlm.seizeit2 import EMG_LABEL, IMU_LABELS, MissingRecordingData, SeizeIT2Adapter, SeizeIT2Mapper
+from lyra_mlm.seizeit2 import (EMG_LABEL, GYRO_DPS_PER_UNIT, IMU_LABELS, MissingRecordingData, SeizeIT2Adapter,
+                               SeizeIT2Mapper, calibrate_imu)
 from lyra_mlm.signals import DataOrigin, EmgSignalType, Recording
 
 RAW, SIM = EmgSignalType.RAW, EmgSignalType.SIMULATED_ENV_FROM_RAW
@@ -239,6 +240,50 @@ def test_split_manifest_is_disjoint_and_complete():
         split_manifest(inventory + ["sub-200"], {}, SEIZEIT2_PLANNED_SPLIT)
     with pytest.raises(LeakageError):
         ParticipantSplit(frozenset({"sub-001"}), frozenset({"sub-001"}), "synthetic", False)
+
+
+def _mov(path, acc_scale, gyro_amp=0.004, secs=60):
+    """Chest IMU as SeizeIT2 stores it: ACC and GYR share one per-recording scale. SYNTHETIC."""
+    t = np.arange(secs * 25) / 25.0
+    rng = np.random.default_rng(5)
+    acc = np.column_stack([0.3 + 0.01 * np.sin(2 * np.pi * t), np.full(t.size, 0.1), np.full(t.size, -0.95)])
+    acc = acc / np.linalg.norm(acc, axis=1, keepdims=True) * acc_scale + 1e-4 * rng.standard_normal((t.size, 3))
+    gyr = gyro_amp * acc_scale * rng.standard_normal((t.size, 3))
+    write_edf(path, [(lb, "g", 25.0, col) for lb, col in zip(IMU_LABELS, np.column_stack([acc, gyr]).T)])
+
+
+@pytest.mark.parametrize("scale", [0.5, 1 / 6, 1.0])
+def test_imu_is_calibrated_to_g_and_deg_per_s(scale):
+    """Regression (Session 5): SeizeIT2 IMU files use per-recording scales; both ACC and GYR are rescaled."""
+    rng = np.random.default_rng(0)
+    acc = np.tile([0.0, 0.6, 0.8], (500, 1)) * scale
+    gyr = rng.standard_normal((500, 3)) * scale
+    vals, flags, note = calibrate_imu(np.column_stack([acc, gyr]))
+    assert flags is None and "calibrated" in note
+    np.testing.assert_allclose(np.linalg.norm(vals[:, :3], axis=1), 1.0, rtol=1e-9)
+    np.testing.assert_allclose(vals[:, 3:], gyr / scale * GYRO_DPS_PER_UNIT, rtol=1e-9)
+
+
+@pytest.mark.parametrize("scale", [32.768, 0.0, 1.343])
+def test_imu_with_impossible_gravity_is_flagged_invalid(scale):
+    vals = np.column_stack([np.tile([0.0, 0.6, 0.8], (100, 1)) * scale, np.zeros((100, 3))])
+    out, flags, note = calibrate_imu(vals)
+    assert (flags == 2).all() and "rejected" in note and out is vals  # 2 = INVALID, values untouched
+
+
+def test_adapter_calibrates_imu_and_prep_suppresses_uncalibratable_imu(tmp_path):
+    good = bids(tmp_path, "sub-001", mov=False)
+    _mov(tmp_path / "sub-001" / "ses-01" / "mov" / f"{good}_mov.edf", acc_scale=1 / 6)
+    rec = SeizeIT2Adapter(tmp_path).load_recording(good)
+    assert abs(np.median(np.linalg.norm(rec.imu.values[:, :3], axis=1)) - 1.0) < 0.01
+    assert "gravity -> g" in rec.imu.provenance[-1] and rec.imu.units[0].startswith("g")
+
+    pinned = bids(tmp_path, "sub-002", mov=False)
+    _mov(tmp_path / "sub-002" / "ses-01" / "mov" / f"{pinned}_mov.edf", acc_scale=32.768)
+    rec = SeizeIT2Adapter(tmp_path).load_recording(pinned)
+    assert not rec.imu.usable.any() and "IMU rejected" in rec.imu.provenance[-1]
+    out = prepare_recording(rec, PrepConfig())
+    assert (out["imu_state"] != 0).all() and not out["primary_available"].all(axis=1).any()
 
 
 def test_malformed_annotation_rows(tmp_path):

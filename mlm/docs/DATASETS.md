@@ -85,8 +85,16 @@ such recordings.
 2. **Bandwidth:** 256 Hz covers only up to 128 Hz, so RAW spectral features use 20–128 Hz.
 3. **IMU placement:** the left chest (ECGEMG module) is used, tagged `imu_placement=chest_upper_back`.
    LYRA's IMU is on the upper arm.
-4. **IMU units:** the EDF labels ACC and GYR as "g". The resting |acc| is about 0.5 (checked on
-   sub-001 run-01), and the gyro unit is unverified. Units are kept as given, with no conversion.
+4. **IMU units (corrected in Session 5):** the EDF labels ACC and GYR as "g", but each recording uses
+   its own storage scale. Median |acc| (gravity) over 2,487 EMG+MOV recordings: ~1/2 in 245, ~1/6 in
+   1,837, pinned at 32.768 in 347, other impossible values (0, ~1.34, 16, 22) in 58. GYR carries the
+   same per-recording factor: after dividing by it, a rigid-body fit (du/dt = -w x u) gives the
+   identity axis map in 24/24 recordings and 125 deg/s per unit (median, IQR 109-136;
+   `models/seizeit2/evaluation/gyro_calibration.json`). `seizeit2.calibrate_imu` therefore divides
+   ACC and GYR by the recording's median |acc| (ACC -> g), converts GYR to deg/s, and flags every IMU
+   sample INVALID when the gravity estimate is outside `ACC_SCALE_VALID = (0.12, 1.2)`. The Stage 3
+   windows prepared before this fix mixed three scales in `imu_acc_*`, `imu_gyr_*` and
+   `xmod_energy_log_ratio`, and rated pinned channels VALID: regenerate `processed/` before training.
 5. **Timing:** EMG and MOV EDF start times are anonymised differently, so both are assumed to start
    at t = 0, the reference for `events.tsv` onsets.
 6. **Scope:** an in-hospital focal-epilepsy cohort. FBTCS windows are not GTCS evidence and not
