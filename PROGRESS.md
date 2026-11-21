@@ -110,7 +110,6 @@ No model trained (`.fit()` never called; a test greps for it). No dataset downlo
 ```bash
 cd mlm && .venv/bin/python -m pytest -q
 ```
-<<<<<<< HEAD
 
 ## Session 3 (2026-11-21): Stage 3, dataset preparation (complete)
 
@@ -137,5 +136,3 @@ cd mlm && .venv/bin/python -m pytest -q
 
 ### Next
 Stage 4 needs explicit authorization. See `mlm/docs/TRAINING_PLAN.md`. `mlm/data/processed_superseded/` (384 MB) can be deleted.
-=======
->>>>>>> 414a2140836e55fed760a18fff6c49fe2bc0082d

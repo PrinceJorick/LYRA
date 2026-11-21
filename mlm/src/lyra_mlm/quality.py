@@ -113,7 +113,6 @@ def assess_modality(stream: SignalStream | None, modality: Modality, start_s: fl
     return result(QualityState.DEGRADED if degraded else QualityState.VALID, degraded, coverage)
 
 
-<<<<<<< HEAD
 QUALITY_RANK = {s: i for i, s in enumerate(reversed(_WORST_FIRST))}  # VALID=0 .. UNSYNCHRONIZED=4
 
 
@@ -128,8 +127,6 @@ def inherit_source_quality(derived: ModalityQuality, source: ModalityQuality) ->
                            min(derived.coverage, source.coverage))
 
 
-=======
->>>>>>> 414a2140836e55fed760a18fff6c49fe2bc0082d
 @dataclass(frozen=True)
 class WindowQuality:
     per_modality: Mapping[Modality, ModalityQuality]
