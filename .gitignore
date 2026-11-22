@@ -49,3 +49,4 @@ __pycache__/
 
 # datasets and model artifacts never go in git
 mlm/data/
+mlm/models/
