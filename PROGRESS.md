@@ -224,14 +224,28 @@ cd mlm && .venv/bin/python -m pytest -q
   - ESP32-S3 Flash/RAM not measured, because the xtensa toolchain is unavailable. The host arm64 proxy
     is about 360 KB of code per model, with no RAM data.
 
+### After the push (same session)
+- `mlm/export/` is gitignored: regenerate it with `scripts/export_c99.py` from the frozen models.
+  `mlm/data/processed_pre35/` and `processed_superseded/` were deleted (2.3 GB).
+- **Item 3 started: C99 port for the pod** (`mlm/c99/`, `tests/test_c99_port.py`).
+  - `lyra_features.c/.h`: all 22 features in training order, mirroring scipy's periodogram/Welch
+    defaults, using a plain DFT and static buffers (no malloc).
+  - `lyra_confirm.c/.h`: `EventConfirmation` with the locked policies.
+  - Parity on 116 synthetic windows cut by the real `segment()`: max absolute difference 2.8e-13, with
+    peak frequencies and lag identical. NaN patterns match on edge cases (flat envelope, still IMU,
+    no IMU). Alerts are identical to the Python reference on 10 random sequences.
+  - Host arm64 size: features about 11 KB of code + 22.6 KB of static RAM; confirmation about 0.5 KB.
+  - Precondition: gap-free windows whose quality gate passed.
+  - Not ported yet: the quality gate (`assess_modality`: coverage, flatline, saturation) and the
+    window buffering. Without those, the pod can't decide VALID / DEGRADED / SUPPRESSED by itself.
+
 ### State at end of session
 - `main` has `9584404` (Stage 3.5) and `1de1b13` (Stage 4 code), plus the results-docs commit. None
   of these are pushed.
-- `mlm/models/` is gitignored. `mlm/export/c99/` is untracked: decide whether to commit the generated C.
-- `mlm/data/processed_pre35/` (Stage 3.5 baseline) and `processed_superseded/` can be deleted.
+- `mlm/models/` and `mlm/export/` are gitignored.
 
 ### Next
-1. Push. Decide on committing `mlm/export/c99/`.
+1. Port the quality gate (`assess_modality`) to C99, then a single `lyra_step()` that chains window → quality → features → RF → confirmation.
 2. Install the ESP-IDF / xtensa toolchain (or allow the download) to measure ESP32-S3 Flash/RAM.
    Then an on-device benchmark and Python-vs-C parity on hardware.
 3. Port feature extraction to C99, in `feature_names` order.

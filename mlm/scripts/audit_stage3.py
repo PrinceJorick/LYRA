@@ -8,7 +8,7 @@ and availability are read for held-out participants; the raw-scale check uses Tr
 Stage 3.5: with --baseline (the pre-remediation processed folder) every non-IMU array must be
 bit-identical; rejected IMU must never be usable; accepted IMU is re-loaded and its converted
 resting |g| must lie in [0.93, 1.08] g (held-out: pass/fail counts only).
-Usage: python scripts/audit_stage3.py [--data mlm/data] [--baseline mlm/data/processed_pre35]
+Usage: python scripts/audit_stage3.py [--data mlm/data] [--baseline <pre-remediation processed folder>]
 """
 
 import argparse
