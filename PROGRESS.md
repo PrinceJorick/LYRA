@@ -236,8 +236,18 @@ cd mlm && .venv/bin/python -m pytest -q
     no IMU). Alerts are identical to the Python reference on 10 random sequences.
   - Host arm64 size: features about 11 KB of code + 22.6 KB of static RAM; confirmation about 0.5 KB.
   - Precondition: gap-free windows whose quality gate passed.
-  - Not ported yet: the quality gate (`assess_modality`: coverage, flatline, saturation) and the
-    window buffering. Without those, the pod can't decide VALID / DEGRADED / SUPPRESSED by itself.
+  - Quality gate (`lyra_quality.c/.h`, `tests/test_c99_quality.py`):
+    - `lyra_assess` is `assess_modality` with `check_timestamps`, and uses the same state codes as
+      the window files. `lyra_combine` is `combine`, where the caller passes the clock check, because
+      Python's `check_sync` is recording-level.
+    - `lyra_route_window` picks multimodal, SIMULATED_ENV fallback or SUPPRESSED, as in
+      `training.track_status` / `fallback_status`.
+    - Parity on 59 synthetic windows with injected dropouts, outages, inf samples, flat channels, a
+      gap, jitter, a duplicate timestamp and light/heavy saturation: every state matches, coverage
+      matches to 1e-12, and all three routes are exercised.
+    - Host size: about 4.5 KB of code, no static RAM.
+  - Not ported yet: window buffering, and one `lyra_step()` chaining window → quality → features →
+    RF → confirmation.
 
 ### State at end of session
 - `main` has `9584404` (Stage 3.5) and `1de1b13` (Stage 4 code), plus the results-docs commit. None
@@ -245,7 +255,7 @@ cd mlm && .venv/bin/python -m pytest -q
 - `mlm/models/` and `mlm/export/` are gitignored.
 
 ### Next
-1. Port the quality gate (`assess_modality`) to C99, then a single `lyra_step()` that chains window → quality → features → RF → confirmation.
+1. Add `lyra_step()`: window → quality → features → RF (generated `lyra_*_rf_predict`) → confirmation, with the frozen operating point. Firmware supplies the window buffers and a clock check.
 2. Install the ESP-IDF / xtensa toolchain (or allow the download) to measure ESP32-S3 Flash/RAM.
    Then an on-device benchmark and Python-vs-C parity on hardware.
 3. Port feature extraction to C99, in `feature_names` order.

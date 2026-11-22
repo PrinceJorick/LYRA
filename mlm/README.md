@@ -43,7 +43,8 @@ mlm/
     evaluate_heldout.py   the single held-out evaluation (refuses a second run)
     export_c99.py         frozen random forests -> export/c99/ (m2cgen)
   c99/                    hand-written C99 port for the pod: lyra_features (22 features, training order),
-                          lyra_confirm (event confirmation); parity tested against Python
+                          lyra_quality (quality gate + routing), lyra_confirm (event confirmation);
+                          parity tested against Python
   export/c99/             generated random-forest C (scripts/export_c99.py; gitignored)
   tests/                  pytest suites on SYNTHETIC fixtures only (+ test-only StubScorePredictor)
   docs/                   ARCHITECTURE, DATASETS, TRAINING_PLAN, BLE_PROTOCOL
