@@ -32,11 +32,16 @@ src/components/  Reusable UI + brand graphics (logo from assets/lyra-mark.png, a
 ml/seizeit2/     Reproducible SeizeIT2 training pipeline (Python); dataset stays in pj-training-data/
 models/seizeit2/ Trained model (C99 header for the pod), inference config, metrics, model card
 mlm/             lyra_mlm: multimodal ML foundation (contracts, quality, features, Stage 3 prep)
+ml/lyra/         ENV-path (D12) pipeline: SeizeIT2 extraction, benchmark, C99 export, final evaluation
+firmware/model/  ESP32-S3 detector package (C99 features, model, event state machine, golden tests)
+reports/lyra/    Pipeline report, manifests, ablation and resource measurements
 ```
 
 [`mlm/`](mlm/README.md) (`lyra_mlm`) prepares the data: quality states, simulated MyoWare ENV,
 features, labels and event confirmation. `ml/seizeit2/` trains and exports a model on its Stage 3
-windows into `models/seizeit2/`. The merge status of the two pipelines is in
+windows into `models/seizeit2/`. `ml/lyra/` is the pipeline for the pod itself: it trains on the simulated MyoWare
+ENV signal at 50 Hz (D12) and exports a measured C99 package to `firmware/model/`. Results and limits are in
+[`reports/lyra/lyra_report.md`](reports/lyra/lyra_report.md). The merge status of the two pipelines is in
 [`docs/MLM_MERGE_GUIDE.md`](docs/MLM_MERGE_GUIDE.md).
 
 To integrate real parts, replace the exports in `services/device/index.ts` (BLE) and
