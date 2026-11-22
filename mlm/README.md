@@ -1,9 +1,10 @@
-# lyra-mlm: LYRA multimodal ML foundation (Stage 3: dataset preparation)
+# lyra-mlm: LYRA multimodal ML foundation (Stage 4: trained research models)
 
-> **Status: Stage 3 (dataset preparation).** SeizeIT2's wearable subset is downloaded to the gitignored
-> `mlm/data/` and processed into labelled feature windows. **No model has been trained, no normalization
-> has been fitted, and no detection performance exists or is claimed.** LYRA is an experimental, unvalidated
-> research prototype, not a diagnostic, predictive or preventive medical device.
+> **Status: Stage 4 (2026-11-22).** SeizeIT2 windows were prepared (Stage 3) and IMU-scale-remediated
+> (Stage 3.5). Random forests were trained on Train/CV, evaluated once on held-out participants, and
+> exported to C99 (results: docs/TRAINING_PLAN.md §7). These are research estimates on an in-hospital
+> cohort, not clinical validation. LYRA is an experimental, unvalidated research prototype, not a
+> diagnostic, predictive or preventive medical device.
 
 Python package for LYRA's sEMG (MyoWare 2.0) + 6-axis IMU (BMI270) pipeline. It defines the data
 contracts and deterministic signal operations that the future training session and the ESP32-S3 C99
@@ -33,9 +34,22 @@ mlm/
     edf.py                minimal EDF/EDF+ reader (rates, units, scaling from each header)
     seizeit2.py           SeizeIT2 BIDS adapter and label mapper
     prep.py               Stage 3 per-recording preparation (simulated ENV, windows, labels, features)
+    training.py           Stage 4 tracks, negative subsampling, models, offline confirmation, event metrics
+    pod.py                LYRA pod session format (schema v1), adapter, integrity checks
+    domain.py             domain-shift report: pod vs SeizeIT2 Train/CV features, MyoWare ENV vs simulated ENV
   scripts/
     download_seizeit2.py  resumable, size-checked download of the wearable subset
     prepare_seizeit2.py   inventory, checksums, window files, split manifest -> data/processed/
+    audit_stage3.py       re-derives labels/grid, checks quality and the Stage 3.5 IMU rule
+    train_stage4.py       participant-grouped CV, selection, frozen models -> models/ (gitignored)
+    evaluate_heldout.py   the single held-out evaluation (refuses a second run)
+    export_c99.py         frozen random forests -> export/c99/ (m2cgen, one function per tree)
+    size_esp32s3.py       ESP32-S3 Flash/RAM of the pod C code (xtensa GCC)
+    pod_report.py         integrity check + domain-shift report per pod session -> data/pod_reports/
+  c99/                    hand-written C99 port for the pod: lyra_features (22 features, training order),
+                          lyra_quality (quality gate + routing), lyra_confirm (event confirmation),
+                          lyra_pipeline (lyra_step: one call per window); parity tested against Python
+  export/c99/             generated random-forest C (scripts/export_c99.py; gitignored)
   tests/                  pytest suites on SYNTHETIC fixtures only (+ test-only StubScorePredictor)
   docs/                   ARCHITECTURE, DATASETS, TRAINING_PLAN, BLE_PROTOCOL
 ```
@@ -45,7 +59,7 @@ mlm/
 ```bash
 cd mlm
 uv venv --python 3.12 .venv          # or: python3.11 -m venv .venv
-uv pip install --python .venv/bin/python -e ".[dev]"
+uv sync --extra dev --extra train     # xgboost on macOS also needs: brew install libomp
 .venv/bin/python -m pytest -q
 ```
 
@@ -67,3 +81,4 @@ Never commit anything under `data/`.
 - [docs/DATASETS.md](docs/DATASETS.md): source registry, LYRA vs dataset differences, integration procedure
 - [docs/TRAINING_PLAN.md](docs/TRAINING_PLAN.md): how the separate training session should begin
 - [docs/BLE_PROTOCOL.md](docs/BLE_PROTOCOL.md): draft pod ↔ phone payloads
+- [docs/POD_DATA_PROTOCOL.md](docs/POD_DATA_PROTOCOL.md): pod data-collection protocol, session format, decision gates

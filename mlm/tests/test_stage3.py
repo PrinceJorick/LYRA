@@ -276,12 +276,12 @@ def test_adapter_calibrates_imu_and_prep_suppresses_uncalibratable_imu(tmp_path)
     _mov(tmp_path / "sub-001" / "ses-01" / "mov" / f"{good}_mov.edf", acc_scale=1 / 6)
     rec = SeizeIT2Adapter(tmp_path).load_recording(good)
     assert abs(np.median(np.linalg.norm(rec.imu.values[:, :3], axis=1)) - 1.0) < 0.01
-    assert "gravity -> g" in rec.imu.provenance[-1] and rec.imu.units[0].startswith("g")
+    assert "Stage 3.5 IMU scale" in rec.imu.provenance[-1] and rec.imu.units[0] == "g"  # adapter uses D19
 
     pinned = bids(tmp_path, "sub-002", mov=False)
     _mov(tmp_path / "sub-002" / "ses-01" / "mov" / f"{pinned}_mov.edf", acc_scale=32.768)
     rec = SeizeIT2Adapter(tmp_path).load_recording(pinned)
-    assert not rec.imu.usable.any() and "IMU rejected" in rec.imu.provenance[-1]
+    assert "IMU rejected" in rec.imu.untrusted  # D19: the stream is rejected, quality rates it INVALID
     out = prepare_recording(rec, PrepConfig())
     assert (out["imu_state"] != 0).all() and not out["primary_available"].all(axis=1).any()
 

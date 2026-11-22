@@ -49,6 +49,9 @@ __pycache__/
 
 # datasets and model artifacts never go in git
 mlm/data/
+mlm/models/
+# generated C (scripts/export_c99.py); regenerate from the frozen models
+mlm/export/
 
 # Local training datasets (SeizeIT2 / prototype recordings)
 pj-training-data/
