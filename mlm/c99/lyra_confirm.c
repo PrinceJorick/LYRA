@@ -53,3 +53,10 @@ int lyra_confirm_update(lyra_confirm *c, double ts, double score, lyra_status st
     c->state = LYRA_IDLE;
     return 0;
 }
+
+void lyra_confirm_reset(lyra_confirm *c) {
+    c->count = 0;
+    c->has_evidence = 0;
+    c->refractory_until = -1e300;
+    c->state = LYRA_IDLE;
+}

@@ -37,4 +37,8 @@ int lyra_confirm_init(lyra_confirm *c, const lyra_confirm_cfg *cfg);
  * prediction is rejected (out-of-order or duplicate timestamp; state unchanged). */
 int lyra_confirm_update(lyra_confirm *c, double ts, double score, lyra_status status);
 
+/* External reset, e.g. the user cancelled on the pod button or the phone (EventConfirmation.reset):
+ * back to IDLE with no run, no evidence history and no cooldown. Timestamp ordering is kept. */
+void lyra_confirm_reset(lyra_confirm *c);
+
 #endif
