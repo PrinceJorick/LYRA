@@ -1,0 +1,7732 @@
+{
+ "selection": {
+  "candidate": "RF_50x8",
+  "entry_threshold": 0.968365,
+  "exit_threshold": 0.768365,
+  "sensitivity": 0.9545454545454546,
+  "far_per_24h": 0.13700512712088403,
+  "latency_s_median": 56.5,
+  "met_far_cap": true,
+  "chosen_on": "pooled out-of-fold scores of the 5 outer folds (all participants)",
+  "fit_windows": 901619,
+  "fit_positive_windows": 2979,
+  "window_metrics_oof": {
+   "windows": 17932140,
+   "positive_windows": 2979,
+   "threshold": 0.968365,
+   "confusion_matrix": {
+    "tn": 17926162,
+    "fp": 2999,
+    "fn": 2219,
+    "tp": 760
+   },
+   "accuracy_not_meaningful_under_imbalance": 0.9997090140942464,
+   "precision": 0.20218143123171056,
+   "recall_sensitivity": 0.25511916750587443,
+   "specificity": 0.9998327306001659,
+   "f1": 0.22558622736717127,
+   "roc_auc": 0.8574410125718371,
+   "pr_auc": 0.15379490282633682
+  }
+ },
+ "cv": {
+  "LR": {
+   "candidate": "LR",
+   "nested_outer": {
+    "fbtcs_events": 51,
+    "evaluable_events": 44,
+    "unevaluable_events": 7,
+    "detected": 27,
+    "event_sensitivity": 0.6136363636363636,
+    "event_sensitivity_95ci": [
+     0.4549553046634418,
+     0.756428357559279
+    ],
+    "event_sensitivity_counting_unevaluable_as_missed": 0.5294117647058824,
+    "false_alarms": 330,
+    "valid_monitored_hours": 9985.03,
+    "suppressed_hours": 1290.8,
+    "far_per_24h": 0.793187578068274,
+    "far_per_24h_95ci": [
+     0.7099074320925195,
+     0.883553083705972
+    ],
+    "alarms_near_out_of_scope_seizures": 3,
+    "alarms_during_impedance_checks": 1,
+    "latency_s_median": 52.0,
+    "latency_s_iqr": [
+     42.0,
+     96.5
+    ]
+   },
+   "per_participant": {
+    "sub-004": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 18.5,
+     "far_per_24h": 0.0
+    },
+    "sub-008": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 114.12,
+     "far_per_24h": 0.8412197686645636
+    },
+    "sub-015": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 88.61,
+     "far_per_24h": 1.0833991648798105
+    },
+    "sub-022": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 9,
+     "monitored_h": 113.12,
+     "far_per_24h": 1.9094766619519095
+    },
+    "sub-028": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 88.37,
+     "far_per_24h": 1.0863415186149146
+    },
+    "sub-029": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 7,
+     "monitored_h": 114.0,
+     "far_per_24h": 1.4736842105263157
+    },
+    "sub-032": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 5,
+     "monitored_h": 88.84,
+     "far_per_24h": 1.3507429085997298
+    },
+    "sub-039": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 91.86,
+     "far_per_24h": 0.5225342913128674
+    },
+    "sub-040": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 53.71,
+     "far_per_24h": 0.0
+    },
+    "sub-041": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 20.98,
+     "far_per_24h": 1.1439466158245948
+    },
+    "sub-043": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 5,
+     "monitored_h": 85.73,
+     "far_per_24h": 1.3997433803802635
+    },
+    "sub-044": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 9,
+     "monitored_h": 99.33,
+     "far_per_24h": 2.1745696164300816
+    },
+    "sub-046": {
+     "events": 2,
+     "detected": 2,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 97.48,
+     "far_per_24h": 0.9848173984407058
+    },
+    "sub-059": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 47.12,
+     "far_per_24h": 0.0
+    },
+    "sub-062": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 67.22,
+     "far_per_24h": 0.0
+    },
+    "sub-072": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 126.05,
+     "far_per_24h": 0.5712019040063467
+    },
+    "sub-077": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 61.6,
+     "far_per_24h": 0.7792207792207791
+    },
+    "sub-083": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 48.16,
+     "far_per_24h": 1.4950166112956813
+    },
+    "sub-087": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-088": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.55,
+     "far_per_24h": 0.0
+    },
+    "sub-094": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 43.55,
+     "far_per_24h": 0.0
+    },
+    "sub-104": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 98.03,
+     "far_per_24h": 0.7344690400897684
+    },
+    "sub-114": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-115": {
+     "events": 5,
+     "detected": 5,
+     "unevaluable": 0,
+     "false_alarms": 9,
+     "monitored_h": 269.43,
+     "far_per_24h": 0.801692461863935
+    },
+    "sub-118": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 122.85,
+     "far_per_24h": 0.3907203907203908
+    },
+    "sub-002": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 99.18,
+     "far_per_24h": 0.9679370840895342
+    },
+    "sub-013": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 14.97,
+     "far_per_24h": 0.0
+    },
+    "sub-014": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 50.76,
+     "far_per_24h": 0.4728132387706856
+    },
+    "sub-016": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 42.31,
+     "far_per_24h": 1.1344835736232568
+    },
+    "sub-017": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 5,
+     "monitored_h": 115.11,
+     "far_per_24h": 1.0424811050299714
+    },
+    "sub-030": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 6,
+     "monitored_h": 117.26,
+     "far_per_24h": 1.2280402524304963
+    },
+    "sub-031": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 6,
+     "monitored_h": 105.47,
+     "far_per_24h": 1.3653171517967193
+    },
+    "sub-034": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 93.91,
+     "far_per_24h": 1.0222553508678522
+    },
+    "sub-045": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 20,
+     "monitored_h": 97.0,
+     "far_per_24h": 4.948453608247423
+    },
+    "sub-053": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 25.79,
+     "far_per_24h": 0.9305932531989143
+    },
+    "sub-054": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 56.84,
+     "far_per_24h": 0.4222378606615059
+    },
+    "sub-058": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 10.17,
+     "far_per_24h": 0.0
+    },
+    "sub-063": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 67.77,
+     "far_per_24h": 0.3541389995573263
+    },
+    "sub-065": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 65.38,
+     "far_per_24h": 1.1012542061792598
+    },
+    "sub-069": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 5,
+     "monitored_h": 193.18,
+     "far_per_24h": 0.6211823170100423
+    },
+    "sub-075": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 200.12,
+     "far_per_24h": 0.47971217269638217
+    },
+    "sub-090": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-095": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 103.57,
+     "far_per_24h": 0.23172733417012653
+    },
+    "sub-099": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 110.26,
+     "far_per_24h": 0.870669327045166
+    },
+    "sub-103": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 89.59,
+     "far_per_24h": 0.5357740819287866
+    },
+    "sub-105": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 109.45,
+     "far_per_24h": 0.6578346276838739
+    },
+    "sub-108": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 20.76,
+     "far_per_24h": 0.0
+    },
+    "sub-110": {
+     "events": 2,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 98.93,
+     "far_per_24h": 0.7277873243707671
+    },
+    "sub-116": {
+     "events": 5,
+     "detected": 2,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 99.86,
+     "far_per_24h": 0.7210094131784498
+    },
+    "sub-122": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 0.58,
+     "far_per_24h": 41.37931034482759
+    },
+    "sub-003": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 8,
+     "monitored_h": 114.91,
+     "far_per_24h": 1.6708728570185363
+    },
+    "sub-006": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 109.54,
+     "far_per_24h": 0.8763921855030126
+    },
+    "sub-007": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 68.46,
+     "far_per_24h": 0.7011393514461
+    },
+    "sub-010": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 102.09,
+     "far_per_24h": 0.0
+    },
+    "sub-012": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 113.89,
+     "far_per_24h": 0.6321889542541048
+    },
+    "sub-018": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 6,
+     "monitored_h": 115.0,
+     "far_per_24h": 1.2521739130434781
+    },
+    "sub-019": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 5,
+     "monitored_h": 120.81,
+     "far_per_24h": 0.9932952570151479
+    },
+    "sub-020": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 8,
+     "monitored_h": 115.49,
+     "far_per_24h": 1.6624816001385403
+    },
+    "sub-023": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 100.21,
+     "far_per_24h": 0.7184911685460533
+    },
+    "sub-048": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-051": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 27.49,
+     "far_per_24h": 1.7460894870862134
+    },
+    "sub-055": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 42.16,
+     "far_per_24h": 1.1385199240986719
+    },
+    "sub-064": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 39.17,
+     "far_per_24h": 0.6127138115905029
+    },
+    "sub-081": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-085": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 50.71,
+     "far_per_24h": 0.4732794320646815
+    },
+    "sub-089": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 6,
+     "monitored_h": 102.37,
+     "far_per_24h": 1.4066621080394648
+    },
+    "sub-100": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 112.3,
+     "far_per_24h": 0.8548530721282279
+    },
+    "sub-102": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 6,
+     "monitored_h": 115.41,
+     "far_per_24h": 1.2477255003899144
+    },
+    "sub-109": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 114.09,
+     "far_per_24h": 0.8414409676571128
+    },
+    "sub-111": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 73.73,
+     "far_per_24h": 0.0
+    },
+    "sub-112": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 66.57,
+     "far_per_24h": 0.3605227579990987
+    },
+    "sub-117": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 5,
+     "monitored_h": 88.25,
+     "far_per_24h": 1.3597733711048159
+    },
+    "sub-121": {
+     "events": 3,
+     "detected": 0,
+     "unevaluable": 3,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-123": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 81.65,
+     "far_per_24h": 0.5878750765462339
+    },
+    "sub-125": {
+     "events": 2,
+     "detected": 0,
+     "unevaluable": 2,
+     "false_alarms": 1,
+     "monitored_h": 1.5,
+     "far_per_24h": 16.0
+    },
+    "sub-001": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 106.57,
+     "far_per_24h": 0.0
+    },
+    "sub-009": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 99.43,
+     "far_per_24h": 0.24137584230111633
+    },
+    "sub-021": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 103.42,
+     "far_per_24h": 0.9282537226842003
+    },
+    "sub-024": {
+     "events": 2,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 111.9,
+     "far_per_24h": 0.21447721179624663
+    },
+    "sub-025": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 97.64,
+     "far_per_24h": 0.4916018025399426
+    },
+    "sub-026": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 88.97,
+     "far_per_24h": 0.5395076992244576
+    },
+    "sub-027": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 100.88,
+     "far_per_24h": 0.47581284694686765
+    },
+    "sub-035": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 68.63,
+     "far_per_24h": 0.3497012968089757
+    },
+    "sub-038": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 94.99,
+     "far_per_24h": 0.0
+    },
+    "sub-042": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 45.3,
+     "far_per_24h": 1.0596026490066226
+    },
+    "sub-047": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 68.32,
+     "far_per_24h": 0.702576112412178
+    },
+    "sub-049": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 27.31,
+     "far_per_24h": 0.0
+    },
+    "sub-056": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 62.04,
+     "far_per_24h": 0.0
+    },
+    "sub-057": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 61.11,
+     "far_per_24h": 0.0
+    },
+    "sub-060": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 47.33,
+     "far_per_24h": 0.0
+    },
+    "sub-068": {
+     "events": 2,
+     "detected": 0,
+     "unevaluable": 1,
+     "false_alarms": 0,
+     "monitored_h": 6.78,
+     "far_per_24h": 0.0
+    },
+    "sub-074": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 132.79,
+     "far_per_24h": 0.18073650124256346
+    },
+    "sub-079": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 95.45,
+     "far_per_24h": 0.5028810895756941
+    },
+    "sub-082": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-084": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 15.02,
+     "far_per_24h": 0.0
+    },
+    "sub-086": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.68,
+     "far_per_24h": 0.0
+    },
+    "sub-096": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 80.06,
+     "far_per_24h": 0.2997751686235324
+    },
+    "sub-098": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 1,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-113": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 95.18,
+     "far_per_24h": 0.5043076276528682
+    },
+    "sub-119": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 186.24,
+     "far_per_24h": 0.38659793814432986
+    },
+    "sub-005": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 121.2,
+     "far_per_24h": 0.594059405940594
+    },
+    "sub-011": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 113.26,
+     "far_per_24h": 0.8476072752957795
+    },
+    "sub-033": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 7,
+     "monitored_h": 113.31,
+     "far_per_24h": 1.4826581943341277
+    },
+    "sub-036": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-037": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 21.13,
+     "far_per_24h": 1.135825840037861
+    },
+    "sub-050": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 69.78,
+     "far_per_24h": 0.3439380911435942
+    },
+    "sub-052": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 79.94,
+     "far_per_24h": 0.0
+    },
+    "sub-061": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 65.74,
+     "far_per_24h": 0.36507453605111045
+    },
+    "sub-066": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-067": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-070": {
+     "events": 2,
+     "detected": 2,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 141.51,
+     "far_per_24h": 0.0
+    },
+    "sub-071": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 5,
+     "monitored_h": 194.3,
+     "far_per_24h": 0.6176016469377251
+    },
+    "sub-073": {
+     "events": 2,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 20,
+     "monitored_h": 278.8,
+     "far_per_24h": 1.721664275466284
+    },
+    "sub-076": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 86.55,
+     "far_per_24h": 0.5545927209705372
+    },
+    "sub-078": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 14,
+     "monitored_h": 393.01,
+     "far_per_24h": 0.8549400778606143
+    },
+    "sub-080": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 147.57,
+     "far_per_24h": 0.3252693636918073
+    },
+    "sub-091": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-092": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 106.19,
+     "far_per_24h": 0.22600998210754308
+    },
+    "sub-093": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 87.64,
+     "far_per_24h": 0.2738475581926061
+    },
+    "sub-101": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 74.25,
+     "far_per_24h": 0.9696969696969697
+    },
+    "sub-106": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 99.17,
+     "far_per_24h": 0.9680346879096502
+    },
+    "sub-107": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 5,
+     "monitored_h": 105.69,
+     "far_per_24h": 1.1353959693443088
+    },
+    "sub-120": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-124": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 66.74,
+     "far_per_24h": 0.0
+    }
+   },
+   "per_fold": [
+    {
+     "fold": 0,
+     "inner_selected": {
+      "entry_threshold": 0.998274,
+      "exit_threshold": 0.7982739999999999,
+      "sensitivity": 0.59375,
+      "far_per_24h": 0.9479417686980292,
+      "latency_s_median": 62.0
+     },
+     "outer": {
+      "fbtcs_events": 12,
+      "evaluable_events": 12,
+      "unevaluable_events": 0,
+      "detected": 10,
+      "event_sensitivity": 0.8333333333333334,
+      "event_sensitivity_95ci": [
+       0.5158622513140328,
+       0.9791374745399076
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 0.8333333333333334,
+      "false_alarms": 76,
+      "valid_monitored_hours": 1959.22,
+      "suppressed_hours": 184.43,
+      "far_per_24h": 0.9309835299962302,
+      "far_per_24h_95ci": [
+       0.7335091329968589,
+       1.1652647141351211
+      ],
+      "alarms_near_out_of_scope_seizures": 1,
+      "alarms_during_impedance_checks": 0,
+      "latency_s_median": 41.5,
+      "latency_s_iqr": [
+       36.0,
+       49.75
+      ]
+     }
+    },
+    {
+     "fold": 1,
+     "inner_selected": {
+      "entry_threshold": 0.999204,
+      "exit_threshold": 0.799204,
+      "sensitivity": 0.75,
+      "far_per_24h": 0.9303715671446307,
+      "latency_s_median": 54.5
+     },
+     "outer": {
+      "fbtcs_events": 12,
+      "evaluable_events": 12,
+      "unevaluable_events": 0,
+      "detected": 6,
+      "event_sensitivity": 0.5,
+      "event_sensitivity_95ci": [
+       0.21094463823929666,
+       0.7890553617607033
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 0.5,
+      "false_alarms": 80,
+      "valid_monitored_hours": 1988.22,
+      "suppressed_hours": 103.09,
+      "far_per_24h": 0.9656865525632745,
+      "far_per_24h_95ci": [
+       0.7657293776130002,
+       1.2018805065141485
+      ],
+      "alarms_near_out_of_scope_seizures": 1,
+      "alarms_during_impedance_checks": 1,
+      "latency_s_median": 74.0,
+      "latency_s_iqr": [
+       51.25,
+       96.75
+      ]
+     }
+    },
+    {
+     "fold": 2,
+     "inner_selected": {
+      "entry_threshold": 0.99903,
+      "exit_threshold": 0.7990299999999999,
+      "sensitivity": 0.6666666666666666,
+      "far_per_24h": 0.9263529661299142,
+      "latency_s_median": 57.0
+     },
+     "outer": {
+      "fbtcs_events": 10,
+      "evaluable_events": 5,
+      "unevaluable_events": 5,
+      "detected": 3,
+      "event_sensitivity": 0.6,
+      "event_sensitivity_95ci": [
+       0.14663279963467313,
+       0.9472550494736831
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 0.3,
+      "false_alarms": 74,
+      "valid_monitored_hours": 1875.81,
+      "suppressed_hours": 358.69,
+      "far_per_24h": 0.946792107933353,
+      "far_per_24h_95ci": [
+       0.7434354449112385,
+       1.1886107896870315
+      ],
+      "alarms_near_out_of_scope_seizures": 0,
+      "alarms_during_impedance_checks": 0,
+      "latency_s_median": 62.0,
+      "latency_s_iqr": [
+       58.5,
+       141.5
+      ]
+     }
+    },
+    {
+     "fold": 3,
+     "inner_selected": {
+      "entry_threshold": 0.99996,
+      "exit_threshold": 0.79996,
+      "sensitivity": 0.24324324324324326,
+      "far_per_24h": 0.433752271253105,
+      "latency_s_median": 58.0
+     },
+     "outer": {
+      "fbtcs_events": 9,
+      "evaluable_events": 7,
+      "unevaluable_events": 2,
+      "detected": 1,
+      "event_sensitivity": 0.14285714285714285,
+      "event_sensitivity_95ci": [
+       0.0036102968619005833,
+       0.5787231970431952
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 0.1111111111111111,
+      "false_alarms": 26,
+      "valid_monitored_hours": 1796.02,
+      "suppressed_hours": 444.59,
+      "far_per_24h": 0.34743456138706574,
+      "far_per_24h_95ci": [
+       0.2269557905338812,
+       0.5090721314581395
+      ],
+      "alarms_near_out_of_scope_seizures": 0,
+      "alarms_during_impedance_checks": 0,
+      "latency_s_median": 87.0,
+      "latency_s_iqr": [
+       87.0,
+       87.0
+      ]
+     }
+    },
+    {
+     "fold": 4,
+     "inner_selected": {
+      "entry_threshold": 0.996855,
+      "exit_threshold": 0.7968550000000001,
+      "sensitivity": 0.75,
+      "far_per_24h": 0.9607218888772318,
+      "latency_s_median": 58.0
+     },
+     "outer": {
+      "fbtcs_events": 8,
+      "evaluable_events": 8,
+      "unevaluable_events": 0,
+      "detected": 7,
+      "event_sensitivity": 0.875,
+      "event_sensitivity_95ci": [
+       0.47349032912479344,
+       0.9968402764687481
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 0.875,
+      "false_alarms": 74,
+      "valid_monitored_hours": 2365.76,
+      "suppressed_hours": 200.01,
+      "far_per_24h": 0.750711012659089,
+      "far_per_24h_95ci": [
+       0.5894696111421989,
+       0.94244893055898
+      ],
+      "alarms_near_out_of_scope_seizures": 1,
+      "alarms_during_impedance_checks": 0,
+      "latency_s_median": 73.0,
+      "latency_s_iqr": [
+       42.0,
+       212.5
+      ]
+     }
+    }
+   ],
+   "d17_default_thresholds": {
+    "fbtcs_events": 51,
+    "evaluable_events": 44,
+    "unevaluable_events": 7,
+    "detected": 41,
+    "event_sensitivity": 0.9318181818181818,
+    "event_sensitivity_95ci": [
+     0.8134379899279777,
+     0.9857123315730246
+    ],
+    "event_sensitivity_counting_unevaluable_as_missed": 0.803921568627451,
+    "false_alarms": 44371,
+    "valid_monitored_hours": 9985.03,
+    "suppressed_hours": 1290.8,
+    "far_per_24h": 106.65007886808326,
+    "far_per_24h_95ci": [
+     105.66001930766714,
+     107.64710635327646
+    ],
+    "alarms_near_out_of_scope_seizures": 380,
+    "alarms_during_impedance_checks": 217,
+    "latency_s_median": 34.0,
+    "latency_s_iqr": [
+     20.0,
+     49.0
+    ]
+   },
+   "window_at_median_fold_entry": {
+    "windows": 17932140,
+    "positive_windows": 2979,
+    "threshold": 0.99903,
+    "confusion_matrix": {
+     "tn": 17924184,
+     "fp": 4977,
+     "fn": 2642,
+     "tp": 337
+    },
+    "accuracy_not_meaningful_under_imbalance": 0.9995751204262291,
+    "precision": 0.0634173880316146,
+    "recall_sensitivity": 0.11312520980194696,
+    "specificity": 0.9997224075348534,
+    "f1": 0.08127336307729409,
+    "roc_auc": 0.8309045627456322,
+    "pr_auc": 0.01816813595324605
+   },
+   "training_history": [
+    {
+     "fold": 0,
+     "train_pr_auc": 0.189913280530342,
+     "heldout_pr_auc": 0.3431837355253903
+    },
+    {
+     "fold": 1,
+     "train_pr_auc": 0.22243098605337658,
+     "heldout_pr_auc": 0.15004929558643135
+    },
+    {
+     "fold": 2,
+     "train_pr_auc": 0.24219102161984635,
+     "heldout_pr_auc": 0.17855223544229812
+    },
+    {
+     "fold": 3,
+     "train_pr_auc": 0.18314933931731586,
+     "heldout_pr_auc": 0.26417501233988444
+    },
+    {
+     "fold": 4,
+     "train_pr_auc": 0.2973002444165231,
+     "heldout_pr_auc": 0.12226248838219649
+    }
+   ]
+  },
+  "RF_50x8": {
+   "candidate": "RF_50x8",
+   "nested_outer": {
+    "fbtcs_events": 51,
+    "evaluable_events": 44,
+    "unevaluable_events": 7,
+    "detected": 42,
+    "event_sensitivity": 0.9545454545454546,
+    "event_sensitivity_95ci": [
+     0.8452684223410106,
+     0.9944470480046295
+    ],
+    "event_sensitivity_counting_unevaluable_as_missed": 0.8235294117647058,
+    "false_alarms": 135,
+    "valid_monitored_hours": 9985.03,
+    "suppressed_hours": 1290.8,
+    "far_per_24h": 0.3244858273915666,
+    "far_per_24h_95ci": [
+     0.27206021853488266,
+     0.38406824787859684
+    ],
+    "alarms_near_out_of_scope_seizures": 16,
+    "alarms_during_impedance_checks": 0,
+    "latency_s_median": 54.0,
+    "latency_s_iqr": [
+     40.0,
+     77.75
+    ]
+   },
+   "per_participant": {
+    "sub-004": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 18.5,
+     "far_per_24h": 0.0
+    },
+    "sub-008": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 114.12,
+     "far_per_24h": 0.0
+    },
+    "sub-015": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 12,
+     "monitored_h": 88.61,
+     "far_per_24h": 3.2501974946394316
+    },
+    "sub-022": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 113.12,
+     "far_per_24h": 0.0
+    },
+    "sub-028": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 88.37,
+     "far_per_24h": 0.0
+    },
+    "sub-029": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 114.0,
+     "far_per_24h": 0.0
+    },
+    "sub-032": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 88.84,
+     "far_per_24h": 0.0
+    },
+    "sub-039": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 91.86,
+     "far_per_24h": 0.0
+    },
+    "sub-040": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 53.71,
+     "far_per_24h": 0.0
+    },
+    "sub-041": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 20.98,
+     "far_per_24h": 0.0
+    },
+    "sub-043": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 85.73,
+     "far_per_24h": 1.119794704304211
+    },
+    "sub-044": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 99.33,
+     "far_per_24h": 0.24161884627000907
+    },
+    "sub-046": {
+     "events": 2,
+     "detected": 2,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 97.48,
+     "far_per_24h": 0.7386130488305293
+    },
+    "sub-059": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 47.12,
+     "far_per_24h": 0.0
+    },
+    "sub-062": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 67.22,
+     "far_per_24h": 0.0
+    },
+    "sub-072": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 126.05,
+     "far_per_24h": 0.0
+    },
+    "sub-077": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 61.6,
+     "far_per_24h": 0.0
+    },
+    "sub-083": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 48.16,
+     "far_per_24h": 0.49833887043189373
+    },
+    "sub-087": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-088": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.55,
+     "far_per_24h": 0.0
+    },
+    "sub-094": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 43.55,
+     "far_per_24h": 0.5510907003444317
+    },
+    "sub-104": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 98.03,
+     "far_per_24h": 0.0
+    },
+    "sub-114": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-115": {
+     "events": 5,
+     "detected": 5,
+     "unevaluable": 0,
+     "false_alarms": 5,
+     "monitored_h": 269.43,
+     "far_per_24h": 0.4453847010355194
+    },
+    "sub-118": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 122.85,
+     "far_per_24h": 0.0
+    },
+    "sub-002": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 99.18,
+     "far_per_24h": 0.0
+    },
+    "sub-013": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 5,
+     "monitored_h": 14.97,
+     "far_per_24h": 8.016032064128256
+    },
+    "sub-014": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 50.76,
+     "far_per_24h": 0.4728132387706856
+    },
+    "sub-016": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 42.31,
+     "far_per_24h": 2.2689671472465136
+    },
+    "sub-017": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 19,
+     "monitored_h": 115.11,
+     "far_per_24h": 3.9614281991138913
+    },
+    "sub-030": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 117.26,
+     "far_per_24h": 0.0
+    },
+    "sub-031": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 105.47,
+     "far_per_24h": 0.45510571726557314
+    },
+    "sub-034": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 93.91,
+     "far_per_24h": 0.25556383771696306
+    },
+    "sub-045": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 13,
+     "monitored_h": 97.0,
+     "far_per_24h": 3.216494845360825
+    },
+    "sub-053": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 25.79,
+     "far_per_24h": 0.0
+    },
+    "sub-054": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 56.84,
+     "far_per_24h": 1.266713581984518
+    },
+    "sub-058": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 10.17,
+     "far_per_24h": 0.0
+    },
+    "sub-063": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 67.77,
+     "far_per_24h": 0.0
+    },
+    "sub-065": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 65.38,
+     "far_per_24h": 1.1012542061792598
+    },
+    "sub-069": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 193.18,
+     "far_per_24h": 0.0
+    },
+    "sub-075": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 200.12,
+     "far_per_24h": 0.0
+    },
+    "sub-090": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-095": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 103.57,
+     "far_per_24h": 0.0
+    },
+    "sub-099": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 110.26,
+     "far_per_24h": 0.0
+    },
+    "sub-103": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 89.59,
+     "far_per_24h": 0.0
+    },
+    "sub-105": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 109.45,
+     "far_per_24h": 0.0
+    },
+    "sub-108": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 20.76,
+     "far_per_24h": 0.0
+    },
+    "sub-110": {
+     "events": 2,
+     "detected": 2,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 98.93,
+     "far_per_24h": 0.0
+    },
+    "sub-116": {
+     "events": 5,
+     "detected": 5,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 99.86,
+     "far_per_24h": 0.0
+    },
+    "sub-122": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.58,
+     "far_per_24h": 0.0
+    },
+    "sub-003": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 114.91,
+     "far_per_24h": 0.41771821425463407
+    },
+    "sub-006": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 109.54,
+     "far_per_24h": 0.0
+    },
+    "sub-007": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 68.46,
+     "far_per_24h": 0.0
+    },
+    "sub-010": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 102.09,
+     "far_per_24h": 0.0
+    },
+    "sub-012": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 113.89,
+     "far_per_24h": 0.0
+    },
+    "sub-018": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 115.0,
+     "far_per_24h": 0.0
+    },
+    "sub-019": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 120.81,
+     "far_per_24h": 0.0
+    },
+    "sub-020": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 115.49,
+     "far_per_24h": 0.0
+    },
+    "sub-023": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 100.21,
+     "far_per_24h": 0.0
+    },
+    "sub-048": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-051": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 27.49,
+     "far_per_24h": 0.0
+    },
+    "sub-055": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 42.16,
+     "far_per_24h": 0.0
+    },
+    "sub-064": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 39.17,
+     "far_per_24h": 1.2254276231810057
+    },
+    "sub-081": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-085": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 50.71,
+     "far_per_24h": 0.0
+    },
+    "sub-089": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 102.37,
+     "far_per_24h": 0.0
+    },
+    "sub-100": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 112.3,
+     "far_per_24h": 0.21371326803205698
+    },
+    "sub-102": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 115.41,
+     "far_per_24h": 0.0
+    },
+    "sub-109": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 114.09,
+     "far_per_24h": 0.2103602419142782
+    },
+    "sub-111": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 73.73,
+     "far_per_24h": 0.6510240065102401
+    },
+    "sub-112": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 66.57,
+     "far_per_24h": 0.0
+    },
+    "sub-117": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 88.25,
+     "far_per_24h": 0.8158640226628896
+    },
+    "sub-121": {
+     "events": 3,
+     "detected": 0,
+     "unevaluable": 3,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-123": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 81.65,
+     "far_per_24h": 0.0
+    },
+    "sub-125": {
+     "events": 2,
+     "detected": 0,
+     "unevaluable": 2,
+     "false_alarms": 0,
+     "monitored_h": 1.5,
+     "far_per_24h": 0.0
+    },
+    "sub-001": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 106.57,
+     "far_per_24h": 0.6756122736229708
+    },
+    "sub-009": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 99.43,
+     "far_per_24h": 0.0
+    },
+    "sub-021": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 103.42,
+     "far_per_24h": 0.0
+    },
+    "sub-024": {
+     "events": 2,
+     "detected": 2,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 111.9,
+     "far_per_24h": 0.0
+    },
+    "sub-025": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 97.64,
+     "far_per_24h": 0.0
+    },
+    "sub-026": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 88.97,
+     "far_per_24h": 0.0
+    },
+    "sub-027": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 100.88,
+     "far_per_24h": 0.0
+    },
+    "sub-035": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 68.63,
+     "far_per_24h": 0.0
+    },
+    "sub-038": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 94.99,
+     "far_per_24h": 0.0
+    },
+    "sub-042": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 11,
+     "monitored_h": 45.3,
+     "far_per_24h": 5.827814569536424
+    },
+    "sub-047": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 68.32,
+     "far_per_24h": 0.0
+    },
+    "sub-049": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 27.31,
+     "far_per_24h": 0.0
+    },
+    "sub-056": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 62.04,
+     "far_per_24h": 0.0
+    },
+    "sub-057": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 61.11,
+     "far_per_24h": 0.0
+    },
+    "sub-060": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 47.33,
+     "far_per_24h": 0.0
+    },
+    "sub-068": {
+     "events": 2,
+     "detected": 1,
+     "unevaluable": 1,
+     "false_alarms": 0,
+     "monitored_h": 6.78,
+     "far_per_24h": 0.0
+    },
+    "sub-074": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 132.79,
+     "far_per_24h": 0.18073650124256346
+    },
+    "sub-079": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 95.45,
+     "far_per_24h": 0.0
+    },
+    "sub-082": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-084": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 15.02,
+     "far_per_24h": 0.0
+    },
+    "sub-086": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.68,
+     "far_per_24h": 0.0
+    },
+    "sub-096": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 80.06,
+     "far_per_24h": 0.0
+    },
+    "sub-098": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 1,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-113": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 95.18,
+     "far_per_24h": 0.0
+    },
+    "sub-119": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 186.24,
+     "far_per_24h": 0.0
+    },
+    "sub-005": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 121.2,
+     "far_per_24h": 0.0
+    },
+    "sub-011": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 113.26,
+     "far_per_24h": 0.21190181882394488
+    },
+    "sub-033": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 113.31,
+     "far_per_24h": 0.4236166269526079
+    },
+    "sub-036": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-037": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 21.13,
+     "far_per_24h": 2.271651680075722
+    },
+    "sub-050": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 6,
+     "monitored_h": 69.78,
+     "far_per_24h": 2.063628546861565
+    },
+    "sub-052": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 79.94,
+     "far_per_24h": 0.600450337753315
+    },
+    "sub-061": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 65.74,
+     "far_per_24h": 0.0
+    },
+    "sub-066": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-067": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-070": {
+     "events": 2,
+     "detected": 2,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 141.51,
+     "far_per_24h": 0.0
+    },
+    "sub-071": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 194.3,
+     "far_per_24h": 0.12352032938754504
+    },
+    "sub-073": {
+     "events": 2,
+     "detected": 2,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 278.8,
+     "far_per_24h": 0.0
+    },
+    "sub-076": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 86.55,
+     "far_per_24h": 0.0
+    },
+    "sub-078": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 5,
+     "monitored_h": 393.01,
+     "far_per_24h": 0.3053357420930765
+    },
+    "sub-080": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 147.57,
+     "far_per_24h": 0.0
+    },
+    "sub-091": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-092": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 106.19,
+     "far_per_24h": 0.0
+    },
+    "sub-093": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 87.64,
+     "far_per_24h": 0.2738475581926061
+    },
+    "sub-101": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 7,
+     "monitored_h": 74.25,
+     "far_per_24h": 2.2626262626262625
+    },
+    "sub-106": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 99.17,
+     "far_per_24h": 0.0
+    },
+    "sub-107": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 105.69,
+     "far_per_24h": 0.9083167754754471
+    },
+    "sub-120": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-124": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 66.74,
+     "far_per_24h": 0.0
+    }
+   },
+   "per_fold": [
+    {
+     "fold": 0,
+     "inner_selected": {
+      "entry_threshold": 0.962353,
+      "exit_threshold": 0.7623530000000001,
+      "sensitivity": 0.96875,
+      "far_per_24h": 0.19736327045447927,
+      "latency_s_median": 60.0
+     },
+     "outer": {
+      "fbtcs_events": 12,
+      "evaluable_events": 12,
+      "unevaluable_events": 0,
+      "detected": 11,
+      "event_sensitivity": 0.9166666666666666,
+      "event_sensitivity_95ci": [
+       0.6152038348490559,
+       0.9978924067681397
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 0.9166666666666666,
+      "false_alarms": 27,
+      "valid_monitored_hours": 1959.22,
+      "suppressed_hours": 184.43,
+      "far_per_24h": 0.33074414881445025,
+      "far_per_24h_95ci": [
+       0.21796247814597186,
+       0.4812153717854603
+      ],
+      "alarms_near_out_of_scope_seizures": 1,
+      "alarms_during_impedance_checks": 0,
+      "latency_s_median": 37.0,
+      "latency_s_iqr": [
+       28.0,
+       53.0
+      ]
+     }
+    },
+    {
+     "fold": 1,
+     "inner_selected": {
+      "entry_threshold": 0.943032,
+      "exit_threshold": 0.7430319999999999,
+      "sensitivity": 0.9375,
+      "far_per_24h": 0.33313304500985164,
+      "latency_s_median": 50.0
+     },
+     "outer": {
+      "fbtcs_events": 12,
+      "evaluable_events": 12,
+      "unevaluable_events": 0,
+      "detected": 12,
+      "event_sensitivity": 1.0,
+      "event_sensitivity_95ci": [
+       0.7353515306029488,
+       1.0
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 1.0,
+      "false_alarms": 51,
+      "valid_monitored_hours": 1988.22,
+      "suppressed_hours": 103.09,
+      "far_per_24h": 0.6156251772590875,
+      "far_per_24h_95ci": [
+       0.4583733806417738,
+       0.8094334151212328
+      ],
+      "alarms_near_out_of_scope_seizures": 1,
+      "alarms_during_impedance_checks": 0,
+      "latency_s_median": 63.0,
+      "latency_s_iqr": [
+       47.25,
+       77.25
+      ]
+     }
+    },
+    {
+     "fold": 2,
+     "inner_selected": {
+      "entry_threshold": 0.948836,
+      "exit_threshold": 0.7488360000000001,
+      "sensitivity": 0.9487179487179487,
+      "far_per_24h": 0.26044428440713246,
+      "latency_s_median": 54.0
+     },
+     "outer": {
+      "fbtcs_events": 10,
+      "evaluable_events": 5,
+      "unevaluable_events": 5,
+      "detected": 5,
+      "event_sensitivity": 1.0,
+      "event_sensitivity_95ci": [
+       0.4781762498950185,
+       1.0
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 0.5,
+      "false_alarms": 11,
+      "valid_monitored_hours": 1875.81,
+      "suppressed_hours": 358.69,
+      "far_per_24h": 0.14073936739549842,
+      "far_per_24h_95ci": [
+       0.07025658512292232,
+       0.25182160449235935
+      ],
+      "alarms_near_out_of_scope_seizures": 2,
+      "alarms_during_impedance_checks": 0,
+      "latency_s_median": 60.0,
+      "latency_s_iqr": [
+       57.0,
+       121.0
+      ]
+     }
+    },
+    {
+     "fold": 3,
+     "inner_selected": {
+      "entry_threshold": 0.966244,
+      "exit_threshold": 0.7662439999999999,
+      "sensitivity": 0.9459459459459459,
+      "far_per_24h": 0.15239944665649635,
+      "latency_s_median": 60.0
+     },
+     "outer": {
+      "fbtcs_events": 9,
+      "evaluable_events": 7,
+      "unevaluable_events": 2,
+      "detected": 6,
+      "event_sensitivity": 0.8571428571428571,
+      "event_sensitivity_95ci": [
+       0.4212768029568048,
+       0.9963897031380994
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 0.6666666666666666,
+      "false_alarms": 15,
+      "valid_monitored_hours": 1796.02,
+      "suppressed_hours": 444.59,
+      "far_per_24h": 0.20044301618484564,
+      "far_per_24h_95ci": [
+       0.11218643456610097,
+       0.3306002727782573
+      ],
+      "alarms_near_out_of_scope_seizures": 1,
+      "alarms_during_impedance_checks": 0,
+      "latency_s_median": 58.0,
+      "latency_s_iqr": [
+       53.0,
+       71.25
+      ]
+     }
+    },
+    {
+     "fold": 4,
+     "inner_selected": {
+      "entry_threshold": 0.932188,
+      "exit_threshold": 0.7321880000000001,
+      "sensitivity": 0.9444444444444444,
+      "far_per_24h": 0.800076589425629,
+      "latency_s_median": 51.5
+     },
+     "outer": {
+      "fbtcs_events": 8,
+      "evaluable_events": 8,
+      "unevaluable_events": 0,
+      "detected": 8,
+      "event_sensitivity": 1.0,
+      "event_sensitivity_95ci": [
+       0.6305833524471807,
+       1.0
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 1.0,
+      "false_alarms": 31,
+      "valid_monitored_hours": 2365.76,
+      "suppressed_hours": 200.01,
+      "far_per_24h": 0.3144870458436725,
+      "far_per_24h_95ci": [
+       0.21367868974507975,
+       0.4463892584404721
+      ],
+      "alarms_near_out_of_scope_seizures": 11,
+      "alarms_during_impedance_checks": 0,
+      "latency_s_median": 65.5,
+      "latency_s_iqr": [
+       38.5,
+       173.75
+      ]
+     }
+    }
+   ],
+   "d17_default_thresholds": {
+    "fbtcs_events": 51,
+    "evaluable_events": 44,
+    "unevaluable_events": 7,
+    "detected": 43,
+    "event_sensitivity": 0.9772727272727273,
+    "event_sensitivity_95ci": [
+     0.8797584177936526,
+     0.9994247607866369
+    ],
+    "event_sensitivity_counting_unevaluable_as_missed": 0.8431372549019608,
+    "false_alarms": 15415,
+    "valid_monitored_hours": 9985.03,
+    "suppressed_hours": 1290.8,
+    "far_per_24h": 37.05147429067416,
+    "far_per_24h_95ci": [
+     36.468853917325596,
+     37.64107036428933
+    ],
+    "alarms_near_out_of_scope_seizures": 201,
+    "alarms_during_impedance_checks": 56,
+    "latency_s_median": 40.0,
+    "latency_s_iqr": [
+     27.0,
+     73.0
+    ]
+   },
+   "window_at_median_fold_entry": {
+    "windows": 17932140,
+    "positive_windows": 2979,
+    "threshold": 0.948836,
+    "confusion_matrix": {
+     "tn": 17923756,
+     "fp": 5405,
+     "fn": 2125,
+     "tp": 854
+    },
+    "accuracy_not_meaningful_under_imbalance": 0.99958008358177,
+    "precision": 0.13644352132928583,
+    "recall_sensitivity": 0.28667338032896944,
+    "specificity": 0.9996985358099021,
+    "f1": 0.18488850400519594,
+    "roc_auc": 0.8574410125718371,
+    "pr_auc": 0.15379490282633682
+   },
+   "training_history": [
+    {
+     "fold": 0,
+     "train_pr_auc": 0.45949927238505117,
+     "heldout_pr_auc": 0.45477784694948187
+    },
+    {
+     "fold": 1,
+     "train_pr_auc": 0.5109988632349943,
+     "heldout_pr_auc": 0.35164567942225206
+    },
+    {
+     "fold": 2,
+     "train_pr_auc": 0.4976879756786531,
+     "heldout_pr_auc": 0.31634898889641216
+    },
+    {
+     "fold": 3,
+     "train_pr_auc": 0.4669094086373618,
+     "heldout_pr_auc": 0.4370443479767494
+    },
+    {
+     "fold": 4,
+     "train_pr_auc": 0.5345914397502615,
+     "heldout_pr_auc": 0.2370966270768035
+    }
+   ]
+  },
+  "RF_25x6": {
+   "candidate": "RF_25x6",
+   "nested_outer": {
+    "fbtcs_events": 51,
+    "evaluable_events": 44,
+    "unevaluable_events": 7,
+    "detected": 41,
+    "event_sensitivity": 0.9318181818181818,
+    "event_sensitivity_95ci": [
+     0.8134379899279777,
+     0.9857123315730246
+    ],
+    "event_sensitivity_counting_unevaluable_as_missed": 0.803921568627451,
+    "false_alarms": 291,
+    "valid_monitored_hours": 9985.03,
+    "suppressed_hours": 1290.8,
+    "far_per_24h": 0.6994472279329326,
+    "far_per_24h_95ci": [
+     0.6213843776446442,
+     0.7846037076069203
+    ],
+    "alarms_near_out_of_scope_seizures": 22,
+    "alarms_during_impedance_checks": 1,
+    "latency_s_median": 52.0,
+    "latency_s_iqr": [
+     38.0,
+     78.0
+    ]
+   },
+   "per_participant": {
+    "sub-004": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 18.5,
+     "far_per_24h": 0.0
+    },
+    "sub-008": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 114.12,
+     "far_per_24h": 0.2103049421661409
+    },
+    "sub-015": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 38,
+     "monitored_h": 88.61,
+     "far_per_24h": 10.292292066358199
+    },
+    "sub-022": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 113.12,
+     "far_per_24h": 0.0
+    },
+    "sub-028": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 88.37,
+     "far_per_24h": 0.0
+    },
+    "sub-029": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 114.0,
+     "far_per_24h": 0.0
+    },
+    "sub-032": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 6,
+     "monitored_h": 88.84,
+     "far_per_24h": 1.6208914903196756
+    },
+    "sub-039": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 91.86,
+     "far_per_24h": 0.5225342913128674
+    },
+    "sub-040": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 53.71,
+     "far_per_24h": 0.4468441630981195
+    },
+    "sub-041": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 20.98,
+     "far_per_24h": 3.4318398474737846
+    },
+    "sub-043": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 9,
+     "monitored_h": 85.73,
+     "far_per_24h": 2.5195380846844744
+    },
+    "sub-044": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 5,
+     "monitored_h": 99.33,
+     "far_per_24h": 1.2080942313500453
+    },
+    "sub-046": {
+     "events": 2,
+     "detected": 2,
+     "unevaluable": 0,
+     "false_alarms": 11,
+     "monitored_h": 97.48,
+     "far_per_24h": 2.708247845711941
+    },
+    "sub-059": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 47.12,
+     "far_per_24h": 0.0
+    },
+    "sub-062": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 67.22,
+     "far_per_24h": 0.7140731925022314
+    },
+    "sub-072": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 126.05,
+     "far_per_24h": 0.0
+    },
+    "sub-077": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 61.6,
+     "far_per_24h": 0.0
+    },
+    "sub-083": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 48.16,
+     "far_per_24h": 1.4950166112956813
+    },
+    "sub-087": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-088": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.55,
+     "far_per_24h": 0.0
+    },
+    "sub-094": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 43.55,
+     "far_per_24h": 0.5510907003444317
+    },
+    "sub-104": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 98.03,
+     "far_per_24h": 0.7344690400897684
+    },
+    "sub-114": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-115": {
+     "events": 5,
+     "detected": 5,
+     "unevaluable": 0,
+     "false_alarms": 18,
+     "monitored_h": 269.43,
+     "far_per_24h": 1.60338492372787
+    },
+    "sub-118": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 122.85,
+     "far_per_24h": 0.0
+    },
+    "sub-002": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 99.18,
+     "far_per_24h": 0.0
+    },
+    "sub-013": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 6,
+     "monitored_h": 14.97,
+     "far_per_24h": 9.619238476953907
+    },
+    "sub-014": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 50.76,
+     "far_per_24h": 0.9456264775413712
+    },
+    "sub-016": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 42.31,
+     "far_per_24h": 1.7017253604348852
+    },
+    "sub-017": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 22,
+     "monitored_h": 115.11,
+     "far_per_24h": 4.586916862131874
+    },
+    "sub-030": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 117.26,
+     "far_per_24h": 0.0
+    },
+    "sub-031": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 105.47,
+     "far_per_24h": 0.45510571726557314
+    },
+    "sub-034": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 93.91,
+     "far_per_24h": 0.0
+    },
+    "sub-045": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 19,
+     "monitored_h": 97.0,
+     "far_per_24h": 4.701030927835052
+    },
+    "sub-053": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 25.79,
+     "far_per_24h": 0.9305932531989143
+    },
+    "sub-054": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 56.84,
+     "far_per_24h": 0.8444757213230119
+    },
+    "sub-058": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 10.17,
+     "far_per_24h": 0.0
+    },
+    "sub-063": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 67.77,
+     "far_per_24h": 0.0
+    },
+    "sub-065": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 65.38,
+     "far_per_24h": 1.1012542061792598
+    },
+    "sub-069": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 193.18,
+     "far_per_24h": 0.0
+    },
+    "sub-075": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 200.12,
+     "far_per_24h": 0.0
+    },
+    "sub-090": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-095": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 103.57,
+     "far_per_24h": 0.0
+    },
+    "sub-099": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 110.26,
+     "far_per_24h": 0.0
+    },
+    "sub-103": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 89.59,
+     "far_per_24h": 0.0
+    },
+    "sub-105": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 109.45,
+     "far_per_24h": 0.0
+    },
+    "sub-108": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 20.76,
+     "far_per_24h": 0.0
+    },
+    "sub-110": {
+     "events": 2,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 98.93,
+     "far_per_24h": 0.0
+    },
+    "sub-116": {
+     "events": 5,
+     "detected": 5,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 99.86,
+     "far_per_24h": 0.0
+    },
+    "sub-122": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.58,
+     "far_per_24h": 0.0
+    },
+    "sub-003": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 5,
+     "monitored_h": 114.91,
+     "far_per_24h": 1.044295535636585
+    },
+    "sub-006": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 109.54,
+     "far_per_24h": 0.0
+    },
+    "sub-007": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 68.46,
+     "far_per_24h": 0.0
+    },
+    "sub-010": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 102.09,
+     "far_per_24h": 0.23508668821627976
+    },
+    "sub-012": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 113.89,
+     "far_per_24h": 0.0
+    },
+    "sub-018": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 115.0,
+     "far_per_24h": 0.0
+    },
+    "sub-019": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 120.81,
+     "far_per_24h": 0.7946362056121181
+    },
+    "sub-020": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 115.49,
+     "far_per_24h": 0.20781020001731754
+    },
+    "sub-023": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 100.21,
+     "far_per_24h": 0.7184911685460533
+    },
+    "sub-048": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-051": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 27.49,
+     "far_per_24h": 1.7460894870862134
+    },
+    "sub-055": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 42.16,
+     "far_per_24h": 0.0
+    },
+    "sub-064": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 39.17,
+     "far_per_24h": 1.2254276231810057
+    },
+    "sub-081": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-085": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 50.71,
+     "far_per_24h": 0.0
+    },
+    "sub-089": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 102.37,
+     "far_per_24h": 0.0
+    },
+    "sub-100": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 11,
+     "monitored_h": 112.3,
+     "far_per_24h": 2.350845948352627
+    },
+    "sub-102": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 115.41,
+     "far_per_24h": 0.2079542500649857
+    },
+    "sub-109": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 114.09,
+     "far_per_24h": 0.4207204838285564
+    },
+    "sub-111": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 73.73,
+     "far_per_24h": 0.6510240065102401
+    },
+    "sub-112": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 66.57,
+     "far_per_24h": 0.3605227579990987
+    },
+    "sub-117": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 5,
+     "monitored_h": 88.25,
+     "far_per_24h": 1.3597733711048159
+    },
+    "sub-121": {
+     "events": 3,
+     "detected": 0,
+     "unevaluable": 3,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-123": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 81.65,
+     "far_per_24h": 0.0
+    },
+    "sub-125": {
+     "events": 2,
+     "detected": 0,
+     "unevaluable": 2,
+     "false_alarms": 0,
+     "monitored_h": 1.5,
+     "far_per_24h": 0.0
+    },
+    "sub-001": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 106.57,
+     "far_per_24h": 0.9008163648306278
+    },
+    "sub-009": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 99.43,
+     "far_per_24h": 0.0
+    },
+    "sub-021": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 103.42,
+     "far_per_24h": 0.0
+    },
+    "sub-024": {
+     "events": 2,
+     "detected": 2,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 111.9,
+     "far_per_24h": 0.42895442359249325
+    },
+    "sub-025": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 97.64,
+     "far_per_24h": 0.2458009012699713
+    },
+    "sub-026": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 88.97,
+     "far_per_24h": 0.2697538496122288
+    },
+    "sub-027": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 100.88,
+     "far_per_24h": 0.0
+    },
+    "sub-035": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 68.63,
+     "far_per_24h": 0.0
+    },
+    "sub-038": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 94.99,
+     "far_per_24h": 0.0
+    },
+    "sub-042": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 25,
+     "monitored_h": 45.3,
+     "far_per_24h": 13.245033112582782
+    },
+    "sub-047": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 68.32,
+     "far_per_24h": 0.0
+    },
+    "sub-049": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 27.31,
+     "far_per_24h": 0.0
+    },
+    "sub-056": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 62.04,
+     "far_per_24h": 0.0
+    },
+    "sub-057": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 61.11,
+     "far_per_24h": 0.0
+    },
+    "sub-060": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 47.33,
+     "far_per_24h": 0.0
+    },
+    "sub-068": {
+     "events": 2,
+     "detected": 1,
+     "unevaluable": 1,
+     "false_alarms": 1,
+     "monitored_h": 6.78,
+     "far_per_24h": 3.5398230088495577
+    },
+    "sub-074": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 132.79,
+     "far_per_24h": 0.18073650124256346
+    },
+    "sub-079": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 95.45,
+     "far_per_24h": 0.0
+    },
+    "sub-082": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-084": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 15.02,
+     "far_per_24h": 0.0
+    },
+    "sub-086": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.68,
+     "far_per_24h": 0.0
+    },
+    "sub-096": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 80.06,
+     "far_per_24h": 0.0
+    },
+    "sub-098": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 1,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-113": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 5,
+     "monitored_h": 95.18,
+     "far_per_24h": 1.2607690691321705
+    },
+    "sub-119": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 186.24,
+     "far_per_24h": 0.0
+    },
+    "sub-005": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 121.2,
+     "far_per_24h": 0.0
+    },
+    "sub-011": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 7,
+     "monitored_h": 113.26,
+     "far_per_24h": 1.4833127317676142
+    },
+    "sub-033": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 113.31,
+     "far_per_24h": 0.21180831347630394
+    },
+    "sub-036": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-037": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 21.13,
+     "far_per_24h": 2.271651680075722
+    },
+    "sub-050": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 6,
+     "monitored_h": 69.78,
+     "far_per_24h": 2.063628546861565
+    },
+    "sub-052": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 8,
+     "monitored_h": 79.94,
+     "far_per_24h": 2.40180135101326
+    },
+    "sub-061": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 65.74,
+     "far_per_24h": 0.0
+    },
+    "sub-066": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-067": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-070": {
+     "events": 2,
+     "detected": 2,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 141.51,
+     "far_per_24h": 0.0
+    },
+    "sub-071": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 194.3,
+     "far_per_24h": 0.12352032938754504
+    },
+    "sub-073": {
+     "events": 2,
+     "detected": 2,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 278.8,
+     "far_per_24h": 0.0
+    },
+    "sub-076": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 86.55,
+     "far_per_24h": 0.0
+    },
+    "sub-078": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 7,
+     "monitored_h": 393.01,
+     "far_per_24h": 0.42747003893030716
+    },
+    "sub-080": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 147.57,
+     "far_per_24h": 0.0
+    },
+    "sub-091": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-092": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 106.19,
+     "far_per_24h": 0.0
+    },
+    "sub-093": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 87.64,
+     "far_per_24h": 0.2738475581926061
+    },
+    "sub-101": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 11,
+     "monitored_h": 74.25,
+     "far_per_24h": 3.5555555555555554
+    },
+    "sub-106": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 99.17,
+     "far_per_24h": 0.4840173439548251
+    },
+    "sub-107": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 105.69,
+     "far_per_24h": 0.45415838773772355
+    },
+    "sub-120": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-124": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 66.74,
+     "far_per_24h": 0.0
+    }
+   },
+   "per_fold": [
+    {
+     "fold": 0,
+     "inner_selected": {
+      "entry_threshold": 0.947592,
+      "exit_threshold": 0.747592,
+      "sensitivity": 0.96875,
+      "far_per_24h": 0.909067185123662,
+      "latency_s_median": 57.0
+     },
+     "outer": {
+      "fbtcs_events": 12,
+      "evaluable_events": 12,
+      "unevaluable_events": 0,
+      "detected": 11,
+      "event_sensitivity": 0.9166666666666666,
+      "event_sensitivity_95ci": [
+       0.6152038348490559,
+       0.9978924067681397
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 0.9166666666666666,
+      "false_alarms": 103,
+      "valid_monitored_hours": 1959.22,
+      "suppressed_hours": 184.43,
+      "far_per_24h": 1.2617276788106804,
+      "far_per_24h_95ci": [
+       1.0298630254458478,
+       1.5302117582924195
+      ],
+      "alarms_near_out_of_scope_seizures": 4,
+      "alarms_during_impedance_checks": 1,
+      "latency_s_median": 28.0,
+      "latency_s_iqr": [
+       28.0,
+       52.0
+      ]
+     }
+    },
+    {
+     "fold": 1,
+     "inner_selected": {
+      "entry_threshold": 0.955549,
+      "exit_threshold": 0.755549,
+      "sensitivity": 0.9375,
+      "far_per_24h": 0.5012001668166236,
+      "latency_s_median": 56.0
+     },
+     "outer": {
+      "fbtcs_events": 12,
+      "evaluable_events": 12,
+      "unevaluable_events": 0,
+      "detected": 11,
+      "event_sensitivity": 0.9166666666666666,
+      "event_sensitivity_95ci": [
+       0.6152038348490559,
+       0.9978924067681397
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 0.9166666666666666,
+      "false_alarms": 60,
+      "valid_monitored_hours": 1988.22,
+      "suppressed_hours": 103.09,
+      "far_per_24h": 0.724264914422456,
+      "far_per_24h_95ci": [
+       0.5526904304096019,
+       0.932272511147446
+      ],
+      "alarms_near_out_of_scope_seizures": 2,
+      "alarms_during_impedance_checks": 0,
+      "latency_s_median": 76.0,
+      "latency_s_iqr": [
+       51.0,
+       77.5
+      ]
+     }
+    },
+    {
+     "fold": 2,
+     "inner_selected": {
+      "entry_threshold": 0.94525,
+      "exit_threshold": 0.74525,
+      "sensitivity": 0.9487179487179487,
+      "far_per_24h": 0.7635752883754565,
+      "latency_s_median": 50.0
+     },
+     "outer": {
+      "fbtcs_events": 10,
+      "evaluable_events": 5,
+      "unevaluable_events": 5,
+      "detected": 5,
+      "event_sensitivity": 1.0,
+      "event_sensitivity_95ci": [
+       0.4781762498950185,
+       1.0
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 0.5,
+      "false_alarms": 40,
+      "valid_monitored_hours": 1875.81,
+      "suppressed_hours": 358.69,
+      "far_per_24h": 0.5117795178018124,
+      "far_per_24h_95ci": [
+       0.36562279074001414,
+       0.6968984469636229
+      ],
+      "alarms_near_out_of_scope_seizures": 3,
+      "alarms_during_impedance_checks": 0,
+      "latency_s_median": 58.0,
+      "latency_s_iqr": [
+       57.0,
+       121.0
+      ]
+     }
+    },
+    {
+     "fold": 3,
+     "inner_selected": {
+      "entry_threshold": 0.963957,
+      "exit_threshold": 0.763957,
+      "sensitivity": 0.9459459459459459,
+      "far_per_24h": 0.32531420343982875,
+      "latency_s_median": 58.0
+     },
+     "outer": {
+      "fbtcs_events": 9,
+      "evaluable_events": 7,
+      "unevaluable_events": 2,
+      "detected": 6,
+      "event_sensitivity": 0.8571428571428571,
+      "event_sensitivity_95ci": [
+       0.4212768029568048,
+       0.9963897031380994
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 0.6666666666666666,
+      "false_alarms": 40,
+      "valid_monitored_hours": 1796.02,
+      "suppressed_hours": 444.59,
+      "far_per_24h": 0.534514709826255,
+      "far_per_24h_95ci": [
+       0.38186514524394305,
+       0.7278573256645666
+      ],
+      "alarms_near_out_of_scope_seizures": 2,
+      "alarms_during_impedance_checks": 0,
+      "latency_s_median": 54.0,
+      "latency_s_iqr": [
+       41.5,
+       67.25
+      ]
+     }
+    },
+    {
+     "fold": 4,
+     "inner_selected": {
+      "entry_threshold": 0.965716,
+      "exit_threshold": 0.7657160000000001,
+      "sensitivity": 0.9444444444444444,
+      "far_per_24h": 0.7843270502637072,
+      "latency_s_median": 53.0
+     },
+     "outer": {
+      "fbtcs_events": 8,
+      "evaluable_events": 8,
+      "unevaluable_events": 0,
+      "detected": 8,
+      "event_sensitivity": 1.0,
+      "event_sensitivity_95ci": [
+       0.6305833524471807,
+       1.0
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 1.0,
+      "false_alarms": 48,
+      "valid_monitored_hours": 2365.76,
+      "suppressed_hours": 200.01,
+      "far_per_24h": 0.48694768388697673,
+      "far_per_24h_95ci": [
+       0.3590367818747426,
+       0.6456219826886282
+      ],
+      "alarms_near_out_of_scope_seizures": 11,
+      "alarms_during_impedance_checks": 0,
+      "latency_s_median": 68.5,
+      "latency_s_iqr": [
+       40.25,
+       173.25
+      ]
+     }
+    }
+   ],
+   "d17_default_thresholds": {
+    "fbtcs_events": 51,
+    "evaluable_events": 44,
+    "unevaluable_events": 7,
+    "detected": 43,
+    "event_sensitivity": 0.9772727272727273,
+    "event_sensitivity_95ci": [
+     0.8797584177936526,
+     0.9994247607866369
+    ],
+    "event_sensitivity_counting_unevaluable_as_missed": 0.8431372549019608,
+    "false_alarms": 30453,
+    "valid_monitored_hours": 9985.03,
+    "suppressed_hours": 1290.8,
+    "far_per_24h": 73.19679186337335,
+    "far_per_24h_95ci": [
+     72.37696995334005,
+     74.0235840103616
+    ],
+    "alarms_near_out_of_scope_seizures": 290,
+    "alarms_during_impedance_checks": 130,
+    "latency_s_median": 38.0,
+    "latency_s_iqr": [
+     25.0,
+     58.0
+    ]
+   },
+   "window_at_median_fold_entry": {
+    "windows": 17932140,
+    "positive_windows": 2979,
+    "threshold": 0.955549,
+    "confusion_matrix": {
+     "tn": 17919348,
+     "fp": 9813,
+     "fn": 2096,
+     "tp": 883
+    },
+    "accuracy_not_meaningful_under_imbalance": 0.9993358851760025,
+    "precision": 0.08255422587883321,
+    "recall_sensitivity": 0.2964081906680094,
+    "specificity": 0.9994526793529268,
+    "f1": 0.12914076782449727,
+    "roc_auc": 0.8543391932530721,
+    "pr_auc": 0.08769210537966482
+   },
+   "training_history": [
+    {
+     "fold": 0,
+     "train_pr_auc": 0.3592811448049327,
+     "heldout_pr_auc": 0.43198803911578165
+    },
+    {
+     "fold": 1,
+     "train_pr_auc": 0.4014971526269505,
+     "heldout_pr_auc": 0.3243063858819421
+    },
+    {
+     "fold": 2,
+     "train_pr_auc": 0.38228901407810967,
+     "heldout_pr_auc": 0.3079866405208638
+    },
+    {
+     "fold": 3,
+     "train_pr_auc": 0.37387262583251,
+     "heldout_pr_auc": 0.4362830575666558
+    },
+    {
+     "fold": 4,
+     "train_pr_auc": 0.42855860819011404,
+     "heldout_pr_auc": 0.21950626599584822
+    }
+   ]
+  },
+  "HGB_300x15": {
+   "candidate": "HGB_300x15",
+   "nested_outer": {
+    "fbtcs_events": 51,
+    "evaluable_events": 44,
+    "unevaluable_events": 7,
+    "detected": 41,
+    "event_sensitivity": 0.9318181818181818,
+    "event_sensitivity_95ci": [
+     0.8134379899279777,
+     0.9857123315730246
+    ],
+    "event_sensitivity_counting_unevaluable_as_missed": 0.803921568627451,
+    "false_alarms": 89,
+    "valid_monitored_hours": 9985.03,
+    "suppressed_hours": 1290.8,
+    "far_per_24h": 0.2139202862062921,
+    "far_per_24h_95ci": [
+     0.17179555566526275,
+     0.26324731988228345
+    ],
+    "alarms_near_out_of_scope_seizures": 11,
+    "alarms_during_impedance_checks": 0,
+    "latency_s_median": 54.0,
+    "latency_s_iqr": [
+     40.0,
+     85.0
+    ]
+   },
+   "per_participant": {
+    "sub-004": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 18.5,
+     "far_per_24h": 0.0
+    },
+    "sub-008": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 114.12,
+     "far_per_24h": 0.0
+    },
+    "sub-015": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 88.61,
+     "far_per_24h": 0.5416995824399052
+    },
+    "sub-022": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 113.12,
+     "far_per_24h": 0.0
+    },
+    "sub-028": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 88.37,
+     "far_per_24h": 0.0
+    },
+    "sub-029": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 114.0,
+     "far_per_24h": 0.0
+    },
+    "sub-032": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 88.84,
+     "far_per_24h": 0.0
+    },
+    "sub-039": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 91.86,
+     "far_per_24h": 0.0
+    },
+    "sub-040": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 53.71,
+     "far_per_24h": 0.0
+    },
+    "sub-041": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 20.98,
+     "far_per_24h": 0.0
+    },
+    "sub-043": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 85.73,
+     "far_per_24h": 0.5598973521521055
+    },
+    "sub-044": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 99.33,
+     "far_per_24h": 0.24161884627000907
+    },
+    "sub-046": {
+     "events": 2,
+     "detected": 2,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 97.48,
+     "far_per_24h": 0.7386130488305293
+    },
+    "sub-059": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 47.12,
+     "far_per_24h": 0.0
+    },
+    "sub-062": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 67.22,
+     "far_per_24h": 0.0
+    },
+    "sub-072": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 126.05,
+     "far_per_24h": 0.0
+    },
+    "sub-077": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 61.6,
+     "far_per_24h": 0.0
+    },
+    "sub-083": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 48.16,
+     "far_per_24h": 0.0
+    },
+    "sub-087": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-088": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.55,
+     "far_per_24h": 0.0
+    },
+    "sub-094": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 43.55,
+     "far_per_24h": 0.0
+    },
+    "sub-104": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 98.03,
+     "far_per_24h": 0.0
+    },
+    "sub-114": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-115": {
+     "events": 5,
+     "detected": 5,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 269.43,
+     "far_per_24h": 0.08907694020710388
+    },
+    "sub-118": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 122.85,
+     "far_per_24h": 0.0
+    },
+    "sub-002": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 99.18,
+     "far_per_24h": 0.0
+    },
+    "sub-013": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 14.97,
+     "far_per_24h": 0.0
+    },
+    "sub-014": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 50.76,
+     "far_per_24h": 0.0
+    },
+    "sub-016": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 6,
+     "monitored_h": 42.31,
+     "far_per_24h": 3.4034507208697704
+    },
+    "sub-017": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 8,
+     "monitored_h": 115.11,
+     "far_per_24h": 1.667969768047954
+    },
+    "sub-030": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 117.26,
+     "far_per_24h": 0.0
+    },
+    "sub-031": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 105.47,
+     "far_per_24h": 0.45510571726557314
+    },
+    "sub-034": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 93.91,
+     "far_per_24h": 0.0
+    },
+    "sub-045": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 97.0,
+     "far_per_24h": 0.4948453608247423
+    },
+    "sub-053": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 25.79,
+     "far_per_24h": 0.0
+    },
+    "sub-054": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 56.84,
+     "far_per_24h": 0.0
+    },
+    "sub-058": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 10.17,
+     "far_per_24h": 0.0
+    },
+    "sub-063": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 67.77,
+     "far_per_24h": 0.3541389995573263
+    },
+    "sub-065": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 65.38,
+     "far_per_24h": 0.0
+    },
+    "sub-069": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 193.18,
+     "far_per_24h": 0.0
+    },
+    "sub-075": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 5,
+     "monitored_h": 200.12,
+     "far_per_24h": 0.5996402158704777
+    },
+    "sub-090": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-095": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 103.57,
+     "far_per_24h": 0.0
+    },
+    "sub-099": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 110.26,
+     "far_per_24h": 0.2176673317612915
+    },
+    "sub-103": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 89.59,
+     "far_per_24h": 0.2678870409643933
+    },
+    "sub-105": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 109.45,
+     "far_per_24h": 0.0
+    },
+    "sub-108": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 20.76,
+     "far_per_24h": 0.0
+    },
+    "sub-110": {
+     "events": 2,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 98.93,
+     "far_per_24h": 0.0
+    },
+    "sub-116": {
+     "events": 5,
+     "detected": 5,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 99.86,
+     "far_per_24h": 0.0
+    },
+    "sub-122": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.58,
+     "far_per_24h": 0.0
+    },
+    "sub-003": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 114.91,
+     "far_per_24h": 0.8354364285092681
+    },
+    "sub-006": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 109.54,
+     "far_per_24h": 0.0
+    },
+    "sub-007": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 68.46,
+     "far_per_24h": 0.0
+    },
+    "sub-010": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 102.09,
+     "far_per_24h": 0.23508668821627976
+    },
+    "sub-012": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 113.89,
+     "far_per_24h": 0.0
+    },
+    "sub-018": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 115.0,
+     "far_per_24h": 0.0
+    },
+    "sub-019": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 120.81,
+     "far_per_24h": 0.0
+    },
+    "sub-020": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 115.49,
+     "far_per_24h": 0.0
+    },
+    "sub-023": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 100.21,
+     "far_per_24h": 0.23949705618201778
+    },
+    "sub-048": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-051": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 27.49,
+     "far_per_24h": 0.0
+    },
+    "sub-055": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 42.16,
+     "far_per_24h": 0.0
+    },
+    "sub-064": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 39.17,
+     "far_per_24h": 1.2254276231810057
+    },
+    "sub-081": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-085": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 50.71,
+     "far_per_24h": 0.0
+    },
+    "sub-089": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 102.37,
+     "far_per_24h": 0.0
+    },
+    "sub-100": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 112.3,
+     "far_per_24h": 0.0
+    },
+    "sub-102": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 115.41,
+     "far_per_24h": 0.0
+    },
+    "sub-109": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 114.09,
+     "far_per_24h": 0.0
+    },
+    "sub-111": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 73.73,
+     "far_per_24h": 0.0
+    },
+    "sub-112": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 66.57,
+     "far_per_24h": 0.0
+    },
+    "sub-117": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 88.25,
+     "far_per_24h": 0.2719546742209632
+    },
+    "sub-121": {
+     "events": 3,
+     "detected": 0,
+     "unevaluable": 3,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-123": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 81.65,
+     "far_per_24h": 0.0
+    },
+    "sub-125": {
+     "events": 2,
+     "detected": 0,
+     "unevaluable": 2,
+     "false_alarms": 0,
+     "monitored_h": 1.5,
+     "far_per_24h": 0.0
+    },
+    "sub-001": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 106.57,
+     "far_per_24h": 0.9008163648306278
+    },
+    "sub-009": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 99.43,
+     "far_per_24h": 0.0
+    },
+    "sub-021": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 103.42,
+     "far_per_24h": 0.0
+    },
+    "sub-024": {
+     "events": 2,
+     "detected": 2,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 111.9,
+     "far_per_24h": 0.0
+    },
+    "sub-025": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 97.64,
+     "far_per_24h": 0.4916018025399426
+    },
+    "sub-026": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 88.97,
+     "far_per_24h": 0.0
+    },
+    "sub-027": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 100.88,
+     "far_per_24h": 0.0
+    },
+    "sub-035": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 68.63,
+     "far_per_24h": 0.0
+    },
+    "sub-038": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 94.99,
+     "far_per_24h": 0.2526581745446889
+    },
+    "sub-042": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 32,
+     "monitored_h": 45.3,
+     "far_per_24h": 16.95364238410596
+    },
+    "sub-047": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 68.32,
+     "far_per_24h": 0.351288056206089
+    },
+    "sub-049": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 27.31,
+     "far_per_24h": 0.0
+    },
+    "sub-056": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 62.04,
+     "far_per_24h": 0.0
+    },
+    "sub-057": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 61.11,
+     "far_per_24h": 0.0
+    },
+    "sub-060": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 47.33,
+     "far_per_24h": 0.0
+    },
+    "sub-068": {
+     "events": 2,
+     "detected": 1,
+     "unevaluable": 1,
+     "false_alarms": 1,
+     "monitored_h": 6.78,
+     "far_per_24h": 3.5398230088495577
+    },
+    "sub-074": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 132.79,
+     "far_per_24h": 0.18073650124256346
+    },
+    "sub-079": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 95.45,
+     "far_per_24h": 0.0
+    },
+    "sub-082": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-084": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 15.02,
+     "far_per_24h": 1.5978695073235687
+    },
+    "sub-086": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.68,
+     "far_per_24h": 0.0
+    },
+    "sub-096": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 80.06,
+     "far_per_24h": 0.0
+    },
+    "sub-098": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 1,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-113": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 95.18,
+     "far_per_24h": 0.2521538138264341
+    },
+    "sub-119": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 186.24,
+     "far_per_24h": 0.0
+    },
+    "sub-005": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 121.2,
+     "far_per_24h": 0.0
+    },
+    "sub-011": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 113.26,
+     "far_per_24h": 0.0
+    },
+    "sub-033": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 113.31,
+     "far_per_24h": 0.0
+    },
+    "sub-036": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-037": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 21.13,
+     "far_per_24h": 0.0
+    },
+    "sub-050": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 69.78,
+     "far_per_24h": 0.0
+    },
+    "sub-052": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 79.94,
+     "far_per_24h": 0.0
+    },
+    "sub-061": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 65.74,
+     "far_per_24h": 0.0
+    },
+    "sub-066": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-067": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-070": {
+     "events": 2,
+     "detected": 2,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 141.51,
+     "far_per_24h": 0.0
+    },
+    "sub-071": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 194.3,
+     "far_per_24h": 0.0
+    },
+    "sub-073": {
+     "events": 2,
+     "detected": 2,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 278.8,
+     "far_per_24h": 0.0
+    },
+    "sub-076": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 86.55,
+     "far_per_24h": 0.0
+    },
+    "sub-078": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 393.01,
+     "far_per_24h": 0.0
+    },
+    "sub-080": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 147.57,
+     "far_per_24h": 0.0
+    },
+    "sub-091": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-092": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 106.19,
+     "far_per_24h": 0.0
+    },
+    "sub-093": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 87.64,
+     "far_per_24h": 0.0
+    },
+    "sub-101": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 74.25,
+     "far_per_24h": 0.0
+    },
+    "sub-106": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 99.17,
+     "far_per_24h": 0.0
+    },
+    "sub-107": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 105.69,
+     "far_per_24h": 0.22707919386886177
+    },
+    "sub-120": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-124": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 66.74,
+     "far_per_24h": 0.0
+    }
+   },
+   "per_fold": [
+    {
+     "fold": 0,
+     "inner_selected": {
+      "entry_threshold": 0.990677,
+      "exit_threshold": 0.7906770000000001,
+      "sensitivity": 0.96875,
+      "far_per_24h": 0.10167198780988325,
+      "latency_s_median": 62.0
+     },
+     "outer": {
+      "fbtcs_events": 12,
+      "evaluable_events": 12,
+      "unevaluable_events": 0,
+      "detected": 11,
+      "event_sensitivity": 0.9166666666666666,
+      "event_sensitivity_95ci": [
+       0.6152038348490559,
+       0.9978924067681397
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 0.9166666666666666,
+      "false_alarms": 9,
+      "valid_monitored_hours": 1959.22,
+      "suppressed_hours": 184.43,
+      "far_per_24h": 0.11024804960481674,
+      "far_per_24h_95ci": [
+       0.05041242859801054,
+       0.20928513982228936
+      ],
+      "alarms_near_out_of_scope_seizures": 0,
+      "alarms_during_impedance_checks": 0,
+      "latency_s_median": 48.0,
+      "latency_s_iqr": [
+       30.0,
+       50.5
+      ]
+     }
+    },
+    {
+     "fold": 1,
+     "inner_selected": {
+      "entry_threshold": 0.987106,
+      "exit_threshold": 0.7871060000000001,
+      "sensitivity": 0.9375,
+      "far_per_24h": 0.24009588829538858,
+      "latency_s_median": 51.5
+     },
+     "outer": {
+      "fbtcs_events": 12,
+      "evaluable_events": 12,
+      "unevaluable_events": 0,
+      "detected": 11,
+      "event_sensitivity": 0.9166666666666666,
+      "event_sensitivity_95ci": [
+       0.6152038348490559,
+       0.9978924067681397
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 0.9166666666666666,
+      "false_alarms": 26,
+      "valid_monitored_hours": 1988.22,
+      "suppressed_hours": 103.09,
+      "far_per_24h": 0.31384812958306424,
+      "far_per_24h_95ci": [
+       0.2050160181898244,
+       0.45986022704000573
+      ],
+      "alarms_near_out_of_scope_seizures": 3,
+      "alarms_during_impedance_checks": 0,
+      "latency_s_median": 77.0,
+      "latency_s_iqr": [
+       47.0,
+       81.0
+      ]
+     }
+    },
+    {
+     "fold": 2,
+     "inner_selected": {
+      "entry_threshold": 0.986653,
+      "exit_threshold": 0.786653,
+      "sensitivity": 0.9487179487179487,
+      "far_per_24h": 0.16869686603643805,
+      "latency_s_median": 50.0
+     },
+     "outer": {
+      "fbtcs_events": 10,
+      "evaluable_events": 5,
+      "unevaluable_events": 5,
+      "detected": 5,
+      "event_sensitivity": 1.0,
+      "event_sensitivity_95ci": [
+       0.4781762498950185,
+       1.0
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 0.5,
+      "false_alarms": 9,
+      "valid_monitored_hours": 1875.81,
+      "suppressed_hours": 358.69,
+      "far_per_24h": 0.11515039150540778,
+      "far_per_24h_95ci": [
+       0.05265409148377087,
+       0.218591311802651
+      ],
+      "alarms_near_out_of_scope_seizures": 3,
+      "alarms_during_impedance_checks": 0,
+      "latency_s_median": 63.0,
+      "latency_s_iqr": [
+       60.0,
+       129.0
+      ]
+     }
+    },
+    {
+     "fold": 3,
+     "inner_selected": {
+      "entry_threshold": 0.972616,
+      "exit_threshold": 0.772616,
+      "sensitivity": 0.972972972972973,
+      "far_per_24h": 0.5480518562454773,
+      "latency_s_median": 54.0
+     },
+     "outer": {
+      "fbtcs_events": 9,
+      "evaluable_events": 7,
+      "unevaluable_events": 2,
+      "detected": 6,
+      "event_sensitivity": 0.8571428571428571,
+      "event_sensitivity_95ci": [
+       0.4212768029568048,
+       0.9963897031380994
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 0.6666666666666666,
+      "false_alarms": 44,
+      "valid_monitored_hours": 1796.02,
+      "suppressed_hours": 444.59,
+      "far_per_24h": 0.5879661808088805,
+      "far_per_24h_95ci": [
+       0.42721712707370685,
+       0.7893171541512876
+      ],
+      "alarms_near_out_of_scope_seizures": 1,
+      "alarms_during_impedance_checks": 0,
+      "latency_s_median": 51.0,
+      "latency_s_iqr": [
+       37.5,
+       57.75
+      ]
+     }
+    },
+    {
+     "fold": 4,
+     "inner_selected": {
+      "entry_threshold": 0.991331,
+      "exit_threshold": 0.791331,
+      "sensitivity": 0.9444444444444444,
+      "far_per_24h": 0.12284640546299028,
+      "latency_s_median": 54.0
+     },
+     "outer": {
+      "fbtcs_events": 8,
+      "evaluable_events": 8,
+      "unevaluable_events": 0,
+      "detected": 8,
+      "event_sensitivity": 1.0,
+      "event_sensitivity_95ci": [
+       0.6305833524471807,
+       1.0
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 1.0,
+      "false_alarms": 1,
+      "valid_monitored_hours": 2365.76,
+      "suppressed_hours": 200.01,
+      "far_per_24h": 0.010144743414312015,
+      "far_per_24h_95ci": [
+       0.00025684266581344086,
+       0.056522892597122454
+      ],
+      "alarms_near_out_of_scope_seizures": 4,
+      "alarms_during_impedance_checks": 0,
+      "latency_s_median": 90.0,
+      "latency_s_iqr": [
+       41.5,
+       169.25
+      ]
+     }
+    }
+   ],
+   "d17_default_thresholds": {
+    "fbtcs_events": 51,
+    "evaluable_events": 44,
+    "unevaluable_events": 7,
+    "detected": 43,
+    "event_sensitivity": 0.9772727272727273,
+    "event_sensitivity_95ci": [
+     0.8797584177936526,
+     0.9994247607866369
+    ],
+    "event_sensitivity_counting_unevaluable_as_missed": 0.8431372549019608,
+    "false_alarms": 34851,
+    "valid_monitored_hours": 9985.03,
+    "suppressed_hours": 1290.8,
+    "far_per_24h": 83.76781904017419,
+    "far_per_24h_95ci": [
+     82.89063461357055,
+     84.651972824714
+    ],
+    "alarms_near_out_of_scope_seizures": 359,
+    "alarms_during_impedance_checks": 220,
+    "latency_s_median": 34.0,
+    "latency_s_iqr": [
+     22.0,
+     47.5
+    ]
+   },
+   "window_at_median_fold_entry": {
+    "windows": 17932140,
+    "positive_windows": 2979,
+    "threshold": 0.987106,
+    "confusion_matrix": {
+     "tn": 17927368,
+     "fp": 1793,
+     "fn": 2148,
+     "tp": 831
+    },
+    "accuracy_not_meaningful_under_imbalance": 0.9997802270113885,
+    "precision": 0.3166920731707317,
+    "recall_sensitivity": 0.27895266868076535,
+    "specificity": 0.9998999953204726,
+    "f1": 0.29662680706764233,
+    "roc_auc": 0.8512199311039448,
+    "pr_auc": 0.22677140184030492
+   },
+   "training_history": [
+    {
+     "fold": 0,
+     "train_pr_auc": 0.5067672690757798,
+     "heldout_pr_auc": 0.49582170448913415
+    },
+    {
+     "fold": 1,
+     "train_pr_auc": 0.5511157240606239,
+     "heldout_pr_auc": 0.3622113150963284
+    },
+    {
+     "fold": 2,
+     "train_pr_auc": 0.5413046422858523,
+     "heldout_pr_auc": 0.32959949022889795
+    },
+    {
+     "fold": 3,
+     "train_pr_auc": 0.5146531819610559,
+     "heldout_pr_auc": 0.49090757377635186
+    },
+    {
+     "fold": 4,
+     "train_pr_auc": 0.5858474968189056,
+     "heldout_pr_auc": 0.28027791332439606
+    }
+   ]
+  },
+  "A_RF_simenv_only": {
+   "candidate": "A_RF_simenv_only",
+   "nested_outer": {
+    "fbtcs_events": 51,
+    "evaluable_events": 44,
+    "unevaluable_events": 7,
+    "detected": 37,
+    "event_sensitivity": 0.8409090909090909,
+    "event_sensitivity_95ci": [
+     0.6993467862283121,
+     0.9335565387971044
+    ],
+    "event_sensitivity_counting_unevaluable_as_missed": 0.7254901960784313,
+    "false_alarms": 830,
+    "valid_monitored_hours": 9985.03,
+    "suppressed_hours": 1290.8,
+    "far_per_24h": 1.9949869387777803,
+    "far_per_24h_95ci": [
+     1.8615560195710141,
+     2.1354559575877903
+    ],
+    "alarms_near_out_of_scope_seizures": 15,
+    "alarms_during_impedance_checks": 33,
+    "latency_s_median": 72.0,
+    "latency_s_iqr": [
+     53.0,
+     101.0
+    ]
+   },
+   "per_participant": {
+    "sub-004": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 18.5,
+     "far_per_24h": 0.0
+    },
+    "sub-008": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 114.12,
+     "far_per_24h": 0.0
+    },
+    "sub-015": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 12,
+     "monitored_h": 88.61,
+     "far_per_24h": 3.2501974946394316
+    },
+    "sub-022": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 113.12,
+     "far_per_24h": 0.0
+    },
+    "sub-028": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 88.37,
+     "far_per_24h": 0.0
+    },
+    "sub-029": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 114.0,
+     "far_per_24h": 0.0
+    },
+    "sub-032": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 88.84,
+     "far_per_24h": 0.0
+    },
+    "sub-039": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 91.86,
+     "far_per_24h": 0.0
+    },
+    "sub-040": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 53.71,
+     "far_per_24h": 0.0
+    },
+    "sub-041": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 20.98,
+     "far_per_24h": 2.2878932316491896
+    },
+    "sub-043": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 33,
+     "monitored_h": 85.73,
+     "far_per_24h": 9.23830631050974
+    },
+    "sub-044": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 99.33,
+     "far_per_24h": 0.0
+    },
+    "sub-046": {
+     "events": 2,
+     "detected": 2,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 97.48,
+     "far_per_24h": 0.0
+    },
+    "sub-059": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 47.12,
+     "far_per_24h": 0.0
+    },
+    "sub-062": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 67.22,
+     "far_per_24h": 0.0
+    },
+    "sub-072": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 126.05,
+     "far_per_24h": 0.0
+    },
+    "sub-077": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 61.6,
+     "far_per_24h": 0.0
+    },
+    "sub-083": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 48.16,
+     "far_per_24h": 0.49833887043189373
+    },
+    "sub-087": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-088": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.55,
+     "far_per_24h": 0.0
+    },
+    "sub-094": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 43.55,
+     "far_per_24h": 0.0
+    },
+    "sub-104": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 98.03,
+     "far_per_24h": 0.24482301336325615
+    },
+    "sub-114": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-115": {
+     "events": 5,
+     "detected": 4,
+     "unevaluable": 0,
+     "false_alarms": 5,
+     "monitored_h": 269.43,
+     "far_per_24h": 0.4453847010355194
+    },
+    "sub-118": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 122.85,
+     "far_per_24h": 0.0
+    },
+    "sub-002": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 99.18,
+     "far_per_24h": 0.4839685420447671
+    },
+    "sub-013": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 5,
+     "monitored_h": 14.97,
+     "far_per_24h": 8.016032064128256
+    },
+    "sub-014": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 50.76,
+     "far_per_24h": 0.0
+    },
+    "sub-016": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 42.31,
+     "far_per_24h": 0.5672417868116284
+    },
+    "sub-017": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 12,
+     "monitored_h": 115.11,
+     "far_per_24h": 2.501954652071931
+    },
+    "sub-030": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 117.26,
+     "far_per_24h": 0.20467337540508274
+    },
+    "sub-031": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 20,
+     "monitored_h": 105.47,
+     "far_per_24h": 4.551057172655732
+    },
+    "sub-034": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 66,
+     "monitored_h": 93.91,
+     "far_per_24h": 16.86721328931956
+    },
+    "sub-045": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 200,
+     "monitored_h": 97.0,
+     "far_per_24h": 49.48453608247422
+    },
+    "sub-053": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 25.79,
+     "far_per_24h": 1.8611865063978286
+    },
+    "sub-054": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 9,
+     "monitored_h": 56.84,
+     "far_per_24h": 3.800140745953554
+    },
+    "sub-058": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 10.17,
+     "far_per_24h": 0.0
+    },
+    "sub-063": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 67.77,
+     "far_per_24h": 0.3541389995573263
+    },
+    "sub-065": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 30,
+     "monitored_h": 65.38,
+     "far_per_24h": 11.012542061792598
+    },
+    "sub-069": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 193.18,
+     "far_per_24h": 0.0
+    },
+    "sub-075": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 200.12,
+     "far_per_24h": 0.47971217269638217
+    },
+    "sub-090": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-095": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 103.57,
+     "far_per_24h": 0.0
+    },
+    "sub-099": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 110.26,
+     "far_per_24h": 0.0
+    },
+    "sub-103": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 305,
+     "monitored_h": 89.59,
+     "far_per_24h": 81.70554749413996
+    },
+    "sub-105": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 109.45,
+     "far_per_24h": 0.21927820922795796
+    },
+    "sub-108": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 20.76,
+     "far_per_24h": 0.0
+    },
+    "sub-110": {
+     "events": 2,
+     "detected": 2,
+     "unevaluable": 0,
+     "false_alarms": 9,
+     "monitored_h": 98.93,
+     "far_per_24h": 2.1833619731123015
+    },
+    "sub-116": {
+     "events": 5,
+     "detected": 5,
+     "unevaluable": 0,
+     "false_alarms": 11,
+     "monitored_h": 99.86,
+     "far_per_24h": 2.643701181654316
+    },
+    "sub-122": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.58,
+     "far_per_24h": 0.0
+    },
+    "sub-003": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 114.91,
+     "far_per_24h": 0.0
+    },
+    "sub-006": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 109.54,
+     "far_per_24h": 0.0
+    },
+    "sub-007": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 68.46,
+     "far_per_24h": 0.0
+    },
+    "sub-010": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 102.09,
+     "far_per_24h": 0.0
+    },
+    "sub-012": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 113.89,
+     "far_per_24h": 0.0
+    },
+    "sub-018": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 115.0,
+     "far_per_24h": 0.0
+    },
+    "sub-019": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 120.81,
+     "far_per_24h": 0.0
+    },
+    "sub-020": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 115.49,
+     "far_per_24h": 0.0
+    },
+    "sub-023": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 5,
+     "monitored_h": 100.21,
+     "far_per_24h": 1.1974852809100889
+    },
+    "sub-048": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-051": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 27.49,
+     "far_per_24h": 0.0
+    },
+    "sub-055": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 42.16,
+     "far_per_24h": 0.5692599620493359
+    },
+    "sub-064": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 39.17,
+     "far_per_24h": 0.0
+    },
+    "sub-081": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-085": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 50.71,
+     "far_per_24h": 1.4198382961940446
+    },
+    "sub-089": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 102.37,
+     "far_per_24h": 0.4688873693464882
+    },
+    "sub-100": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 112.3,
+     "far_per_24h": 0.641139804096171
+    },
+    "sub-102": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 5,
+     "monitored_h": 115.41,
+     "far_per_24h": 1.0397712503249286
+    },
+    "sub-109": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 114.09,
+     "far_per_24h": 0.0
+    },
+    "sub-111": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 73.73,
+     "far_per_24h": 0.0
+    },
+    "sub-112": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 66.57,
+     "far_per_24h": 0.0
+    },
+    "sub-117": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 88.25,
+     "far_per_24h": 0.0
+    },
+    "sub-121": {
+     "events": 3,
+     "detected": 0,
+     "unevaluable": 3,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-123": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 81.65,
+     "far_per_24h": 0.5878750765462339
+    },
+    "sub-125": {
+     "events": 2,
+     "detected": 0,
+     "unevaluable": 2,
+     "false_alarms": 0,
+     "monitored_h": 1.5,
+     "far_per_24h": 0.0
+    },
+    "sub-001": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 106.57,
+     "far_per_24h": 0.9008163648306278
+    },
+    "sub-009": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 99.43,
+     "far_per_24h": 0.0
+    },
+    "sub-021": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 103.42,
+     "far_per_24h": 0.23206343067105006
+    },
+    "sub-024": {
+     "events": 2,
+     "detected": 2,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 111.9,
+     "far_per_24h": 0.6434316353887399
+    },
+    "sub-025": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 97.64,
+     "far_per_24h": 0.0
+    },
+    "sub-026": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 88.97,
+     "far_per_24h": 0.5395076992244576
+    },
+    "sub-027": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 100.88,
+     "far_per_24h": 0.0
+    },
+    "sub-035": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 68.63,
+     "far_per_24h": 0.0
+    },
+    "sub-038": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 94.99,
+     "far_per_24h": 0.0
+    },
+    "sub-042": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 45.3,
+     "far_per_24h": 1.589403973509934
+    },
+    "sub-047": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 68.32,
+     "far_per_24h": 0.0
+    },
+    "sub-049": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 27.31,
+     "far_per_24h": 0.0
+    },
+    "sub-056": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 62.04,
+     "far_per_24h": 0.3868471953578337
+    },
+    "sub-057": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 61.11,
+     "far_per_24h": 0.3927344133529701
+    },
+    "sub-060": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 47.33,
+     "far_per_24h": 0.5070779632368476
+    },
+    "sub-068": {
+     "events": 2,
+     "detected": 1,
+     "unevaluable": 1,
+     "false_alarms": 0,
+     "monitored_h": 6.78,
+     "far_per_24h": 0.0
+    },
+    "sub-074": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 132.79,
+     "far_per_24h": 0.0
+    },
+    "sub-079": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 95.45,
+     "far_per_24h": 0.0
+    },
+    "sub-082": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-084": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 15.02,
+     "far_per_24h": 0.0
+    },
+    "sub-086": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.68,
+     "far_per_24h": 0.0
+    },
+    "sub-096": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 5,
+     "monitored_h": 80.06,
+     "far_per_24h": 1.4988758431176616
+    },
+    "sub-098": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 1,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-113": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 30,
+     "monitored_h": 95.18,
+     "far_per_24h": 7.564614414793023
+    },
+    "sub-119": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 186.24,
+     "far_per_24h": 0.0
+    },
+    "sub-005": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 121.2,
+     "far_per_24h": 0.0
+    },
+    "sub-011": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 113.26,
+     "far_per_24h": 0.21190181882394488
+    },
+    "sub-033": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 113.31,
+     "far_per_24h": 0.6354249404289118
+    },
+    "sub-036": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-037": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 21.13,
+     "far_per_24h": 1.135825840037861
+    },
+    "sub-050": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 10,
+     "monitored_h": 69.78,
+     "far_per_24h": 3.4393809114359417
+    },
+    "sub-052": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 79.94,
+     "far_per_24h": 0.3002251688766575
+    },
+    "sub-061": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 65.74,
+     "far_per_24h": 0.0
+    },
+    "sub-066": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-067": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-070": {
+     "events": 2,
+     "detected": 2,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 141.51,
+     "far_per_24h": 0.0
+    },
+    "sub-071": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 194.3,
+     "far_per_24h": 0.0
+    },
+    "sub-073": {
+     "events": 2,
+     "detected": 2,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 278.8,
+     "far_per_24h": 0.0
+    },
+    "sub-076": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 86.55,
+     "far_per_24h": 0.0
+    },
+    "sub-078": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 393.01,
+     "far_per_24h": 0.12213429683723062
+    },
+    "sub-080": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 147.57,
+     "far_per_24h": 0.0
+    },
+    "sub-091": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-092": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 106.19,
+     "far_per_24h": 0.0
+    },
+    "sub-093": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 87.64,
+     "far_per_24h": 0.0
+    },
+    "sub-101": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 5,
+     "monitored_h": 74.25,
+     "far_per_24h": 1.6161616161616161
+    },
+    "sub-106": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 99.17,
+     "far_per_24h": 0.0
+    },
+    "sub-107": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 105.69,
+     "far_per_24h": 0.45415838773772355
+    },
+    "sub-120": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-124": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 66.74,
+     "far_per_24h": 0.0
+    }
+   },
+   "per_fold": [
+    {
+     "fold": 0,
+     "inner_selected": {
+      "entry_threshold": 0.94901,
+      "exit_threshold": 0.74901,
+      "sensitivity": 0.84375,
+      "far_per_24h": 0.5322827597105653,
+      "latency_s_median": 78.0
+     },
+     "outer": {
+      "fbtcs_events": 12,
+      "evaluable_events": 12,
+      "unevaluable_events": 0,
+      "detected": 10,
+      "event_sensitivity": 0.8333333333333334,
+      "event_sensitivity_95ci": [
+       0.5158622513140328,
+       0.9791374745399076
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 0.8333333333333334,
+      "false_alarms": 54,
+      "valid_monitored_hours": 1959.22,
+      "suppressed_hours": 184.43,
+      "far_per_24h": 0.6614882976289005,
+      "far_per_24h_95ci": [
+       0.4969303679823362,
+       0.8630987392671337
+      ],
+      "alarms_near_out_of_scope_seizures": 1,
+      "alarms_during_impedance_checks": 2,
+      "latency_s_median": 57.5,
+      "latency_s_iqr": [
+       45.25,
+       80.0
+      ]
+     }
+    },
+    {
+     "fold": 1,
+     "inner_selected": {
+      "entry_threshold": 0.959069,
+      "exit_threshold": 0.759069,
+      "sensitivity": 0.71875,
+      "far_per_24h": 0.924369169937246,
+      "latency_s_median": 62.0
+     },
+     "outer": {
+      "fbtcs_events": 12,
+      "evaluable_events": 12,
+      "unevaluable_events": 0,
+      "detected": 10,
+      "event_sensitivity": 0.8333333333333334,
+      "event_sensitivity_95ci": [
+       0.5158622513140328,
+       0.9791374745399076
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 0.8333333333333334,
+      "false_alarms": 679,
+      "valid_monitored_hours": 1988.22,
+      "suppressed_hours": 103.09,
+      "far_per_24h": 8.196264614880793,
+      "far_per_24h_95ci": [
+       7.591281746053662,
+       8.83663633012058
+      ],
+      "alarms_near_out_of_scope_seizures": 10,
+      "alarms_during_impedance_checks": 6,
+      "latency_s_median": 72.5,
+      "latency_s_iqr": [
+       51.5,
+       75.25
+      ]
+     }
+    },
+    {
+     "fold": 2,
+     "inner_selected": {
+      "entry_threshold": 0.949348,
+      "exit_threshold": 0.7493479999999999,
+      "sensitivity": 0.7692307692307693,
+      "far_per_24h": 0.8434843301821904,
+      "latency_s_median": 69.0
+     },
+     "outer": {
+      "fbtcs_events": 10,
+      "evaluable_events": 5,
+      "unevaluable_events": 5,
+      "detected": 4,
+      "event_sensitivity": 0.8,
+      "event_sensitivity_95ci": [
+       0.2835820638819105,
+       0.9949492366205319
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 0.4,
+      "false_alarms": 21,
+      "valid_monitored_hours": 1875.81,
+      "suppressed_hours": 358.69,
+      "far_per_24h": 0.2686842468459515,
+      "far_per_24h_95ci": [
+       0.16631978356941673,
+       0.4107124124153788
+      ],
+      "alarms_near_out_of_scope_seizures": 2,
+      "alarms_during_impedance_checks": 0,
+      "latency_s_median": 61.5,
+      "latency_s_iqr": [
+       59.0,
+       107.25
+      ]
+     }
+    },
+    {
+     "fold": 3,
+     "inner_selected": {
+      "entry_threshold": 0.952195,
+      "exit_threshold": 0.752195,
+      "sensitivity": 0.7837837837837838,
+      "far_per_24h": 0.6711437170064936,
+      "latency_s_median": 70.0
+     },
+     "outer": {
+      "fbtcs_events": 9,
+      "evaluable_events": 7,
+      "unevaluable_events": 2,
+      "detected": 6,
+      "event_sensitivity": 0.8571428571428571,
+      "event_sensitivity_95ci": [
+       0.4212768029568048,
+       0.9963897031380994
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 0.6666666666666666,
+      "false_alarms": 51,
+      "valid_monitored_hours": 1796.02,
+      "suppressed_hours": 444.59,
+      "far_per_24h": 0.6815062550284752,
+      "far_per_24h_95ci": [
+       0.5074261703147485,
+       0.8960548655436551
+      ],
+      "alarms_near_out_of_scope_seizures": 0,
+      "alarms_during_impedance_checks": 0,
+      "latency_s_median": 66.5,
+      "latency_s_iqr": [
+       56.0,
+       80.75
+      ]
+     }
+    },
+    {
+     "fold": 4,
+     "inner_selected": {
+      "entry_threshold": 0.956672,
+      "exit_threshold": 0.756672,
+      "sensitivity": 0.8333333333333334,
+      "far_per_24h": 0.34019004589751156,
+      "latency_s_median": 64.0
+     },
+     "outer": {
+      "fbtcs_events": 8,
+      "evaluable_events": 8,
+      "unevaluable_events": 0,
+      "detected": 7,
+      "event_sensitivity": 0.875,
+      "event_sensitivity_95ci": [
+       0.47349032912479344,
+       0.9968402764687481
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 0.875,
+      "false_alarms": 25,
+      "valid_monitored_hours": 2365.76,
+      "suppressed_hours": 200.01,
+      "far_per_24h": 0.25361858535780035,
+      "far_per_24h_95ci": [
+       0.1641285761280159,
+       0.3743910627941559
+      ],
+      "alarms_near_out_of_scope_seizures": 2,
+      "alarms_during_impedance_checks": 25,
+      "latency_s_median": 125.0,
+      "latency_s_iqr": [
+       97.5,
+       229.5
+      ]
+     }
+    }
+   ],
+   "d17_default_thresholds": {
+    "fbtcs_events": 51,
+    "evaluable_events": 44,
+    "unevaluable_events": 7,
+    "detected": 44,
+    "event_sensitivity": 1.0,
+    "event_sensitivity_95ci": [
+     0.9195800602364241,
+     1.0
+    ],
+    "event_sensitivity_counting_unevaluable_as_missed": 0.8627450980392157,
+    "false_alarms": 29549,
+    "valid_monitored_hours": 9985.03,
+    "suppressed_hours": 1290.8,
+    "far_per_24h": 71.02393861921055,
+    "far_per_24h_95ci": [
+     70.21641073759436,
+     71.8384369423658
+    ],
+    "alarms_near_out_of_scope_seizures": 249,
+    "alarms_during_impedance_checks": 260,
+    "latency_s_median": 41.0,
+    "latency_s_iqr": [
+     29.5,
+     68.5
+    ]
+   },
+   "window_at_median_fold_entry": {
+    "windows": 17932140,
+    "positive_windows": 2979,
+    "threshold": 0.952195,
+    "confusion_matrix": {
+     "tn": 17886271,
+     "fp": 42890,
+     "fn": 2510,
+     "tp": 469
+    },
+    "accuracy_not_meaningful_under_imbalance": 0.997468233016249,
+    "precision": 0.010816670126156046,
+    "recall_sensitivity": 0.1574353810003357,
+    "specificity": 0.9976078077496209,
+    "f1": 0.020242565497000303,
+    "roc_auc": 0.7627973871065892,
+    "pr_auc": 0.008145036310391296
+   },
+   "training_history": [
+    {
+     "fold": 0,
+     "train_pr_auc": 0.2208455675806901,
+     "heldout_pr_auc": 0.22625974668037716
+    },
+    {
+     "fold": 1,
+     "train_pr_auc": 0.24118946092333482,
+     "heldout_pr_auc": 0.04189118495096723
+    },
+    {
+     "fold": 2,
+     "train_pr_auc": 0.22191359344734685,
+     "heldout_pr_auc": 0.16203678413976988
+    },
+    {
+     "fold": 3,
+     "train_pr_auc": 0.19476307361890247,
+     "heldout_pr_auc": 0.24637009684189154
+    },
+    {
+     "fold": 4,
+     "train_pr_auc": 0.25261006772600714,
+     "heldout_pr_auc": 0.07590617982762077
+    }
+   ]
+  },
+  "A_RF_imu_only": {
+   "candidate": "A_RF_imu_only",
+   "nested_outer": {
+    "fbtcs_events": 51,
+    "evaluable_events": 44,
+    "unevaluable_events": 7,
+    "detected": 39,
+    "event_sensitivity": 0.8863636363636364,
+    "event_sensitivity_95ci": [
+     0.7544232236844686,
+     0.9620562870607252
+    ],
+    "event_sensitivity_counting_unevaluable_as_missed": 0.7647058823529411,
+    "false_alarms": 297,
+    "valid_monitored_hours": 9985.03,
+    "suppressed_hours": 1290.8,
+    "far_per_24h": 0.7138688202614466,
+    "far_per_24h_95ci": [
+     0.6349814776350354,
+     0.7998484154266678
+    ],
+    "alarms_near_out_of_scope_seizures": 22,
+    "alarms_during_impedance_checks": 1,
+    "latency_s_median": 58.0,
+    "latency_s_iqr": [
+     42.0,
+     81.5
+    ]
+   },
+   "per_participant": {
+    "sub-004": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 18.5,
+     "far_per_24h": 0.0
+    },
+    "sub-008": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 114.12,
+     "far_per_24h": 0.0
+    },
+    "sub-015": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 88.61,
+     "far_per_24h": 0.5416995824399052
+    },
+    "sub-022": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 113.12,
+     "far_per_24h": 0.0
+    },
+    "sub-028": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 88.37,
+     "far_per_24h": 0.0
+    },
+    "sub-029": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 114.0,
+     "far_per_24h": 0.21052631578947367
+    },
+    "sub-032": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 88.84,
+     "far_per_24h": 0.0
+    },
+    "sub-039": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 91.86,
+     "far_per_24h": 0.0
+    },
+    "sub-040": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 53.71,
+     "far_per_24h": 0.4468441630981195
+    },
+    "sub-041": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 20.98,
+     "far_per_24h": 0.0
+    },
+    "sub-043": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 7,
+     "monitored_h": 85.73,
+     "far_per_24h": 1.959640732532369
+    },
+    "sub-044": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 99.33,
+     "far_per_24h": 0.7248565388100272
+    },
+    "sub-046": {
+     "events": 2,
+     "detected": 2,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 97.48,
+     "far_per_24h": 0.9848173984407058
+    },
+    "sub-059": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 47.12,
+     "far_per_24h": 0.0
+    },
+    "sub-062": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 67.22,
+     "far_per_24h": 0.3570365962511157
+    },
+    "sub-072": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 126.05,
+     "far_per_24h": 0.0
+    },
+    "sub-077": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 61.6,
+     "far_per_24h": 0.0
+    },
+    "sub-083": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 48.16,
+     "far_per_24h": 0.0
+    },
+    "sub-087": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-088": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.55,
+     "far_per_24h": 0.0
+    },
+    "sub-094": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 43.55,
+     "far_per_24h": 1.6532721010332954
+    },
+    "sub-104": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 98.03,
+     "far_per_24h": 0.0
+    },
+    "sub-114": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-115": {
+     "events": 5,
+     "detected": 5,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 269.43,
+     "far_per_24h": 0.08907694020710388
+    },
+    "sub-118": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 122.85,
+     "far_per_24h": 0.0
+    },
+    "sub-002": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 99.18,
+     "far_per_24h": 0.4839685420447671
+    },
+    "sub-013": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 14.97,
+     "far_per_24h": 4.809619238476953
+    },
+    "sub-014": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 50.76,
+     "far_per_24h": 1.4184397163120568
+    },
+    "sub-016": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 11,
+     "monitored_h": 42.31,
+     "far_per_24h": 6.239659654927912
+    },
+    "sub-017": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 14,
+     "monitored_h": 115.11,
+     "far_per_24h": 2.91894709408392
+    },
+    "sub-030": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 117.26,
+     "far_per_24h": 0.20467337540508274
+    },
+    "sub-031": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 105.47,
+     "far_per_24h": 0.45510571726557314
+    },
+    "sub-034": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 93.91,
+     "far_per_24h": 0.0
+    },
+    "sub-045": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 5,
+     "monitored_h": 97.0,
+     "far_per_24h": 1.2371134020618557
+    },
+    "sub-053": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 25.79,
+     "far_per_24h": 0.9305932531989143
+    },
+    "sub-054": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 56.84,
+     "far_per_24h": 0.0
+    },
+    "sub-058": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 10.17,
+     "far_per_24h": 2.359882005899705
+    },
+    "sub-063": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 67.77,
+     "far_per_24h": 0.0
+    },
+    "sub-065": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 65.38,
+     "far_per_24h": 0.0
+    },
+    "sub-069": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 193.18,
+     "far_per_24h": 0.49694585360803395
+    },
+    "sub-075": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 7,
+     "monitored_h": 200.12,
+     "far_per_24h": 0.8394963022186688
+    },
+    "sub-090": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-095": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 103.57,
+     "far_per_24h": 0.23172733417012653
+    },
+    "sub-099": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 7,
+     "monitored_h": 110.26,
+     "far_per_24h": 1.5236713223290406
+    },
+    "sub-103": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 89.59,
+     "far_per_24h": 0.0
+    },
+    "sub-105": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 109.45,
+     "far_per_24h": 0.21927820922795796
+    },
+    "sub-108": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 20.76,
+     "far_per_24h": 0.0
+    },
+    "sub-110": {
+     "events": 2,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 98.93,
+     "far_per_24h": 0.0
+    },
+    "sub-116": {
+     "events": 5,
+     "detected": 4,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 99.86,
+     "far_per_24h": 0.4806729421189665
+    },
+    "sub-122": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.58,
+     "far_per_24h": 0.0
+    },
+    "sub-003": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 8,
+     "monitored_h": 114.91,
+     "far_per_24h": 1.6708728570185363
+    },
+    "sub-006": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 109.54,
+     "far_per_24h": 0.0
+    },
+    "sub-007": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 68.46,
+     "far_per_24h": 0.0
+    },
+    "sub-010": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 102.09,
+     "far_per_24h": 0.23508668821627976
+    },
+    "sub-012": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 113.89,
+     "far_per_24h": 0.0
+    },
+    "sub-018": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 115.0,
+     "far_per_24h": 0.0
+    },
+    "sub-019": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 120.81,
+     "far_per_24h": 0.0
+    },
+    "sub-020": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 115.49,
+     "far_per_24h": 0.0
+    },
+    "sub-023": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 100.21,
+     "far_per_24h": 0.23949705618201778
+    },
+    "sub-048": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-051": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 27.49,
+     "far_per_24h": 0.0
+    },
+    "sub-055": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 42.16,
+     "far_per_24h": 0.0
+    },
+    "sub-064": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 39.17,
+     "far_per_24h": 1.8381414347715086
+    },
+    "sub-081": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-085": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 50.71,
+     "far_per_24h": 0.0
+    },
+    "sub-089": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 102.37,
+     "far_per_24h": 0.9377747386929765
+    },
+    "sub-100": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 5,
+     "monitored_h": 112.3,
+     "far_per_24h": 1.068566340160285
+    },
+    "sub-102": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 115.41,
+     "far_per_24h": 0.6238627501949572
+    },
+    "sub-109": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 114.09,
+     "far_per_24h": 0.4207204838285564
+    },
+    "sub-111": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 73.73,
+     "far_per_24h": 0.9765360097653601
+    },
+    "sub-112": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 66.57,
+     "far_per_24h": 0.0
+    },
+    "sub-117": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 88.25,
+     "far_per_24h": 0.2719546742209632
+    },
+    "sub-121": {
+     "events": 3,
+     "detected": 0,
+     "unevaluable": 3,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-123": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 81.65,
+     "far_per_24h": 0.29393753827311697
+    },
+    "sub-125": {
+     "events": 2,
+     "detected": 0,
+     "unevaluable": 2,
+     "false_alarms": 0,
+     "monitored_h": 1.5,
+     "far_per_24h": 0.0
+    },
+    "sub-001": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 106.57,
+     "far_per_24h": 0.22520409120765694
+    },
+    "sub-009": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 99.43,
+     "far_per_24h": 0.24137584230111633
+    },
+    "sub-021": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 103.42,
+     "far_per_24h": 0.6961902920131503
+    },
+    "sub-024": {
+     "events": 2,
+     "detected": 2,
+     "unevaluable": 0,
+     "false_alarms": 5,
+     "monitored_h": 111.9,
+     "far_per_24h": 1.0723860589812333
+    },
+    "sub-025": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 97.64,
+     "far_per_24h": 0.7374027038099139
+    },
+    "sub-026": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 88.97,
+     "far_per_24h": 0.0
+    },
+    "sub-027": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 100.88,
+     "far_per_24h": 0.23790642347343383
+    },
+    "sub-035": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 68.63,
+     "far_per_24h": 0.0
+    },
+    "sub-038": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 94.99,
+     "far_per_24h": 0.7579745236340667
+    },
+    "sub-042": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 71,
+     "monitored_h": 45.3,
+     "far_per_24h": 37.615894039735096
+    },
+    "sub-047": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 11,
+     "monitored_h": 68.32,
+     "far_per_24h": 3.864168618266979
+    },
+    "sub-049": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 27.31,
+     "far_per_24h": 0.8787989747345295
+    },
+    "sub-056": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 62.04,
+     "far_per_24h": 0.3868471953578337
+    },
+    "sub-057": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 61.11,
+     "far_per_24h": 0.0
+    },
+    "sub-060": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 47.33,
+     "far_per_24h": 0.0
+    },
+    "sub-068": {
+     "events": 2,
+     "detected": 1,
+     "unevaluable": 1,
+     "false_alarms": 0,
+     "monitored_h": 6.78,
+     "far_per_24h": 0.0
+    },
+    "sub-074": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 132.79,
+     "far_per_24h": 0.18073650124256346
+    },
+    "sub-079": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 95.45,
+     "far_per_24h": 0.0
+    },
+    "sub-082": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-084": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 15.02,
+     "far_per_24h": 0.0
+    },
+    "sub-086": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.68,
+     "far_per_24h": 0.0
+    },
+    "sub-096": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 80.06,
+     "far_per_24h": 0.2997751686235324
+    },
+    "sub-098": {
+     "events": 1,
+     "detected": 0,
+     "unevaluable": 1,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-113": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 95.18,
+     "far_per_24h": 0.5043076276528682
+    },
+    "sub-119": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 186.24,
+     "far_per_24h": 0.0
+    },
+    "sub-005": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 121.2,
+     "far_per_24h": 0.396039603960396
+    },
+    "sub-011": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 113.26,
+     "far_per_24h": 0.21190181882394488
+    },
+    "sub-033": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 113.31,
+     "far_per_24h": 0.0
+    },
+    "sub-036": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-037": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 21.13,
+     "far_per_24h": 1.135825840037861
+    },
+    "sub-050": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 31,
+     "monitored_h": 69.78,
+     "far_per_24h": 10.662080825451419
+    },
+    "sub-052": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 3,
+     "monitored_h": 79.94,
+     "far_per_24h": 0.9006755066299725
+    },
+    "sub-061": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 2,
+     "monitored_h": 65.74,
+     "far_per_24h": 0.7301490721022209
+    },
+    "sub-066": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-067": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-070": {
+     "events": 2,
+     "detected": 2,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 141.51,
+     "far_per_24h": 0.0
+    },
+    "sub-071": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 194.3,
+     "far_per_24h": 0.49408131755018014
+    },
+    "sub-073": {
+     "events": 2,
+     "detected": 2,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 278.8,
+     "far_per_24h": 0.34433285509325684
+    },
+    "sub-076": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 86.55,
+     "far_per_24h": 0.0
+    },
+    "sub-078": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 5,
+     "monitored_h": 393.01,
+     "far_per_24h": 0.3053357420930765
+    },
+    "sub-080": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 147.57,
+     "far_per_24h": 0.16263468184590366
+    },
+    "sub-091": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-092": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 106.19,
+     "far_per_24h": 0.0
+    },
+    "sub-093": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 1,
+     "monitored_h": 87.64,
+     "far_per_24h": 0.2738475581926061
+    },
+    "sub-101": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 7,
+     "monitored_h": 74.25,
+     "far_per_24h": 2.2626262626262625
+    },
+    "sub-106": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 4,
+     "monitored_h": 99.17,
+     "far_per_24h": 0.9680346879096502
+    },
+    "sub-107": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 6,
+     "monitored_h": 105.69,
+     "far_per_24h": 1.3624751632131706
+    },
+    "sub-120": {
+     "events": 0,
+     "detected": 0,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 0.0,
+     "far_per_24h": null
+    },
+    "sub-124": {
+     "events": 1,
+     "detected": 1,
+     "unevaluable": 0,
+     "false_alarms": 0,
+     "monitored_h": 66.74,
+     "far_per_24h": 0.0
+    }
+   },
+   "per_fold": [
+    {
+     "fold": 0,
+     "inner_selected": {
+      "entry_threshold": 0.985084,
+      "exit_threshold": 0.7850839999999999,
+      "sensitivity": 0.875,
+      "far_per_24h": 0.3917361883263149,
+      "latency_s_median": 63.0
+     },
+     "outer": {
+      "fbtcs_events": 12,
+      "evaluable_events": 12,
+      "unevaluable_events": 0,
+      "detected": 10,
+      "event_sensitivity": 0.8333333333333334,
+      "event_sensitivity_95ci": [
+       0.5158622513140328,
+       0.9791374745399076
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 0.8333333333333334,
+      "false_alarms": 23,
+      "valid_monitored_hours": 1959.22,
+      "suppressed_hours": 184.43,
+      "far_per_24h": 0.2817450156567539,
+      "far_per_24h_95ci": [
+       0.17860217155774122,
+       0.42275585899954576
+      ],
+      "alarms_near_out_of_scope_seizures": 1,
+      "alarms_during_impedance_checks": 0,
+      "latency_s_median": 44.0,
+      "latency_s_iqr": [
+       32.5,
+       55.25
+      ]
+     }
+    },
+    {
+     "fold": 1,
+     "inner_selected": {
+      "entry_threshold": 0.971259,
+      "exit_threshold": 0.7712589999999999,
+      "sensitivity": 0.9375,
+      "far_per_24h": 0.6782708844344727,
+      "latency_s_median": 52.5
+     },
+     "outer": {
+      "fbtcs_events": 12,
+      "evaluable_events": 12,
+      "unevaluable_events": 0,
+      "detected": 10,
+      "event_sensitivity": 0.8333333333333334,
+      "event_sensitivity_95ci": [
+       0.5158622513140328,
+       0.9791374745399076
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 0.8333333333333334,
+      "false_alarms": 65,
+      "valid_monitored_hours": 1988.22,
+      "suppressed_hours": 103.09,
+      "far_per_24h": 0.7846203239576606,
+      "far_per_24h_95ci": [
+       0.6055534012377106,
+       1.0000630119544651
+      ],
+      "alarms_near_out_of_scope_seizures": 2,
+      "alarms_during_impedance_checks": 1,
+      "latency_s_median": 69.5,
+      "latency_s_iqr": [
+       49.5,
+       81.5
+      ]
+     }
+    },
+    {
+     "fold": 2,
+     "inner_selected": {
+      "entry_threshold": 0.972031,
+      "exit_threshold": 0.7720309999999999,
+      "sensitivity": 0.9230769230769231,
+      "far_per_24h": 0.7458177235295156,
+      "latency_s_median": 53.5
+     },
+     "outer": {
+      "fbtcs_events": 10,
+      "evaluable_events": 5,
+      "unevaluable_events": 5,
+      "detected": 5,
+      "event_sensitivity": 1.0,
+      "event_sensitivity_95ci": [
+       0.4781762498950185,
+       1.0
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 0.5,
+      "false_alarms": 32,
+      "valid_monitored_hours": 1875.81,
+      "suppressed_hours": 358.69,
+      "far_per_24h": 0.4094236142414499,
+      "far_per_24h_95ci": [
+       0.28004544905616763,
+       0.5779839825541722
+      ],
+      "alarms_near_out_of_scope_seizures": 4,
+      "alarms_during_impedance_checks": 0,
+      "latency_s_median": 60.0,
+      "latency_s_iqr": [
+       59.0,
+       121.0
+      ]
+     }
+    },
+    {
+     "fold": 3,
+     "inner_selected": {
+      "entry_threshold": 0.970557,
+      "exit_threshold": 0.7705569999999999,
+      "sensitivity": 0.918918918918919,
+      "far_per_24h": 0.6213208209841774,
+      "latency_s_median": 53.5
+     },
+     "outer": {
+      "fbtcs_events": 9,
+      "evaluable_events": 7,
+      "unevaluable_events": 2,
+      "detected": 6,
+      "event_sensitivity": 0.8571428571428571,
+      "event_sensitivity_95ci": [
+       0.4212768029568048,
+       0.9963897031380994
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 0.6666666666666666,
+      "false_alarms": 105,
+      "valid_monitored_hours": 1796.02,
+      "suppressed_hours": 444.59,
+      "far_per_24h": 1.4031011132939195,
+      "far_per_24h_95ci": [
+       1.1475977010411027,
+       1.6985394449688678
+      ],
+      "alarms_near_out_of_scope_seizures": 2,
+      "alarms_during_impedance_checks": 0,
+      "latency_s_median": 58.5,
+      "latency_s_iqr": [
+       53.5,
+       59.75
+      ]
+     }
+    },
+    {
+     "fold": 4,
+     "inner_selected": {
+      "entry_threshold": 0.977633,
+      "exit_threshold": 0.777633,
+      "sensitivity": 0.9166666666666666,
+      "far_per_24h": 0.7150290779512511,
+      "latency_s_median": 56.0
+     },
+     "outer": {
+      "fbtcs_events": 8,
+      "evaluable_events": 8,
+      "unevaluable_events": 0,
+      "detected": 8,
+      "event_sensitivity": 1.0,
+      "event_sensitivity_95ci": [
+       0.6305833524471807,
+       1.0
+      ],
+      "event_sensitivity_counting_unevaluable_as_missed": 1.0,
+      "false_alarms": 72,
+      "valid_monitored_hours": 2365.76,
+      "suppressed_hours": 200.01,
+      "far_per_24h": 0.730421525830465,
+      "far_per_24h_95ci": [
+       0.5715098590270801,
+       0.9198450274739891
+      ],
+      "alarms_near_out_of_scope_seizures": 13,
+      "alarms_during_impedance_checks": 0,
+      "latency_s_median": 61.5,
+      "latency_s_iqr": [
+       37.0,
+       155.75
+      ]
+     }
+    }
+   ],
+   "d17_default_thresholds": {
+    "fbtcs_events": 51,
+    "evaluable_events": 44,
+    "unevaluable_events": 7,
+    "detected": 43,
+    "event_sensitivity": 0.9772727272727273,
+    "event_sensitivity_95ci": [
+     0.8797584177936526,
+     0.9994247607866369
+    ],
+    "event_sensitivity_counting_unevaluable_as_missed": 0.8431372549019608,
+    "false_alarms": 29409,
+    "valid_monitored_hours": 9985.03,
+    "suppressed_hours": 1290.8,
+    "far_per_24h": 70.68743479821191,
+    "far_per_24h_95ci": [
+     69.88182758907914,
+     71.50001248140738
+    ],
+    "alarms_near_out_of_scope_seizures": 324,
+    "alarms_during_impedance_checks": 88,
+    "latency_s_median": 36.0,
+    "latency_s_iqr": [
+     23.0,
+     57.5
+    ]
+   },
+   "window_at_median_fold_entry": {
+    "windows": 17932140,
+    "positive_windows": 2979,
+    "threshold": 0.972031,
+    "confusion_matrix": {
+     "tn": 17919166,
+     "fp": 9995,
+     "fn": 2119,
+     "tp": 860
+    },
+    "accuracy_not_meaningful_under_imbalance": 0.9993244531885207,
+    "precision": 0.07922616305849839,
+    "recall_sensitivity": 0.2886874790198053,
+    "specificity": 0.9994425282923166,
+    "f1": 0.12433135752493855,
+    "roc_auc": 0.8651990603511186,
+    "pr_auc": 0.06233456338155465
+   },
+   "training_history": [
+    {
+     "fold": 0,
+     "train_pr_auc": 0.3520609119146886,
+     "heldout_pr_auc": 0.4609523282415344
+    },
+    {
+     "fold": 1,
+     "train_pr_auc": 0.3980074901442926,
+     "heldout_pr_auc": 0.30315960481345405
+    },
+    {
+     "fold": 2,
+     "train_pr_auc": 0.39664281176964095,
+     "heldout_pr_auc": 0.2749059149617801
+    },
+    {
+     "fold": 3,
+     "train_pr_auc": 0.38345010817114294,
+     "heldout_pr_auc": 0.3167382683110396
+    },
+    {
+     "fold": 4,
+     "train_pr_auc": 0.4267806064052854,
+     "heldout_pr_auc": 0.25656545121795243
+    }
+   ]
+  }
+ }
+}

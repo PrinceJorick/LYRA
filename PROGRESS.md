@@ -353,3 +353,109 @@ cd mlm && .venv/bin/python -m pytest -q
    any hardware claim.
 5. Optional research: probability calibration instead of threshold-only operating points; sub-114
    false alarms; why sub-121's three events were missed.
+
+## Branch sessions: `seizeit2-model` and `lyra-esp32-ml` (PrinceJorick)
+
+These sessions ran on branches in parallel with the main-line sessions above, so their numbers restart at 4. Merged into `main` with Kyle's Stage 3.5/4 work on 2026-11-22.
+
+### Session 4 (2026-11-21): SeizeIT2 model trained and integrated (branch `seizeit2-model`)
+
+Developed in parallel with Sessions 2–3 (`mlm/`), from the older base `9ef25ed`. How the two pipelines differ and how to merge them: `docs/MLM_MERGE_GUIDE.md`.
+
+#### What exists
+- `ml/seizeit2/`: reproducible pipeline (fetch + SHA256-verify EDFs, features, subject-level split, 5-fold grouped CV, one-time test evaluation, JSON export, Python↔TS parity check). Reuses `lyra_mlm.annotations` for label mapping.
+- `models/seizeit2/`: `lyra-seizeit2-fbtcs` v1.0.0 (HGB, 300 trees, 5 s windows), config, labels, metadata, metrics, plots, model card (`README.md`).
+- `src/services/ml/seizeit2/`: TS feature extractor, tree evaluator + streaming detector, `MlService` implementation. `services/ml/index.ts` now serves it (falls back to the mock if the bundled assets are incompatible).
+- Insights/About wording updated: "experimental, not clinically validated, no live pod data".
+
+#### Decisions worth remembering
+- Target = FBTCS (`sz_foc_f2b`); other seizures are excluded from training negatives and from the false-alarm count. `context.md` U1 still needs owner sign-off.
+- Model shipped as JSON evaluated in TypeScript, not `.tflite`: no native runtime in the app, keeps Expo Go working.
+- SeizeIT2 accelerometer files use per-file scales (~1/2, ~1/6, or pinned at 32.768): runs are rescaled to g by their median |acc|; invalid runs excluded. Gyro unit unknown → only scale-invariant gyro features.
+- Held-out test (25 subjects, 1,983 h): 11/12 FBTCS (CI 0.62–1.00), 0.22 false alarms/24 h, median latency 43 s from annotated onset. Hospital data only.
+- `detect()` is not called anywhere yet (no real sensor stream); the alert flow is unchanged.
+
+#### Gotchas
+- `pj-training-data/ds005873` is a DataLad clone without EDF content; `preprocessing.py` downloads from the public bucket. Don't `git annex`/`datalad` inside it.
+- Run Python modules from the repo root (`python -m ml.seizeit2.<module>`); pickled models need `ml.seizeit2.train` importable.
+- `evaluate.py` refuses to evaluate the test set twice for the same run.
+
+#### Not verified
+- No run on a phone; no LYRA pod data; MyoWare/BMI270 units and placement not matched to SeizeIT2.
+
+### Session 5 (2026-11-22): v2 retrained on all participants under D9–D18 (branch `seizeit2-model`)
+
+Owner instruction: retrain on all participants and all seizures, follow Kyle's locked hardware decisions, fix the bug in Kyle's prepared data, push and open a PR (do not merge).
+
+#### What exists
+- **`lyra_mlm` IMU fix (`218a656`):** `seizeit2.calibrate_imu` puts ACC in g (per-recording median |acc|) and GYR in deg/s (125 deg/s per unit, estimated by `ml/seizeit2/gyro_calibration.py`). Impossible scales are marked INVALID. 7 new tests; 141 pass.
+- **App follows D11 (`93a3f24`):** `src/services/ml/seizeit2/` is removed and `services/ml/index.ts` is the mock again. Insights/About wording is restored.
+- **`ml/seizeit2/` v2 pipeline:**
+  - `prepare.py`: streams and verifies EDFs, then runs Kyle's Stage 3 worker. All 2,850 recordings were regenerated, 0 failed.
+  - `train.py`: nested participant-grouped CV over all 124 usable participants. Thresholds are chosen in inner CV only.
+  - `evaluate.py`: `confirm_alarms` is an exact, fast replica of `EventConfirmation`, checked by `test_evaluate.py` on 300 streams.
+  - `export.py`: writes the C99 header and checks it with gcc parity.
+  - `preprocessing.py` and the TS parity files are deleted.
+- **`models/seizeit2/` v2.0.0:** RF 50 × 8 (D18), with `lyra_seizeit2_model.h`, `model_config.json`/`export_manifest.json` (Kyle's contracts) and the model card.
+
+#### Results (nested 5-fold CV, no held-out set)
+- **Primary RF:**
+  - 42/44 evaluable FBTCS (CI 0.85–0.99).
+  - 0.32 FA/24 h (CI 0.27–0.38) over 9,985 valid hours.
+  - Median latency 54 s.
+- **Fusion vs single modality:** ENV-only reaches 2.0 FA/24 h and IMU-only 0.71.
+- **HGB:** 0.21 FA/24 h at 41/44.
+- **D17 default thresholds (0.65/0.45):** 37 FA/24 h. Final thresholds are entry 0.9684, exit 0.7684.
+
+#### Decisions worth remembering
+- All participants are used, so no SeizeIT2 test set remains. The next independent check needs new data.
+- D17 entry/exit are tuned, because the defaults are unusable with uncalibrated forest scores. HGB stands in for XGBoost.
+- Python 3.14 uses forkserver. Set `OMP_NUM_THREADS=1` for the Stage 3 worker pool, or each worker spawns about 34 threads and runs about 15× slower.
+
+#### Not verified
+- The 22 features have no C99 port.
+- The header has never run on an ESP32-S3.
+- The MyoWare ENV gain has not been calibrated against the simulated envelope.
+- The gyro unit is an estimate.
+- There is no pod data.
+
+### Session 6 (2026-11-22): ENV-path pipeline and ESP32-S3 package (branch `lyra-esp32-ml`)
+
+Owner brief: an end-to-end, patient-wise, cached SeizeIT2 pipeline with a C99 export for the ESP32-S3. The owner ruled that D12 (MyoWare ENV pin at 50 Hz) is the deployable signal path, set the FAR cap to ≤ 1 per 24 h, and approved installing ESP-IDF.
+
+#### What exists
+- **`ml/lyra/`** (see its README for the commands):
+  - Extraction, benchmark, deploy, parity, final evaluation, ADL loader and report.
+  - 224 tests, all passing.
+- **`firmware/model/`:** C99 features, XGB model, detector state machine, golden vectors and host test.
+- **`firmware/esp32s3_app/`:** an ESP-IDF size probe, not product firmware.
+- **`reports/lyra/`:** `lyra_report.md`/`.json`, dataset and experiment manifests, `ablation_results.csv`, `oof_metrics.json`, `resource_report.json`.
+- **ESP-IDF v5.5.6** for esp32s3 is installed in `~/esp/esp-idf`.
+
+#### Results
+- **Development (sub-001..096, subject-wise 5-fold OOF):**
+  - Selected model: w4 (4 s window, 2 s hop), fusion, XGB 40 × 4, threshold 0.015, N=3, M=3.
+  - 26/29 events at 0.79 FA/24 h, median latency 55.5 s.
+  - No configuration reaches a median latency below 20 s.
+- **Final evaluation (sub-097..125, run once):**
+  - 12/15 events (bootstrap CI 0.60–1.00) at 0.24 FA/24 h (CI 0.10–0.43), median latency 47.5 s.
+  - IMU-only: 10/15. sEMG-only: 0/15.
+- **ESP32-S3 (measured with xtensa gcc 14.2 -Os):**
+  - 15,898 B flash and 6,024 B SRAM, against targets of 60 KB and 8 KB.
+  - Python/C parity is bit-exact on the golden vectors and on 31,206 real windows.
+
+#### Decisions worth remembering
+- **EMG rate:** EMG is 256 Hz in every file, not 250.
+- **ENV simulation:** a 1st-order 20.8 Hz HPF, rectification, a 1st-order 3.6 Hz LPF and 20 ms bin means, all causal.
+- **Threshold grid:** calibrated probabilities follow the true prevalence, so the grid is extended down to 0.005. Within the brief's 0.20–0.80 grid, the best result is 1/29 events.
+- **Dominant frequency:** uses a tie-tolerant argmax (relative 1e-6). Quantised still signals give exact periodogram ties, and a plain argmax broke Python/C parity.
+- **XGB export:** m2cgen 0.10 fails on XGBoost 3.x, so XGB uses its own exporter. emlearn 0.23 sets `numpy.seterr(all='raise')` on import, and `export_c.py` restores the previous state.
+
+#### Not verified
+- **Hardware:** nothing has run on a board.
+- **Calibration:** the MyoWare ENV gain and the BMI270 units are not calibrated against the simulation. The SeizeIT2 gyro unit is an estimate.
+- **Daily-life data:** no ADL or pod data exists yet.
+- **Test cohort:** the final cohort was used to train v1/v2, so it is not pristine.
+- **Latency:** measured from the annotated focal onset, not from the convulsive phase.
+- **IMU rule predates D19.** `ml/lyra` scales the IMU with the legacy `calibrate_imu` (median |acc|), not Kyle's Stage 3.5 rule (D19, merged afterwards). The legacy rule lacks the Z-corruption, ceiling and rest-spread rejections. Some included recordings may carry a corrupt v1.1.0 Z axis. Re-extract under D19 before relying on these numbers.
+- **`ml/seizeit2` after the merge.** The adapter now applies D19. Rerunning `ml/seizeit2/prepare.py` will not reproduce the data that `models/seizeit2` v2 was trained on.

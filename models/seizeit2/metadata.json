@@ -1,0 +1,50 @@
+{
+ "model_id": "lyra-seizeit2-fbtcs",
+ "version": "2.0.0",
+ "format": "lyra-seizeit2-forest/1",
+ "created_utc": "2026-11-21T18:53:14+00:00",
+ "training_run": "20261122-022006",
+ "git_commit_at_export": "93a3f24335721b53b80d755f0194496f65d5400d",
+ "family": "random_forest (D18 primary embedded candidate)",
+ "hyperparameters": {
+  "class_weight": "balanced_subsample",
+  "max_depth": 8,
+  "max_features": "sqrt",
+  "min_samples_leaf": 20,
+  "n_estimators": 50,
+  "random_state": 20261121
+ },
+ "sklearn": "1.9.1",
+ "numpy": "2.5.5",
+ "trees": 50,
+ "nodes": 17230,
+ "header_bytes": 512352,
+ "flash_bytes_arrays": 224212,
+ "trained_on": "all 124 participants with usable windows (901,619 windows, 2,979 positive)",
+ "performance_estimate": "nested 5-fold participant-grouped CV (no held-out set); see evaluation/metrics.json",
+ "nested_cv_summary": {
+  "detected": 42,
+  "evaluable_events": 44,
+  "event_sensitivity": 0.9545454545454546,
+  "event_sensitivity_95ci": [
+   0.8452684223410106,
+   0.9944470480046295
+  ],
+  "far_per_24h": 0.3244858273915666,
+  "far_per_24h_95ci": [
+   0.27206021853488266,
+   0.38406824787859684
+  ],
+  "latency_s_median": 54.0,
+  "valid_monitored_hours": 9985.03
+ },
+ "export_check": {
+  "rows": 205000,
+  "json_max_abs_diff": 8.178160149086011e-09,
+  "c_max_abs_diff": 3.573183671168323e-08,
+  "decision_agreement_outside_1e-6_of_threshold": 1.0,
+  "compiler": "gcc -std=c99 -Wall -Wextra -Werror -pedantic",
+  "on_device": "not run (no ESP32-S3 firmware yet)"
+ },
+ "status": "experimental research component; not clinically validated; not a diagnostic device"
+}

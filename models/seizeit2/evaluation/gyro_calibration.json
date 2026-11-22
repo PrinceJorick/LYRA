@@ -1,0 +1,457 @@
+{
+ "method": "Estimate the SeizeIT2 gyroscope unit from rigid-body kinematics (no external reference needed).",
+ "recordings": 24,
+ "identity_axis_map": 24,
+ "rad_s_per_unit_median": 2.18945948616253,
+ "rad_s_per_unit_iqr": [
+  1.9110679917244209,
+  2.3744232226729447
+ ],
+ "deg_s_per_unit_median": 125.44678797199484,
+ "deg_s_per_unit_iqr": [
+  109.49613028835145,
+  136.04442943701142
+ ],
+ "by_regime_median_deg_s": {
+  "~1/2": 110.51492014972085,
+  "~1/6": 131.8603515965052
+ },
+ "acc_scale_valid": [
+  0.12,
+  1.2
+ ],
+ "per_recording": [
+  {
+   "recording_id": "sub-046_ses-01_task-szMonitoring_run-07",
+   "regime": "~1/6",
+   "acc_scale": 0.16755472854166018,
+   "rad_s_per_unit": 2.1347753034115766,
+   "axes": [
+    0,
+    1,
+    2
+   ],
+   "signs": [
+    1,
+    1,
+    1
+   ],
+   "residual": 0.6455468949982814,
+   "n": 80353
+  },
+  {
+   "recording_id": "sub-065_ses-01_task-szMonitoring_run-10",
+   "regime": "~1/6",
+   "acc_scale": 0.18013323988309424,
+   "rad_s_per_unit": 2.126234428967134,
+   "axes": [
+    0,
+    1,
+    2
+   ],
+   "signs": [
+    1,
+    1,
+    1
+   ],
+   "residual": 0.6548338504296367,
+   "n": 19246
+  },
+  {
+   "recording_id": "sub-050_ses-01_task-szMonitoring_run-05",
+   "regime": "~1/2",
+   "acc_scale": 0.5161912517962927,
+   "rad_s_per_unit": 1.7198040808378212,
+   "axes": [
+    0,
+    1,
+    2
+   ],
+   "signs": [
+    1,
+    1,
+    1
+   ],
+   "residual": 0.7645232075100861,
+   "n": 67330
+  },
+  {
+   "recording_id": "sub-007_ses-01_task-szMonitoring_run-03",
+   "regime": "~1/2",
+   "acc_scale": 0.5239840129861273,
+   "rad_s_per_unit": 2.4878472903358664,
+   "axes": [
+    0,
+    1,
+    2
+   ],
+   "signs": [
+    1,
+    1,
+    1
+   ],
+   "residual": 0.5598309430457528,
+   "n": 63783
+  },
+  {
+   "recording_id": "sub-011_ses-01_task-szMonitoring_run-07",
+   "regime": "~1/2",
+   "acc_scale": 0.5116975034459216,
+   "rad_s_per_unit": 1.7525434299873408,
+   "axes": [
+    0,
+    1,
+    2
+   ],
+   "signs": [
+    1,
+    1,
+    1
+   ],
+   "residual": 0.6913114253340822,
+   "n": 85094
+  },
+  {
+   "recording_id": "sub-059_ses-01_task-szMonitoring_run-02",
+   "regime": "~1/6",
+   "acc_scale": 0.16762520789019753,
+   "rad_s_per_unit": 2.302264247774223,
+   "axes": [
+    0,
+    1,
+    2
+   ],
+   "signs": [
+    1,
+    1,
+    1
+   ],
+   "residual": 0.48130104545321717,
+   "n": 45337
+  },
+  {
+   "recording_id": "sub-061_ses-01_task-szMonitoring_run-06",
+   "regime": "~1/6",
+   "acc_scale": 0.17236805444423325,
+   "rad_s_per_unit": 1.876442261809691,
+   "axes": [
+    0,
+    1,
+    2
+   ],
+   "signs": [
+    1,
+    1,
+    1
+   ],
+   "residual": 0.7122070512721882,
+   "n": 49635
+  },
+  {
+   "recording_id": "sub-005_ses-01_task-szMonitoring_run-23",
+   "regime": "~1/2",
+   "acc_scale": 0.5089494945691577,
+   "rad_s_per_unit": 2.240217832749049,
+   "axes": [
+    0,
+    1,
+    2
+   ],
+   "signs": [
+    1,
+    1,
+    1
+   ],
+   "residual": 0.7204343851148013,
+   "n": 95521
+  },
+  {
+   "recording_id": "sub-050_ses-01_task-szMonitoring_run-06",
+   "regime": "~1/2",
+   "acc_scale": 0.5161961396448548,
+   "rad_s_per_unit": 1.7669941655041097,
+   "axes": [
+    0,
+    1,
+    2
+   ],
+   "signs": [
+    1,
+    1,
+    1
+   ],
+   "residual": 0.6935580214421991,
+   "n": 26414
+  },
+  {
+   "recording_id": "sub-026_ses-01_task-szMonitoring_run-02",
+   "regime": "~1/6",
+   "acc_scale": 0.16647224367894087,
+   "rad_s_per_unit": 2.410631228524042,
+   "axes": [
+    0,
+    1,
+    2
+   ],
+   "signs": [
+    1,
+    1,
+    1
+   ],
+   "residual": 0.5666377821757892,
+   "n": 44892
+  },
+  {
+   "recording_id": "sub-060_ses-01_task-szMonitoring_run-04",
+   "regime": "~1/6",
+   "acc_scale": 0.16489696155534178,
+   "rad_s_per_unit": 1.9724851567152188,
+   "axes": [
+    0,
+    1,
+    2
+   ],
+   "signs": [
+    1,
+    1,
+    1
+   ],
+   "residual": 0.6968158053224773,
+   "n": 68355
+  },
+  {
+   "recording_id": "sub-023_ses-01_task-szMonitoring_run-01",
+   "regime": "~1/6",
+   "acc_scale": 0.16748168799038116,
+   "rad_s_per_unit": 2.3478461242822806,
+   "axes": [
+    0,
+    1,
+    2
+   ],
+   "signs": [
+    1,
+    1,
+    1
+   ],
+   "residual": 0.5929890968394916,
+   "n": 51864
+  },
+  {
+   "recording_id": "sub-030_ses-01_task-szMonitoring_run-01",
+   "regime": "~1/6",
+   "acc_scale": 0.1642169904300267,
+   "rad_s_per_unit": 2.6533132133300277,
+   "axes": [
+    0,
+    1,
+    2
+   ],
+   "signs": [
+    1,
+    1,
+    1
+   ],
+   "residual": 0.5173480097299198,
+   "n": 62055
+  },
+  {
+   "recording_id": "sub-018_ses-01_task-szMonitoring_run-08",
+   "regime": "~1/6",
+   "acc_scale": 0.1655112339610339,
+   "rad_s_per_unit": 2.23807416954337,
+   "axes": [
+    0,
+    1,
+    2
+   ],
+   "signs": [
+    1,
+    1,
+    1
+   ],
+   "residual": 0.6813808408122266,
+   "n": 67786
+  },
+  {
+   "recording_id": "sub-056_ses-01_task-szMonitoring_run-04",
+   "regime": "~1/6",
+   "acc_scale": 0.16735538408811318,
+   "rad_s_per_unit": 2.4196596191148156,
+   "axes": [
+    0,
+    1,
+    2
+   ],
+   "signs": [
+    1,
+    1,
+    1
+   ],
+   "residual": 0.5503376976405877,
+   "n": 78283
+  },
+  {
+   "recording_id": "sub-015_ses-01_task-szMonitoring_run-09",
+   "regime": "~1/2",
+   "acc_scale": 0.49530248519514186,
+   "rad_s_per_unit": 2.4244804269363973,
+   "axes": [
+    0,
+    1,
+    2
+   ],
+   "signs": [
+    1,
+    1,
+    1
+   ],
+   "residual": 0.5663214223495487,
+   "n": 110929
+  },
+  {
+   "recording_id": "sub-039_ses-01_task-szMonitoring_run-06",
+   "regime": "~1/2",
+   "acc_scale": 0.5135449886909114,
+   "rad_s_per_unit": 1.675320119627365,
+   "axes": [
+    0,
+    1,
+    2
+   ],
+   "signs": [
+    1,
+    1,
+    1
+   ],
+   "residual": 0.7889558913064654,
+   "n": 99553
+  },
+  {
+   "recording_id": "sub-050_ses-01_task-szMonitoring_run-03",
+   "regime": "~1/2",
+   "acc_scale": 0.5079475074408921,
+   "rad_s_per_unit": 1.8293136249218818,
+   "axes": [
+    0,
+    1,
+    2
+   ],
+   "signs": [
+    1,
+    1,
+    1
+   ],
+   "residual": 0.7595029081489577,
+   "n": 87028
+  },
+  {
+   "recording_id": "sub-110_ses-01_task-szMonitoring_run-02",
+   "regime": "~1/6",
+   "acc_scale": 0.16617724497918712,
+   "rad_s_per_unit": 2.362353887389246,
+   "axes": [
+    0,
+    1,
+    2
+   ],
+   "signs": [
+    1,
+    1,
+    1
+   ],
+   "residual": 0.5161389272248799,
+   "n": 60622
+  },
+  {
+   "recording_id": "sub-043_ses-01_task-szMonitoring_run-02",
+   "regime": "~1/6",
+   "acc_scale": 0.1652054600142564,
+   "rad_s_per_unit": 2.300530328618532,
+   "axes": [
+    0,
+    1,
+    2
+   ],
+   "signs": [
+    1,
+    1,
+    1
+   ],
+   "residual": 0.5336451138974133,
+   "n": 76859
+  },
+  {
+   "recording_id": "sub-100_ses-01_task-szMonitoring_run-09",
+   "regime": "~1/2",
+   "acc_scale": 0.5005039961687472,
+   "rad_s_per_unit": 1.9226099016959974,
+   "axes": [
+    0,
+    1,
+    2
+   ],
+   "signs": [
+    1,
+    1,
+    1
+   ],
+   "residual": 0.659720850216182,
+   "n": 24655
+  },
+  {
+   "recording_id": "sub-002_ses-01_task-szMonitoring_run-05",
+   "regime": "~1/2",
+   "acc_scale": 0.6076657236096332,
+   "rad_s_per_unit": 2.655252283293962,
+   "axes": [
+    0,
+    1,
+    2
+   ],
+   "signs": [
+    1,
+    1,
+    1
+   ],
+   "residual": 0.4338027468018553,
+   "n": 17802
+  },
+  {
+   "recording_id": "sub-014_ses-01_task-szMonitoring_run-04",
+   "regime": "~1/2",
+   "acc_scale": 0.49229663557898856,
+   "rad_s_per_unit": 2.1408448027816895,
+   "axes": [
+    0,
+    1,
+    2
+   ],
+   "signs": [
+    1,
+    1,
+    1
+   ],
+   "residual": 0.7280552804550592,
+   "n": 37019
+  },
+  {
+   "recording_id": "sub-011_ses-01_task-szMonitoring_run-03",
+   "regime": "~1/2",
+   "acc_scale": 0.5190749642493632,
+   "rad_s_per_unit": 1.9350885566865095,
+   "axes": [
+    0,
+    1,
+    2
+   ],
+   "signs": [
+    1,
+    1,
+    1
+   ],
+   "residual": 0.6409710502852579,
+   "n": 86409
+  }
+ ]
+}

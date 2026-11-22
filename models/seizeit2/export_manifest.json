@@ -1,0 +1,40 @@
+{
+ "model_id": "lyra-seizeit2-fbtcs",
+ "converter": "ml/seizeit2/export.py (C99 tree arrays)",
+ "converter_version": "2.0.0",
+ "feature_names": [
+  "emg_simenv_rms",
+  "emg_simenv_mav",
+  "emg_simenv_var",
+  "emg_simenv_std",
+  "emg_simenv_wl_per_s",
+  "emg_simenv_autocorr_peak",
+  "emg_simenv_mod_band_power",
+  "emg_simenv_mod_band_ratio",
+  "emg_simenv_mod_peak_freq_hz",
+  "imu_acc_mag_mean",
+  "imu_acc_mag_std",
+  "imu_gyr_mag_mean",
+  "imu_gyr_mag_std",
+  "imu_gyr_mag_rms",
+  "imu_acc_jerk_rms",
+  "imu_acc_dominant_freq_hz",
+  "imu_acc_band_power",
+  "imu_orientation_change_deg",
+  "xmod_env_accmag_corr",
+  "xmod_energy_log_ratio",
+  "xmod_lag_s",
+  "xmod_coherence_band"
+ ],
+ "normalization": null,
+ "files": [
+  "lyra_seizeit2_model.h",
+  "model.json",
+  "model_config.json",
+  "config.json",
+  "labels.json",
+  "metadata.json"
+ ],
+ "c_standard": "C99",
+ "target": "ESP32-S3"
+}

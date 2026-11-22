@@ -112,6 +112,10 @@ such recordings.
      the window saturation limits catch them (more than 5% saturated → INVALID, any → DEGRADED).
      Decisions are in `processed/imu_scale_manifest.json`; held-out entries hold only D and the
      category.
+   - The earlier per-recording gravity rule (`seizeit2.calibrate_imu`, median |acc| in
+     `ACC_SCALE_VALID = (0.12, 1.2)`) stays in the module for reproducibility only: `ml/seizeit2` (v2)
+     and `ml/lyra` (`reports/lyra/`) were produced with it. It lacks the Z-corruption, ceiling and
+     rest-spread checks, and the adapter no longer uses it.
 5. **Timing:** EMG and MOV EDF start times are anonymised differently, so both are assumed to start
    at t = 0, the reference for `events.tsv` onsets.
 6. **Scope:** an in-hospital focal-epilepsy cohort. FBTCS windows are not GTCS evidence and not

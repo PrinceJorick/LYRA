@@ -52,3 +52,19 @@ mlm/data/
 mlm/models/
 # generated C (scripts/export_c99.py); regenerate from the frozen models
 mlm/export/
+
+# Local training datasets (SeizeIT2 / prototype recordings)
+pj-training-data/
+
+# SeizeIT2 ML pipeline (ml/seizeit2/): experiment runs/checkpoints, compiled Python
+ml/seizeit2/runs/
+ml/lyra/cache/
+ml/lyra/runs/
+*.py[cod]
+
+# ESP-IDF size-probe build outputs
+firmware/esp32s3_app/build/
+firmware/esp32s3_app/sdkconfig*
+firmware/esp32s3_app/dependencies.lock
+firmware/esp32s3_app/build.log
+firmware/model/lyra_model_test
