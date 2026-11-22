@@ -141,3 +141,4 @@ Scope: LYRA package only (model + features + detector + one input window); exclu
 - **Labels and data:** in-hospital recordings only; latency is measured from the annotated focal onset, not from the convulsive phase; few target events; no daily-life negatives.
 - **Hardware:** nothing has run on an ESP32-S3 board; acquisition, ring buffers, BLE and power are not part of the measured package.
 - **Final cohort:** previously used to train LYRA v1/v2, so these numbers are not a pristine external test.
+- **IMU scaling predates D19:** IMU is scaled by the per-recording median |acc| (`lyra_mlm.seizeit2.calibrate_imu`), not by the Stage 3.5 rule (D19, `assess_imu_scale`) that was merged afterwards. That rule also rejects recordings with a corrupt v1.1.0 Z axis, stuck axes or unstable resting gravity. Some recordings included here may fail it. Re-extract under D19 before relying on these numbers.

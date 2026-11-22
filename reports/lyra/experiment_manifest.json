@@ -12,7 +12,7 @@
   "pyarrow": "26.0.1"
  },
  "os": "Linux-7.3.5-2-cachyos-x86_64-with-glibc2.44",
- "git_commit": "f2b528f84f358ab14a4a337314a14c08d48ca25f",
+ "git_commit": "8399b64b34e1dd1ec30cf773d5e228c021599e82",
  "host_compiler": "gcc (GCC) 16.2.1 20260810",
  "esp32s3_compiler": "xtensa-esp-elf-gcc (crosstool-NG esp-14.2.0_20260121) 14.2.0",
  "esp_idf": "v5.5.6",

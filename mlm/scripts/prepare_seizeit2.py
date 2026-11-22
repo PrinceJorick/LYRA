@@ -2,7 +2,8 @@
 
 Reads mlm/data/seizeit2/ and writes only under mlm/data/ (gitignored). Fits nothing: features are
 stored raw with availability masks for Stage 4 training-fold normalization. Resumable: recordings
-with an existing output file are summarised from it instead of recomputed.
+with an existing output file are summarised from it instead of recomputed. The Stage 3.5 IMU scale
+decision per recording goes to imu_scale_manifest.json (held-out: divisor and category only).
 Usage: python scripts/prepare_seizeit2.py [--workers 5] [--skip-checksums] [--data mlm/data]
 """
 
@@ -21,13 +22,15 @@ from pathlib import Path
 import numpy as np
 
 from lyra_mlm.annotations import AnnotationKind, WindowLabel
-from lyra_mlm.evaluation import SEIZEIT2_PLANNED_SPLIT, split_manifest
+from lyra_mlm.evaluation import SEIZEIT2_PLANNED_SPLIT, Partition, split_manifest
 from lyra_mlm.features import feature_specs
 from lyra_mlm.prep import QUALITY_CODE, PrepConfig, prepare_recording
+from lyra_mlm.quality import QualityConfig
+from lyra_mlm import seizeit2 as sz
 from lyra_mlm.seizeit2 import MalformedAnnotation, MissingRecordingData, SeizeIT2Adapter
 
 DATA = Path(__file__).resolve().parents[1] / "data"
-CFG = PrepConfig()
+CFG = PrepConfig(quality=QualityConfig(saturation_limits=sz.SATURATION_LIMITS))
 STATE = {v: k.value for k, v in QUALITY_CODE.items()}
 
 
@@ -47,7 +50,22 @@ def summarise(rid: str, z) -> dict:
             "secondary_all_available": int(z["secondary_available"].all(axis=1).sum())}
 
 
+def imu_entry(adapter: SeizeIT2Adapter, rid: str) -> dict:
+    s = adapter.imu_scale(rid)
+    if s is None:
+        return {"d": None, "category": "NO_MOV"}
+    if SEIZEIT2_PLANNED_SPLIT.partition_of(rid.split("_")[0]) is Partition.TEST:
+        return {"d": s.d, "category": s.category}  # blind: no signal statistics for held-out
+    return {"d": s.d, "category": s.category, "reason": s.reason, "evidence": s.evidence}
+
+
 def work(rid: str, RAW: Path, OUT: Path) -> dict:
+    s = _work(rid, RAW, OUT)
+    s["imu_scale"] = imu_entry(SeizeIT2Adapter(RAW), rid)
+    return s
+
+
+def _work(rid: str, RAW: Path, OUT: Path) -> dict:
     out = OUT / "windows" / rid.split("_")[0] / f"{rid}.npz"
     if out.exists():
         with np.load(out) as z:
@@ -159,6 +177,21 @@ def main() -> None:
             if i % 50 == 0:
                 print(f"{i}/{len(rids)} recordings, {time.time() - t0:.0f} s", flush=True)
     summaries.sort(key=lambda s: s["recording_id"])
+    scale = {s["recording_id"]: s.pop("imu_scale") for s in summaries}
+    part = {"train_cv": Partition.TRAIN, "held_out_test": Partition.TEST}
+    (OUT / "imu_scale_manifest.json").write_text(json.dumps({
+        "rule": {"d_rest_windows": sz.D_REST_WINDOWS, "max_rest_spread": sz.MAX_REST_SPREAD,
+                 "rest_g_range_after_conversion": sz.REST_G_RANGE, "max_axis_disagreement": sz.MAX_AXIS_DISAGREEMENT,
+                 "acc": "stored x D -> g, full scale +-8 g",
+                 "gyr": f"stored x {sz.GYR_DPS_PER_UNIT:g}*D -> deg/s, full scale +-1000 deg/s",
+                 "gyr_factor_confidence": "medium: inferred in Step 1 from posture changes (ACC tilt vs integrated "
+                                          "gyro, Train/CV sample of 203 recordings) and the shared 8/D ceiling; "
+                                          "not documented by the dataset",
+                 "saturation_limits": sz.SATURATION_LIMITS},
+        "counts": {k: dict(Counter(e["category"] for r, e in scale.items()
+                                   if SEIZEIT2_PLANNED_SPLIT.partition_of(r.split("_")[0]) is p))
+                   for k, p in part.items()},
+        "recordings": scale}, indent=1))
     (OUT / "windows_manifest.json").write_text(json.dumps(summaries, indent=1))
 
     # 5. participant-independent split
