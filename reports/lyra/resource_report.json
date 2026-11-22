@@ -1,0 +1,305 @@
+{
+ "targets": {
+  "flash_bytes": 61440,
+  "sram_bytes": 8192
+ },
+ "budget": {
+  "flash_bytes": 15898,
+  "flash_model_bytes": 8851,
+  "flash_features_bytes": 6590,
+  "flash_detector_bytes": 457,
+  "sram_static_bytes": 2056,
+  "sram_peak_stack_bytes": 768,
+  "sram_input_window_bytes": 3200,
+  "sram_total_bytes": 6024,
+  "meets_flash_target": true,
+  "meets_sram_target": true,
+  "scope": "LYRA package only (model + features + detector + one input window); excludes RTOS, BLE/Wi-Fi, drivers and acquisition ring buffers beyond one window"
+ },
+ "xtensa_objects": {
+  "compiler": "xtensa-esp-elf-gcc (crosstool-NG esp-14.2.0_20260121) 14.2.0",
+  "flags": "-std=c99 -Os -mlongcalls -ffunction-sections -fdata-sections -fstack-usage",
+  "objects": {
+   "model": {
+    "sections": {
+     ".literal.lyra_model_entry": 72,
+     ".text": 0,
+     ".data": 0,
+     ".bss": 0,
+     ".text.lyra_model_entry": 202,
+     ".rodata.lyra_xgb_root": 80,
+     ".rodata.lyra_xgb_right": 1212,
+     ".rodata.lyra_xgb_left": 1212,
+     ".rodata.lyra_xgb_value": 4848,
+     ".rodata.lyra_xgb_feature": 1212,
+     ".rodata.lyra_model_columns": 13,
+     ".comment": 48,
+     ".xtensa.info": 56,
+     ".xt.lit": 8,
+     ".xt.prop": 144
+    },
+    "flash_bytes": 8851,
+    "static_ram_bytes": 0,
+    "stack_bytes_per_function": {
+     "lyra_model_entry": 96
+    }
+   },
+   "features": {
+    "sections": {
+     ".literal.all_finite": 4,
+     ".literal.dft_bin": 48,
+     ".literal.lyra_window_valid": 36,
+     ".literal.lyra_features_compute": 900,
+     ".text": 0,
+     ".data": 0,
+     ".bss": 0,
+     ".text.all_finite": 44,
+     ".text.dft_bin": 206,
+     ".text.lyra_window_valid": 286,
+     ".text.lyra_features_compute": 5066,
+     ".bss.s_pow": 408,
+     ".bss.s_env25": 800,
+     ".bss.s_mag": 800,
+     ".comment": 48,
+     ".xtensa.info": 56,
+     ".xt.lit": 32,
+     ".xt.prop": 1020
+    },
+    "flash_bytes": 6590,
+    "static_ram_bytes": 2008,
+    "stack_bytes_per_function": {
+     "all_finite": 32,
+     "dft_bin": 80,
+     "lyra_window_valid": 48,
+     "lyra_features_compute": 672
+    }
+   },
+   "detector": {
+    "sections": {
+     ".literal.lyra_detector_reset": 4,
+     ".literal.lyra_detector_init": 4,
+     ".literal.lyra_init_event_state": 16,
+     ".literal.lyra_update_event_state": 8,
+     ".literal.lyra_update_event_state_fixed_hop": 12,
+     ".text": 0,
+     ".data": 0,
+     ".bss": 0,
+     ".text.lyra_detector_reset": 50,
+     ".text.lyra_detector_init": 30,
+     ".text.lyra_detector_update": 226,
+     ".rodata": 16,
+     ".text.lyra_init_event_state": 41,
+     ".text.lyra_update_event_state": 20,
+     ".text.lyra_update_event_state_fixed_hop": 30,
+     ".bss.g_fixed_ms": 4,
+     ".bss.g_detector": 44,
+     ".comment": 48,
+     ".xtensa.info": 56,
+     ".xt.lit": 40,
+     ".xt.prop": 456
+    },
+    "flash_bytes": 457,
+    "static_ram_bytes": 48,
+    "stack_bytes_per_function": {
+     "lyra_detector_reset": 48,
+     "lyra_detector_init": 32,
+     "lyra_detector_update": 32,
+     "lyra_init_event_state": 48,
+     "lyra_update_event_state": 32,
+     "lyra_update_event_state_fixed_hop": 32
+    }
+   }
+  }
+ },
+ "esp_idf_application": {
+  "status": "built",
+  "esp_idf": "v5.5.6",
+  "target": "esp32s3",
+  "application": {
+   "version": "1.2",
+   "total_size": 214913,
+   "layout": [
+    {
+     "name": "Flash Code",
+     "total": 0,
+     "used": 94354,
+     "free": 0,
+     "parts": {
+      ".text": {
+       "size": 94354
+      }
+     }
+    },
+    {
+     "name": "DIRAM",
+     "total": 341760,
+     "used": 61627,
+     "free": 280133,
+     "parts": {
+      ".text": {
+       "size": 42059
+      },
+      ".data": {
+       "size": 12016
+      },
+      ".bss": {
+       "size": 7552
+      }
+     }
+    },
+    {
+     "name": "Flash Data",
+     "total": 0,
+     "used": 50068,
+     "free": 0,
+     "parts": {
+      ".rodata": {
+       "size": 49812
+      },
+      ".appdesc": {
+       "size": 256
+      }
+     }
+    },
+    {
+     "name": "IRAM",
+     "total": 16384,
+     "used": 16384,
+     "free": 0,
+     "parts": {
+      ".text": {
+       "size": 15356
+      },
+      ".vectors": {
+       "size": 1028
+      }
+     }
+    },
+    {
+     "name": "RTC SLOW",
+     "total": 8192,
+     "used": 32,
+     "free": 8160,
+     "parts": {
+      ".force_slow": {
+       "size": 32
+      }
+     }
+    },
+    {
+     "name": "RTC FAST",
+     "total": 8192,
+     "used": 24,
+     "free": 8168,
+     "parts": {
+      ".rtc_reserved": {
+       "size": 24
+      }
+     }
+    }
+   ]
+  },
+  "objects": {
+   "lyra_features.c.obj": {
+    "flash_bytes": 5520,
+    "ram_bytes": 2008,
+    "sections": {
+     "Flash Code": {
+      ".text": 5520
+     },
+     "DIRAM": {
+      ".bss": 2008,
+      ".data": 0,
+      ".text": 0
+     },
+     "IRAM": {
+      ".text": 0,
+      ".vectors": 0
+     },
+     "Flash Data": {
+      ".rodata": 0,
+      ".appdesc": 0
+     },
+     "RTC FAST": {
+      ".rtc_reserved": 0
+     },
+     "RTC SLOW": {
+      ".force_slow": 0
+     }
+    }
+   },
+   "lyra_detector.c.obj": {
+    "flash_bytes": 422,
+    "ram_bytes": 48,
+    "sections": {
+     "Flash Code": {
+      ".text": 406
+     },
+     "DIRAM": {
+      ".bss": 48,
+      ".data": 0,
+      ".text": 0
+     },
+     "Flash Data": {
+      ".rodata": 16,
+      ".appdesc": 0
+     },
+     "IRAM": {
+      ".text": 0,
+      ".vectors": 0
+     },
+     "RTC FAST": {
+      ".rtc_reserved": 0
+     },
+     "RTC SLOW": {
+      ".force_slow": 0
+     }
+    }
+   },
+   "main.c.obj": {
+    "flash_bytes": 9185,
+    "ram_bytes": 3200,
+    "sections": {
+     "Flash Data": {
+      ".rodata": 8577,
+      ".appdesc": 0
+     },
+     "DIRAM": {
+      ".bss": 3200,
+      ".data": 0,
+      ".text": 0
+     },
+     "Flash Code": {
+      ".text": 608
+     },
+     "IRAM": {
+      ".text": 0,
+      ".vectors": 0
+     },
+     "RTC FAST": {
+      ".rtc_reserved": 0
+     },
+     "RTC SLOW": {
+      ".force_slow": 0
+     }
+    }
+   }
+  },
+  "note": "main.c.obj = generated model (inlined lyra_model.h) + the probe's input window buffers (.bss)"
+ },
+ "measured_candidates": {
+  "w4|fusion|XGB": {
+   "flash_bytes": 15898,
+   "flash_model_bytes": 8851,
+   "flash_features_bytes": 6590,
+   "flash_detector_bytes": 457,
+   "sram_static_bytes": 2056,
+   "sram_peak_stack_bytes": 768,
+   "sram_input_window_bytes": 3200,
+   "sram_total_bytes": 6024,
+   "meets_flash_target": true,
+   "meets_sram_target": true,
+   "scope": "LYRA package only (model + features + detector + one input window); excludes RTOS, BLE/Wi-Fi, drivers and acquisition ring buffers beyond one window"
+  }
+ }
+}

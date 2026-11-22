@@ -1,0 +1,14 @@
+{
+ "window_classes": {
+  "0": "background",
+  "1": "convulsive_pattern"
+ },
+ "class_1_definition": "D14: window overlaps an annotated sz_foc_f2b event by >= 50% (>= 2.0 s of 4 s)",
+ "confirmation_states": [
+  "idle",
+  "accumulating",
+  "possible_event",
+  "refractory"
+ ],
+ "possible_event": "D17 evidence rule met. Shown as 'Possible convulsive seizure detected. This is not a diagnosis.' Never a confirmed seizure; the cancel countdown and caregiver workflow apply."
+}

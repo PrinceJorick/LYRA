@@ -1,0 +1,522 @@
+{
+ "python": "3.14.10",
+ "packages": {
+  "numpy": "2.5.5",
+  "scipy": "1.18.1",
+  "scikit-learn": "1.9.1",
+  "xgboost": "3.4.1",
+  "emlearn": "0.23.2",
+  "m2cgen": "0.10.0",
+  "pyedflib": "0.1.42",
+  "pandas": "3.1.1",
+  "pyarrow": "26.0.1"
+ },
+ "os": "Linux-7.3.5-2-cachyos-x86_64-with-glibc2.44",
+ "git_commit": "8399b64b34e1dd1ec30cf773d5e228c021599e82",
+ "host_compiler": "gcc (GCC) 16.2.1 20260810",
+ "esp32s3_compiler": "xtensa-esp-elf-gcc (crosstool-NG esp-14.2.0_20260121) 14.2.0",
+ "esp_idf": "v5.5.6",
+ "seed": 20261122,
+ "feature_config": {
+  "dataset": [
+   "ds005873",
+   "1.1.0"
+  ],
+  "spec": "lyra-features/2",
+  "features": [
+   "emg_rms",
+   "emg_mav",
+   "emg_wl",
+   "emg_env_std",
+   "emg_acf_peak",
+   "imu_acc_mag_mean",
+   "imu_gyr_mag_mean",
+   "imu_jerk_rms",
+   "imu_acc_band_ratio_1_5hz",
+   "imu_acc_dom_freq_hz",
+   "imu_tilt_deg",
+   "xmod_corr_env_accmag",
+   "xmod_coh_1_5hz"
+  ],
+  "env": {
+   "hpf_hz": 20.8,
+   "lpf_hz": 3.6,
+   "order": 1,
+   "rate_hz": 50,
+   "decimation": "causal mean over each 20 ms bin"
+  },
+  "imu": {
+   "rate_hz": 25,
+   "acc_scale_valid": [
+    0.12,
+    1.2
+   ],
+   "gyro_dps_per_unit": 125.0,
+   "gravity": 9.80665
+  },
+  "windows": {
+   "w2": [
+    2.0,
+    1.0
+   ],
+   "w4": [
+    4.0,
+    2.0
+   ],
+   "w5": [
+    5.0,
+    2.48
+   ]
+  },
+  "warmup_s": 1.0,
+  "max_sat_fraction": 0.05,
+  "labels": {
+   "target": [
+    "sz_foc_f2b",
+    "sz_gen_m_tonicClonic",
+    "sz_uo_m_tonicClonic"
+   ],
+   "artifact": [
+    "impd"
+   ],
+   "pos_overlap": 0.5
+  },
+  "eps": 1e-12,
+  "channels": [
+   "EMG SD",
+   "ECGEMG SD ACC X",
+   "ECGEMG SD ACC Y",
+   "ECGEMG SD ACC Z",
+   "ECGEMG SD GYR A",
+   "ECGEMG SD GYR B",
+   "ECGEMG SD GYR C"
+  ]
+ },
+ "feature_config_hash": "2e096b546941ce94",
+ "experiment_hashes": {
+  "w2|emg|LR": "35164ae0794d5975",
+  "w2|emg|RF": "6c331dd504c65755",
+  "w2|emg|ET": "912af78159de033a",
+  "w2|emg|XGB": "77670d3113f16eab",
+  "w2|emg|SVC": "ecef487b037d1cda",
+  "w2|imu|LR": "977075892fe6aca5",
+  "w2|imu|RF": "b961575b0e420e62",
+  "w2|imu|ET": "332b8c7b60038ce0",
+  "w2|imu|XGB": "eea7b87bfcc3c9a7",
+  "w2|imu|SVC": "a8eeafa149b478f3",
+  "w2|fusion|LR": "3d06a1430e4c0b9a",
+  "w2|fusion|RF": "236bcd74e795ccc7",
+  "w2|fusion|ET": "b120f1be2d6fa6e9",
+  "w2|fusion|XGB": "7701ef9f76d4fc10",
+  "w2|fusion|SVC": "9ef20b1e54ebe3af",
+  "w4|emg|LR": "621ae795a532f3e0",
+  "w4|emg|RF": "c63c5c1f983c856c",
+  "w4|emg|ET": "7eb2493f6e38f767",
+  "w4|emg|XGB": "d6cb9761bb34f9c6",
+  "w4|emg|SVC": "01593dba36f75f35",
+  "w4|imu|LR": "2373ae6d83e95eed",
+  "w4|imu|RF": "70cf22fd2bf80d51",
+  "w4|imu|ET": "54930bd39db4c14d",
+  "w4|imu|XGB": "1980c99ef6132f3b",
+  "w4|imu|SVC": "d2369d5fde6bc0ba",
+  "w4|fusion|LR": "3a7c4585c6a2b8cd",
+  "w4|fusion|RF": "f63dea9d9f355144",
+  "w4|fusion|ET": "d6ab54953a41ef96",
+  "w4|fusion|XGB": "c275063a1d24c2ca",
+  "w4|fusion|SVC": "7d49e3ba07a72688",
+  "w5|emg|LR": "bde45acf33da1add",
+  "w5|emg|RF": "17d331b79181049d",
+  "w5|emg|ET": "2a05a2892f43ebdd",
+  "w5|emg|XGB": "3b7eac93de94972e",
+  "w5|emg|SVC": "c2898847327d53be",
+  "w5|imu|LR": "8ffd0fda24cc0c2c",
+  "w5|imu|RF": "65e740cd52d9664d",
+  "w5|imu|ET": "267d1510e6c62322",
+  "w5|imu|XGB": "bbe5ca01e311718b",
+  "w5|imu|SVC": "a761b7c9005676cc",
+  "w5|fusion|LR": "41dd5996d6731559",
+  "w5|fusion|RF": "1a3183660e0ab072",
+  "w5|fusion|ET": "ea5b21e3f3e5b7a4",
+  "w5|fusion|XGB": "1cdd20f775dcdfca",
+  "w5|fusion|SVC": "eddab6fff32c724a"
+ },
+ "subject_folds": {
+  "method": "GroupKFold(5) by subject (dev pool only)",
+  "subject_fold": {
+   "sub-009": 0,
+   "sub-010": 0,
+   "sub-017": 0,
+   "sub-026": 0,
+   "sub-030": 0,
+   "sub-033": 0,
+   "sub-036": 0,
+   "sub-042": 0,
+   "sub-043": 0,
+   "sub-050": 0,
+   "sub-056": 0,
+   "sub-062": 0,
+   "sub-064": 0,
+   "sub-078": 0,
+   "sub-079": 0,
+   "sub-084": 0,
+   "sub-087": 0,
+   "sub-092": 0,
+   "sub-001": 1,
+   "sub-002": 1,
+   "sub-003": 1,
+   "sub-007": 1,
+   "sub-011": 1,
+   "sub-024": 1,
+   "sub-027": 1,
+   "sub-034": 1,
+   "sub-037": 1,
+   "sub-040": 1,
+   "sub-041": 1,
+   "sub-059": 1,
+   "sub-061": 1,
+   "sub-067": 1,
+   "sub-072": 1,
+   "sub-073": 1,
+   "sub-076": 1,
+   "sub-077": 1,
+   "sub-086": 1,
+   "sub-013": 2,
+   "sub-015": 2,
+   "sub-018": 2,
+   "sub-022": 2,
+   "sub-031": 2,
+   "sub-035": 2,
+   "sub-038": 2,
+   "sub-044": 2,
+   "sub-045": 2,
+   "sub-053": 2,
+   "sub-057": 2,
+   "sub-063": 2,
+   "sub-065": 2,
+   "sub-066": 2,
+   "sub-068": 2,
+   "sub-070": 2,
+   "sub-075": 2,
+   "sub-089": 2,
+   "sub-094": 2,
+   "sub-004": 3,
+   "sub-012": 3,
+   "sub-014": 3,
+   "sub-019": 3,
+   "sub-020": 3,
+   "sub-021": 3,
+   "sub-025": 3,
+   "sub-032": 3,
+   "sub-039": 3,
+   "sub-047": 3,
+   "sub-051": 3,
+   "sub-055": 3,
+   "sub-071": 3,
+   "sub-080": 3,
+   "sub-081": 3,
+   "sub-083": 3,
+   "sub-085": 3,
+   "sub-095": 3,
+   "sub-096": 3,
+   "sub-005": 4,
+   "sub-006": 4,
+   "sub-008": 4,
+   "sub-016": 4,
+   "sub-023": 4,
+   "sub-028": 4,
+   "sub-029": 4,
+   "sub-046": 4,
+   "sub-048": 4,
+   "sub-049": 4,
+   "sub-052": 4,
+   "sub-054": 4,
+   "sub-058": 4,
+   "sub-060": 4,
+   "sub-069": 4,
+   "sub-074": 4,
+   "sub-082": 4,
+   "sub-088": 4,
+   "sub-090": 4,
+   "sub-091": 4,
+   "sub-093": 4
+  }
+ },
+ "tree_scaling_check": {
+  "windows_compared": 200000,
+  "max_abs_diff": 0.024751522128690695,
+  "decision_agreement_at_0.5": 0.99471
+ },
+ "selection_rule": "among (window, modality, classifier, threshold, N, M) with dev out-of-fold FAR <= MAX_FAR_PER_24H: 1) most detected events, 2) median latency < 20 s if any candidate achieves it, 3) smaller model, 4) lower FAR, 5) narrower between-subject sensitivity IQR. Best statistical = first candidate. Best deployable = first candidate whose exported package measures under the flash and SRAM targets on the ESP32-S3 toolchain. ",
+ "selected": {
+  "best_statistical": {
+   "window": "w4",
+   "modality": "fusion",
+   "model": "XGB",
+   "experiment_hash": "c275063a1d24c2ca",
+   "window_auprc": 0.04925505491705693,
+   "threshold": 0.015,
+   "grid": "extended",
+   "n_open": 3,
+   "m_close": 3,
+   "target_events": 30,
+   "evaluable_events": 29,
+   "detected": 26,
+   "event_sensitivity": 0.896551724137931,
+   "false_alerts": 250,
+   "valid_negative_hours": 7643.141,
+   "far_per_24h": 0.7850175618604744,
+   "latency_s_median": 55.5,
+   "event_precision": 0.09747292418772563,
+   "emitted_alerts": 277,
+   "suppressed_alerts": 43,
+   "candidate_events": 320,
+   "false_alerts_during_nontarget_seizures": 5,
+   "subjects_with_events": 25,
+   "subject_sensitivity_iqr": [
+    1.0,
+    1.0
+   ],
+   "size_proxy": 3666
+  },
+  "best_deployable": {
+   "window": "w4",
+   "modality": "fusion",
+   "model": "XGB",
+   "experiment_hash": "c275063a1d24c2ca",
+   "window_auprc": 0.04925505491705693,
+   "threshold": 0.015,
+   "grid": "extended",
+   "n_open": 3,
+   "m_close": 3,
+   "target_events": 30,
+   "evaluable_events": 29,
+   "detected": 26,
+   "event_sensitivity": 0.896551724137931,
+   "false_alerts": 250,
+   "valid_negative_hours": 7643.141,
+   "far_per_24h": 0.7850175618604744,
+   "latency_s_median": 55.5,
+   "event_precision": 0.09747292418772563,
+   "emitted_alerts": 277,
+   "suppressed_alerts": 43,
+   "candidate_events": 320,
+   "false_alerts_during_nontarget_seizures": 5,
+   "subjects_with_events": 25,
+   "subject_sensitivity_iqr": [
+    1.0,
+    1.0
+   ],
+   "size_proxy": 3666
+  },
+  "per_modality": {
+   "emg": {
+    "window": "w5",
+    "modality": "emg",
+    "model": "LR",
+    "experiment_hash": "bde45acf33da1add",
+    "window_auprc": 0.0015056612176715127,
+    "threshold": 0.0075,
+    "grid": "extended",
+    "n_open": 3,
+    "m_close": 2,
+    "target_events": 30,
+    "evaluable_events": 29,
+    "detected": 3,
+    "event_sensitivity": 0.10344827586206896,
+    "false_alerts": 226,
+    "valid_negative_hours": 7642.952,
+    "far_per_24h": 0.70967341857385,
+    "latency_s_median": 63.47999999999956,
+    "event_precision": 0.013100436681222707,
+    "emitted_alerts": 229,
+    "suppressed_alerts": 54,
+    "candidate_events": 283,
+    "false_alerts_during_nontarget_seizures": 0,
+    "subjects_with_events": 25,
+    "subject_sensitivity_iqr": [
+     0.0,
+     0.0
+    ],
+    "size_proxy": 6
+   },
+   "imu": {
+    "window": "w4",
+    "modality": "imu",
+    "model": "XGB",
+    "experiment_hash": "1980c99ef6132f3b",
+    "window_auprc": 0.02105831337732362,
+    "threshold": 0.015,
+    "grid": "extended",
+    "n_open": 3,
+    "m_close": 3,
+    "target_events": 30,
+    "evaluable_events": 29,
+    "detected": 21,
+    "event_sensitivity": 0.7241379310344828,
+    "false_alerts": 238,
+    "valid_negative_hours": 7643.141,
+    "far_per_24h": 0.7473367188911717,
+    "latency_s_median": 66.0,
+    "event_precision": 0.08461538461538462,
+    "emitted_alerts": 260,
+    "suppressed_alerts": 35,
+    "candidate_events": 295,
+    "false_alerts_during_nontarget_seizures": 2,
+    "subjects_with_events": 25,
+    "subject_sensitivity_iqr": [
+     0.0,
+     1.0
+    ],
+    "size_proxy": 3642
+   },
+   "fusion": {
+    "window": "w4",
+    "modality": "fusion",
+    "model": "XGB",
+    "experiment_hash": "c275063a1d24c2ca",
+    "window_auprc": 0.04925505491705693,
+    "threshold": 0.015,
+    "grid": "extended",
+    "n_open": 3,
+    "m_close": 3,
+    "target_events": 30,
+    "evaluable_events": 29,
+    "detected": 26,
+    "event_sensitivity": 0.896551724137931,
+    "false_alerts": 250,
+    "valid_negative_hours": 7643.141,
+    "far_per_24h": 0.7850175618604744,
+    "latency_s_median": 55.5,
+    "event_precision": 0.09747292418772563,
+    "emitted_alerts": 277,
+    "suppressed_alerts": 43,
+    "candidate_events": 320,
+    "false_alerts_during_nontarget_seizures": 5,
+    "subjects_with_events": 25,
+    "subject_sensitivity_iqr": [
+     1.0,
+     1.0
+    ],
+    "size_proxy": 3666
+   }
+  }
+ },
+ "export": {
+  "backend": "own exporter from XGBoost 3.4.1 JSON model (m2cgen 0.10.0 failed: TypeError on XGBoost 3.x base_score)",
+  "trees": 40,
+  "nodes": 1212,
+  "base_score": 0.5
+ },
+ "final_fit": {
+  "A": 0.732458515302549,
+  "B": -7.281087924468132,
+  "lr_c": 1.0,
+  "fit_windows": 691546,
+  "fit_s": 0.66,
+  "complexity": {
+   "trees": 40,
+   "nodes": 1212,
+   "leaves": 626
+  }
+ },
+ "lock": {
+  "frozen_by": "ml/lyra/deploy.py",
+  "run": "bench-20261122-121533",
+  "feature_hash": "2e096b546941ce94",
+  "selection": {
+   "deployable": {
+    "window": "w4",
+    "modality": "fusion",
+    "model": "XGB",
+    "threshold": 0.015,
+    "n_open": 3,
+    "m_close": 3
+   },
+   "best_statistical": {
+    "window": "w4",
+    "modality": "fusion",
+    "model": "XGB",
+    "threshold": 0.015,
+    "n_open": 3,
+    "m_close": 3
+   },
+   "modality_emg": {
+    "window": "w5",
+    "modality": "emg",
+    "model": "LR",
+    "threshold": 0.0075,
+    "n_open": 3,
+    "m_close": 2
+   },
+   "modality_imu": {
+    "window": "w4",
+    "modality": "imu",
+    "model": "XGB",
+    "threshold": 0.015,
+    "n_open": 3,
+    "m_close": 3
+   },
+   "modality_fusion": {
+    "window": "w4",
+    "modality": "fusion",
+    "model": "XGB",
+    "threshold": 0.015,
+    "n_open": 3,
+    "m_close": 3
+   }
+  },
+  "final_models_sha256": {
+   "final_best_statistical.pkl": "789bd5b017960e6afa135e4902d3578f39c65a48b05b315ab4c26765a6d7a78a",
+   "final_deployable.pkl": "789bd5b017960e6afa135e4902d3578f39c65a48b05b315ab4c26765a6d7a78a",
+   "final_modality_emg.pkl": "a4164368979c54c38cb3df4eb8647c4b60ab6944546e040ba4953f724d62fd85",
+   "final_modality_fusion.pkl": "789bd5b017960e6afa135e4902d3578f39c65a48b05b315ab4c26765a6d7a78a",
+   "final_modality_imu.pkl": "52b3149ba2e2c0a790c1c5d2f9a6d4d6e257580fcc4861309bf13ca1c7758fa7"
+  },
+  "firmware_sha256": {
+   "lyra_detector.c": "cdf68ad5f2419958d9c7e88a54368cbddc9bbf75d1272828e722eb13f006adea",
+   "lyra_detector.h": "a74d53eec4d4a7867c37f555292c09afe4ed9438cb28d3930eb486663f8b5f92",
+   "lyra_detector_config.h": "3ac86b6344ba704199c704a996b87f6a382fbdcef6f929323b43e6f41f31fca7",
+   "lyra_feature_spec.h": "a965d4644904d4eb9a9b5cc4b6ed37db3026d1cfc2343fae7ba5cc08a7e869bc",
+   "lyra_features.c": "59db6435de2fd05efd57c053aaa0b84539f4b92a7b539b631328d817af38679b",
+   "lyra_features.h": "26156186a8d0f2fc9c01ded14eae332abc895f574b5928c680a8ac4dd4226de8",
+   "lyra_model.h": "0edc7ad7a307d03045a1814045ff5c455324cf4282e528d13f13fab4ade029eb",
+   "lyra_model_test.c": "ee18fccce8822e2226af36d0ea56e907c4d4efeb80280fb24dd636e76342eb95"
+  }
+ },
+ "validation": {
+  "golden_host": "windows 43, features compared 312 (exact 312, max rel diff 0), probabilities 24 (max abs diff 0), detector steps 438, failures 0",
+  "golden": {
+   "windows": 43,
+   "valid_windows": 36,
+   "detector_steps": 438
+  },
+  "exported_vs_original_on_dev": {
+   "windows": 300000,
+   "max_abs_prob_diff": 1.4901161193847656e-08,
+   "decision_agreement": 1.0
+  },
+  "real_data_parity": {
+   "features_real_dev_windows": {
+    "recordings": [
+     "sub-001_ses-01_task-szMonitoring_run-08",
+     "sub-045_ses-01_task-szMonitoring_run-10"
+    ],
+    "windows": 31206,
+    "exact": 405677,
+    "values": 405678,
+    "max_rel_diff": 2.173512799656296e-31,
+    "code_mismatch": 0,
+    "max_rel_diff_vs_float64_training_inputs": 1.1086463928222656e-05,
+    "tolerance": "relative 1e-5 (max(1,|ref|) scale)",
+    "passed": true
+   },
+   "model_real_dev_feature_vectors": {
+    "rows": 200000,
+    "max_abs_prob_diff": 0.0,
+    "decision_agreement": 1.0,
+    "rows_within_1e-6_of_threshold": 0,
+    "passed": true
+   }
+  }
+ }
+}

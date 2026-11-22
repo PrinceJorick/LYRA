@@ -1,0 +1,8 @@
+# SeizeIT2 training pipeline (tested with Python 3.14). Install from the repo root:
+#   uv venv --python 3.14 ml/seizeit2/.venv && VIRTUAL_ENV=ml/seizeit2/.venv uv pip install -r ml/seizeit2/requirements.txt
+numpy==2.5.5
+scipy==1.18.1
+scikit-learn==1.9.1
+matplotlib==3.11.2
+pytest>=8
+-e ./mlm

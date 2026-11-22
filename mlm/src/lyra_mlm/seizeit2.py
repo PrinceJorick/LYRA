@@ -32,7 +32,7 @@ import numpy as np
 from .annotations import SEIZURE_LIKE, Annotation, AnnotationKind
 from .datasets import SOURCES, RecordingInfo
 from .edf import EdfError, read_edf, read_edf_header
-from .signals import IMU_CHANNELS, DataOrigin, EmgSignalType, Modality, Recording, SignalStream
+from .signals import IMU_CHANNELS, DataOrigin, EmgSignalType, Modality, Recording, SampleFlag, SignalStream
 
 EMG_LABEL = "EMG SD"
 IMU_LABELS = ("ECGEMG SD ACC X", "ECGEMG SD ACC Y", "ECGEMG SD ACC Z",
@@ -140,6 +140,37 @@ def convert_imu(acc: np.ndarray, gyr: np.ndarray, d: int) -> np.ndarray:
     at = np.isclose(np.abs(stored), round(ACC_FULL_SCALE_G / d, 3), rtol=0, atol=1e-9)
     out[at] = (np.sign(stored) * full)[at]
     return out
+
+
+# --- Legacy per-recording gravity rule (PrinceJorick, commit 218a656) -------------------------
+# Superseded for this adapter by the Stage 3.5 rule above (D19). Kept because ml/seizeit2 (v2) and
+# ml/lyra (reports/lyra) were produced with it and import it directly; changing it would make those
+# results irreproducible. It does not apply the Z-corruption, ceiling or rest-spread checks of D19.
+# Median |acc| per recording, in the file's unit. Valid recordings sit at ~1/2 or ~1/6 (1 = already g).
+ACC_SCALE_VALID = (0.12, 1.2)
+# Calibrated gyro unit -> deg/s: median 125.4 (IQR 109-136) over 24 recordings, fitted from
+# rigid-body kinematics (ml/seizeit2/gyro_calibration.py). An estimate, not a datasheet value.
+GYRO_DPS_PER_UNIT = 125.0
+
+
+def calibrate_imu(values: np.ndarray, gyro_to_dps: float = GYRO_DPS_PER_UNIT
+                  ) -> tuple[np.ndarray, np.ndarray | None, str]:
+    """(values, source flags or None, provenance note) for the 6 IMU columns (ACC x3, GYR x3).
+
+    ACC and GYR share the recording's storage scale, so both are divided by the median |acc|
+    (gravity); GYR is then converted to deg/s. A recording whose gravity estimate is outside
+    ACC_SCALE_VALID cannot be calibrated: values are returned unchanged and every sample is INVALID.
+    """
+    acc = values[:, :3]
+    mag = np.linalg.norm(acc[np.isfinite(acc).all(axis=1)], axis=1)
+    scale = float(np.median(mag)) if mag.size else float("nan")
+    if not ACC_SCALE_VALID[0] <= scale <= ACC_SCALE_VALID[1]:
+        return values, np.full(len(values), SampleFlag.INVALID, np.int8), (
+            f"IMU rejected: median |acc| {scale:.4g} outside {ACC_SCALE_VALID} (pinned, zero or unknown scale)")
+    out = values / scale
+    out[:, 3:] *= gyro_to_dps
+    return out, None, (f"IMU calibrated: ACC and GYR divided by median |acc| {scale:.4f} (gravity -> g); "
+                       f"GYR x {gyro_to_dps:g} deg/s per unit")
 
 
 class MissingRecordingData(ValueError):

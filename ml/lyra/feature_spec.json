@@ -1,0 +1,92 @@
+{
+ "version": "lyra-features/2",
+ "note": "Canonical feature order shared by Python (ml/lyra/features.py) and C99 (firmware/model/lyra_features.c via the generated lyra_feature_spec.h). Change both together and bump the version.",
+ "inputs": {
+  "env": {
+   "signal": "MyoWare 2.0 ENV (locked decision D12)",
+   "rate_hz": 50,
+   "unit": "uV-equivalent envelope (training: SIMULATED_ENV_FROM_RAW)"
+  },
+  "acc": {
+   "sensor": "BMI270",
+   "rate_hz": 25,
+   "unit": "m/s^2",
+   "axes": 3
+  },
+  "gyr": {
+   "sensor": "BMI270",
+   "rate_hz": 25,
+   "unit": "rad/s",
+   "axes": 3
+  }
+ },
+ "features": [
+  {
+   "name": "emg_rms",
+   "unit": "uV",
+   "definition": "sqrt(mean(env^2)) over the window"
+  },
+  {
+   "name": "emg_mav",
+   "unit": "uV",
+   "definition": "mean(|env|)"
+  },
+  {
+   "name": "emg_wl",
+   "unit": "uV",
+   "definition": "sum(|env[t+1]-env[t]|) (waveform length per window)"
+  },
+  {
+   "name": "emg_env_std",
+   "unit": "uV",
+   "definition": "population standard deviation of env"
+  },
+  {
+   "name": "emg_acf_peak",
+   "unit": "1",
+   "definition": "max normalised biased autocorrelation of (env - mean) over lags 10..50 samples (1-5 Hz periodicity at 50 Hz); 0 if variance <= eps"
+  },
+  {
+   "name": "imu_acc_mag_mean",
+   "unit": "m/s^2",
+   "definition": "mean(||a||)"
+  },
+  {
+   "name": "imu_gyr_mag_mean",
+   "unit": "rad/s",
+   "definition": "mean(||w||)"
+  },
+  {
+   "name": "imu_jerk_rms",
+   "unit": "m/s^3",
+   "definition": "sqrt(mean((diff(||a||) * 25)^2))"
+  },
+  {
+   "name": "imu_acc_band_ratio_1_5hz",
+   "unit": "1",
+   "definition": "sum P(1<=f<=5) / sum P(f>0); P = |DFT(periodic-Hann * (||a|| - mean))|^2 at f_k = k*25/N, k=0..N/2; 0 if denominator <= eps"
+  },
+  {
+   "name": "imu_acc_dom_freq_hz",
+   "unit": "Hz",
+   "definition": "f_k of the lowest bin k with 0.5<=f_k<=8 and P_k >= (1 - 1e-6) * max P over that band (tie-tolerant: quantised still signals give exactly tied bins); 0 if that max <= eps"
+  },
+  {
+   "name": "imu_tilt_deg",
+   "unit": "deg",
+   "definition": "atan2(|g1 x g2|, g1.g2) in degrees; g1/g2 = mean acc vector of the first/last 25 samples (1 s); 0 if either norm <= eps"
+  },
+  {
+   "name": "xmod_corr_env_accmag",
+   "unit": "1",
+   "definition": "Pearson r of env25 and ||a||; env25[j] = (env[2j]+env[2j+1])/2; 0 if either sum of squares <= eps"
+  },
+  {
+   "name": "xmod_coh_1_5hz",
+   "unit": "1",
+   "definition": "mean magnitude-squared coherence of env25 and ||a|| at f_k = k*25/16 in [1,5] Hz (k=1,2,3); Welch, segments of 16 with step 8, per-segment mean removed, periodic Hann; bins with Sxx*Syy <= eps give 0; >= 4 segments required (always met for windows >= 2 s)"
+  }
+ ],
+ "eps": 1e-12,
+ "invalid_window": "any non-finite input sample, or a quality check failing (lyra_window_valid), marks the window invalid: no features, no score; the event state machine holds"
+}

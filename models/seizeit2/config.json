@@ -1,0 +1,73 @@
+{
+ "format": "lyra-seizeit2-forest/1",
+ "model_file": "lyra_seizeit2_model.h",
+ "runtime": "ESP32-S3 firmware (D11), C99",
+ "input": {
+  "window_s": 4.0,
+  "step_s": 2.0,
+  "emg": {
+   "signal": "MyoWare 2.0 ENV (D12)",
+   "rate_hz": 50.0,
+   "training_source": "SIMULATED_ENV_FROM_RAW from SeizeIT2 RAW sEMG (D15)",
+   "unit": "sensor units (training: simulated envelope of \u00b5V RAW)"
+  },
+  "imu": {
+   "sensor": "BMI270 (D12)",
+   "rate_hz": 25.0,
+   "acc_unit": "g",
+   "gyro_unit": "deg/s",
+   "training_calibration": {
+    "acc": "per-recording gravity scale -> g",
+    "gyro_deg_s_per_unit": 125.0,
+    "acc_scale_valid": [
+     0.12,
+     1.2
+    ]
+   }
+  },
+  "placement": "EMG left deltoid, IMU left chest (SeizeIT2); LYRA placement: D10"
+ },
+ "features": {
+  "names": [
+   "emg_simenv_rms",
+   "emg_simenv_mav",
+   "emg_simenv_var",
+   "emg_simenv_std",
+   "emg_simenv_wl_per_s",
+   "emg_simenv_autocorr_peak",
+   "emg_simenv_mod_band_power",
+   "emg_simenv_mod_band_ratio",
+   "emg_simenv_mod_peak_freq_hz",
+   "imu_acc_mag_mean",
+   "imu_acc_mag_std",
+   "imu_gyr_mag_mean",
+   "imu_gyr_mag_std",
+   "imu_gyr_mag_rms",
+   "imu_acc_jerk_rms",
+   "imu_acc_dominant_freq_hz",
+   "imu_acc_band_power",
+   "imu_orientation_change_deg",
+   "xmod_env_accmag_corr",
+   "xmod_energy_log_ratio",
+   "xmod_lag_s",
+   "xmod_coherence_band"
+  ],
+  "implementation": "lyra_mlm.features (Python); C99 port pending",
+  "float_type": "float32"
+ },
+ "routing": {
+  "rule": "lyra_mlm.inference: both modalities VALID/DEGRADED and every feature available, else SUPPRESSED (no score, never negative)",
+  "degraded_window_policy": "allow_with_flag",
+  "missing_modality_policy": "suppress"
+ },
+ "confirmation": {
+  "entry_threshold": 0.968365,
+  "exit_threshold": 0.768365,
+  "consecutive_positive_required": 3,
+  "max_timestamp_gap_s": 6.0,
+  "refractory_cooldown_s": 60.0,
+  "invalid_window_policy": "hold",
+  "degraded_window_policy": "allow_with_flag",
+  "note": "D17 structure; entry/exit chosen on training data (D17 defaults 0.65/0.45 are reported for comparison in evaluation/metrics.json)"
+ }
+}
