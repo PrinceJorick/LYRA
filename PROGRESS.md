@@ -197,3 +197,42 @@ Owner instruction: retrain on all participants and all seizures, follow Kyle's l
 - The MyoWare ENV gain has not been calibrated against the simulated envelope.
 - The gyro unit is an estimate.
 - There is no pod data.
+
+## Session 6 (2026-11-22): ENV-path pipeline and ESP32-S3 package (branch `lyra-esp32-ml`, uncommitted)
+
+Owner brief: an end-to-end, patient-wise, cached SeizeIT2 pipeline with a C99 export for the ESP32-S3. The owner ruled that D12 (MyoWare ENV pin at 50 Hz) is the deployable signal path, set the FAR cap to ≤ 1 per 24 h, and approved installing ESP-IDF.
+
+### What exists
+- **`ml/lyra/`** (see its README for the commands):
+  - Extraction, benchmark, deploy, parity, final evaluation, ADL loader and report.
+  - 224 tests, all passing.
+- **`firmware/model/`:** C99 features, XGB model, detector state machine, golden vectors and host test.
+- **`firmware/esp32s3_app/`:** an ESP-IDF size probe, not product firmware.
+- **`reports/lyra/`:** `lyra_report.md`/`.json`, dataset and experiment manifests, `ablation_results.csv`, `oof_metrics.json`, `resource_report.json`.
+- **ESP-IDF v5.5.6** for esp32s3 is installed in `~/esp/esp-idf`.
+
+### Results
+- **Development (sub-001..096, subject-wise 5-fold OOF):**
+  - Selected model: w4 (4 s window, 2 s hop), fusion, XGB 40 × 4, threshold 0.015, N=3, M=3.
+  - 26/29 events at 0.79 FA/24 h, median latency 55.5 s.
+  - No configuration reaches a median latency below 20 s.
+- **Final evaluation (sub-097..125, run once):**
+  - 12/15 events (bootstrap CI 0.60–1.00) at 0.24 FA/24 h (CI 0.10–0.43), median latency 47.5 s.
+  - IMU-only: 10/15. sEMG-only: 0/15.
+- **ESP32-S3 (measured with xtensa gcc 14.2 -Os):**
+  - 15,898 B flash and 6,024 B SRAM, against targets of 60 KB and 8 KB.
+  - Python/C parity is bit-exact on the golden vectors and on 31,206 real windows.
+
+### Decisions worth remembering
+- **EMG rate:** EMG is 256 Hz in every file, not 250.
+- **ENV simulation:** a 1st-order 20.8 Hz HPF, rectification, a 1st-order 3.6 Hz LPF and 20 ms bin means, all causal.
+- **Threshold grid:** calibrated probabilities follow the true prevalence, so the grid is extended down to 0.005. Within the brief's 0.20–0.80 grid, the best result is 1/29 events.
+- **Dominant frequency:** uses a tie-tolerant argmax (relative 1e-6). Quantised still signals give exact periodogram ties, and a plain argmax broke Python/C parity.
+- **XGB export:** m2cgen 0.10 fails on XGBoost 3.x, so XGB uses its own exporter. emlearn 0.23 sets `numpy.seterr(all='raise')` on import, and `export_c.py` restores the previous state.
+
+### Not verified
+- **Hardware:** nothing has run on a board.
+- **Calibration:** the MyoWare ENV gain and the BMI270 units are not calibrated against the simulation. The SeizeIT2 gyro unit is an estimate.
+- **Daily-life data:** no ADL or pod data exists yet.
+- **Test cohort:** the final cohort was used to train v1/v2, so it is not pristine.
+- **Latency:** measured from the annotated focal onset, not from the convulsive phase.
