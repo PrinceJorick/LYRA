@@ -383,21 +383,35 @@ cd mlm && .venv/bin/python -m pytest -q
 - Still open (owner): approve the layout; pairing and bonding/security, connection parameters, the
   standard Battery / Device Information services.
 
-### State at end of session
-- `main` has `9584404` (Stage 3.5) and `1de1b13` (Stage 4 code), plus the results-docs commit. None
-  of these are pushed.
-- `mlm/models/` and `mlm/export/` are gitignored.
+### State at end of session (2026-11-22)
+- `main` = `origin/main` = `9237c29` (github.com/PrinceJorick/LYRA). Working tree clean. 227 `mlm` tests pass,
+  and app `tsc` and `expo lint` are clean.
+- Done this session:
+  - Stage 3.5 and Stage 4. The held-out set is spent: `heldout_report.json` refuses a rerun.
+  - The C99 pod pipeline (`mlm/c99`) and the ESP32-S3 sizing.
+  - The pod data protocol and tooling.
+  - The firmware core (`firmware/components/lyra_pod`).
+  - The app pod consumer (`src/services/pod`).
+  - The DRAFT GATT layout and phone → pod cancel command.
+  - PR #2 merged.
+  - `docs/DETECTOR_COMPARISON.md`.
+- `mlm/models/`, `mlm/export/` and `mlm/data/` are gitignored. Regenerate the export with
+  `scripts/export_c99.py`.
 
-### Next
-1. Install ESP-IDF (owner decision), then write the platform layer against the contract in `firmware/README.md`: ADC ENV/RAW, BMI270, esp_timer, button, NimBLE GATT (define the UUIDs), USB serial data-collection mode. Then run the bring-up checks on the DevKit.
-2. Ethics/consent approval for Phase 1 pod recordings (owner action) before any session.
-2. Install the ESP-IDF / xtensa toolchain (or allow the download) to measure ESP32-S3 Flash/RAM.
-   Then an on-device benchmark and Python-vs-C parity on hardware.
-3. Port feature extraction to C99, in `feature_names` order.
-4. Record real MyoWare ENV + BMI270 data from the pod, and compare simulated ENV with real ENV before
-   any hardware claim.
-5. Optional research: probability calibration instead of threshold-only operating points; sub-114
-   false alarms; why sub-121's three events were missed.
+### Next (owner decisions first)
+1. **Detector choice** (with PrinceJorick, `docs/DETECTOR_COMPARISON.md`). Proposed: re-run `ml/lyra`'s
+   XGB selection on the D19 windows with A's participant folds and event rules, on development data
+   only (one raw Train/CV pass of about 2 h, plus training). Needs both owners' agreement.
+2. **Approve the DRAFT GATT layout** (`mlm/docs/BLE_PROTOCOL.md`), plus the pairing/bonding mode,
+   connection parameters and the Battery/DIS services.
+3. **ESP-IDF platform layer** (`firmware/README.md` contract). PrinceJorick's Session 6 notes say
+   ESP-IDF v5.5.6 is installed in `~/esp/esp-idf` on his machine. It isn't installed on Kyle's (only
+   the xtensa compiler in `~/.espressif/tools`).
+4. **Ethics/consent approval**, then Phase 1 pod recordings → `pod_logger.py` → `pod_report.py` → ENV
+   calibration or retraining.
+5. **Small, no decision needed:**
+   - export A's forests as compact arrays (about 2× less flash, float inputs);
+   - show EMG/IMU quality from the status payloads on the Device screen.
 
 ## Branch sessions: `seizeit2-model` and `lyra-esp32-ml` (PrinceJorick)
 
