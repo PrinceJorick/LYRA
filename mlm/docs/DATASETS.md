@@ -190,5 +190,5 @@ in excluded recordings with no EMG and no ECGEMG IMU.
 ```bash
 .venv/bin/python scripts/download_seizeit2.py   # resumable
 .venv/bin/python scripts/prepare_seizeit2.py --workers 3   # resumable; 8 GB RAM fits 3 workers
-.venv/bin/python scripts/audit_stage3.py [--baseline data/processed_pre35]   # Stage 3.5: bit-identity check
+.venv/bin/python scripts/audit_stage3.py [--baseline <old processed/>]   # Stage 3.5 bit-identity check (baseline deleted 2026-11-22)
 ```
