@@ -246,8 +246,22 @@ cd mlm && .venv/bin/python -m pytest -q
       gap, jitter, a duplicate timestamp and light/heavy saturation: every state matches, coverage
       matches to 1e-12, and all three routes are exercised.
     - Host size: about 4.5 KB of code, no static RAM.
-  - Not ported yet: window buffering, and one `lyra_step()` chaining window → quality → features →
-    RF → confirmation.
+  - `lyra_step()` (`lyra_pipeline.c/.h`, `tests/test_c99_step.py`): one call per window chains the
+    quality gate → features → RF → confirmation.
+    - RF scorers are function pointers with the generated `lyra_*_rf_predict` signature. A NULL
+      fallback means policy "suppress".
+    - Pod rule, stricter than Python: a modality's features are computed only from a clean window
+      (every sample OK, regular, no gap). Python may still score a usable but gappy window.
+    - Parity against a Python reference chain (`segment` quality → `extract_features` → training
+      routing → same scorer → `training.confirm`) on a bursty and a defect-injected recording, with and
+      without fallback: routes, statuses, scores, features and alerts are all identical.
+    - With the real exported forests linked in, scores are within 1e-5 of scikit-learn.
+    - The fix found by this test: `xmod_env_accmag_corr` uses the covered IMU bins (≥ 20) as Python
+      does; only lag and coherence need full coverage.
+  - Host total: hand-written code about 18 KB of code + 22.6 KB of static RAM; forests about 360 KB
+    of code each.
+  - Still firmware-side: window buffering (4 s / 2 s ring buffers), the running clock check
+    (`clocks_ok`), BLE notification.
 
 ### State at end of session
 - `main` has `9584404` (Stage 3.5) and `1de1b13` (Stage 4 code), plus the results-docs commit. None
@@ -255,7 +269,7 @@ cd mlm && .venv/bin/python -m pytest -q
 - `mlm/models/` and `mlm/export/` are gitignored.
 
 ### Next
-1. Add `lyra_step()`: window → quality → features → RF (generated `lyra_*_rf_predict`) → confirmation, with the frozen operating point. Firmware supplies the window buffers and a clock check.
+1. ESP32-S3 build: install ESP-IDF (or allow the xtensa toolchain download), compile `mlm/c99/` + the exported forests for the S3, measure Flash/RAM and per-window latency, check parity on the board.
 2. Install the ESP-IDF / xtensa toolchain (or allow the download) to measure ESP32-S3 Flash/RAM.
    Then an on-device benchmark and Python-vs-C parity on hardware.
 3. Port feature extraction to C99, in `feature_names` order.

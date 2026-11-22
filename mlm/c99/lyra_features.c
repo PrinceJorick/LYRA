@@ -266,22 +266,43 @@ static void xmod_block(const double *env_t, const double *env, int n_env, double
     double ma, mb, saa = 0.0, sbb = 0.0, sab = 0.0, bestv = -INFINITY;
     if (emg_rms > 0 && acc_std > 0) out[1] = log10(emg_rms / acc_std);  /* _xmod_energy_ratio */
     env_on_imu_grid(env_t, env, n_env, imu_t, n_imu, imu_rate);
-    for (j = 0; j < n_imu; ++j) ok &= !isnan(s_a[j]);
-    if (!ok || n_imu < MIN_PAIRED) return;  /* gap-free precondition: every IMU bin has envelope samples */
+    {   /* _xmod_corr: np.corrcoef over the IMU bins that have envelope samples */
+        int n_ok = 0;
+        double sa = 0.0, sb = 0.0;
+        for (j = 0; j < n_imu; ++j) {
+            if (isnan(s_a[j])) {
+                ok = 0;
+                continue;
+            }
+            sa += s_a[j];
+            sb += s_b[j];
+            ++n_ok;
+        }
+        if (n_ok >= MIN_PAIRED) {
+            double ca = sa / n_ok, cb = sb / n_ok, r;
+            for (j = 0; j < n_imu; ++j) {
+                if (isnan(s_a[j])) continue;
+                saa += (s_a[j] - ca) * (s_a[j] - ca);
+                sbb += (s_b[j] - cb) * (s_b[j] - cb);
+                sab += (s_a[j] - ca) * (s_b[j] - cb);
+            }
+            if (saa > 0 && sbb > 0) {
+                r = (sab / (n_ok - 1)) / sqrt(saa / (n_ok - 1)) / sqrt(sbb / (n_ok - 1));
+                out[0] = r > 1.0 ? 1.0 : r < -1.0 ? -1.0 : r;
+            }
+        }
+    }
+    if (!ok || n_imu < MIN_PAIRED) return;  /* _paired_regular: every IMU bin covered by the envelope */
     ma = mean(s_a, n_imu);
     mb = mean(s_b, n_imu);
+    saa = sbb = 0.0;
     for (j = 0; j < n_imu; ++j) {
         s_a[j] -= ma;
         s_b[j] -= mb;
         saa += s_a[j] * s_a[j];
         sbb += s_b[j] * s_b[j];
-        sab += s_a[j] * s_b[j];
     }
     if (!(saa > 0 && sbb > 0)) return;
-    {   /* _xmod_corr: np.corrcoef */
-        double r = (sab / (n_imu - 1)) / sqrt(saa / (n_imu - 1)) / sqrt(sbb / (n_imu - 1));
-        out[0] = r > 1.0 ? 1.0 : r < -1.0 ? -1.0 : r;
-    }
     max_k = (int)rint(MAX_LAG_S * imu_rate);  /* _xmod_lag: scipy.signal.correlate(b, a)[mid + m] */
     if (max_k > n_imu - 1) max_k = n_imu - 1;
     best = 0;
