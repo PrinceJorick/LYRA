@@ -5,8 +5,8 @@
 | **Project name** | LYRA |
 | **Document purpose** | Central context, source of truth, and onboarding document for LYRA. Written so that developers, researchers, clinicians, and AI coding assistants can understand the project, its evidence base, its decisions, and its open questions without re-deriving the background. |
 | **Last updated** | 2026-11-21 |
-| **Document version** | 1.3 (Stage 3.5 complete: SeizeIT2 IMU scale investigated and remediated, re-audited) |
-| **Project status** | **Stage 3.5 complete (IMU remediation, 0 audit problems); Stage 4 authorized 2026-11-22.** Hardware selected (§5.8, not yet built or tested). Python ML foundation and SeizeIT2 preparation pipeline in `mlm/` (§9.7). **No model trained, no performance measured.** Expo companion app with simulated data in `src/`. |
+| **Document version** | 1.4 (Stage 4 complete: models trained, single held-out evaluation, C99 export) |
+| **Project status** | **Stage 4 complete (2026-11-22): random-forest models trained on SeizeIT2 Train/CV, evaluated once on held-out (research estimates only), exported to C99; ESP32-S3 sizes not yet measured.** Hardware selected (§5.8, not yet built or tested). Python ML foundation and SeizeIT2 preparation pipeline in `mlm/` (§9.7). **No model trained, no performance measured.** Expo companion app with simulated data in `src/`. |
 | **Repository** | `https://github.com/PrinceJorick/LYRA` (branch `main`) |
 | **Owner / maintainer** | Kyle Masilang (git author on record) |
 
@@ -1319,9 +1319,9 @@ sequenceDiagram
 | Dataset download / inspection | **Done and verified** for the SeizeIT2 wearable subset: 13,568 files, 52.8 GB, SHA-256 recorded; 125 participants, 2,850 recordings, 11,626 h, 883 seizures, **55 FBTCS, 0 GTCS** `[VERIFIED: files]`; see `mlm/docs/DATASETS.md` |
 | Annotation parser | **Done** (SeizeIT2 mapper; `sz_foc_f2b` = FBTCS) |
 | Preprocessing / quality / windowing / features | **Implemented, unit-tested and run on SeizeIT2:** 20,296,484 windows from 2,806 recordings (44 excluded); 3,716 positive, 20,244,889 negative and 47,879 ignore windows. **Stage 3.5 (2026-11-22):** SeizeIT2 stores IMU as value / D (D = 6 or 2), and the v1.1.0 Z re-export is corrupt in 374 recordings. A per-recording rule converts accepted IMU to g / deg/s (2,026 recordings) and rejects the rest as INVALID (Train/CV: 1,552 accepted, 306 rejected). Re-audit: 0 problems, non-IMU arrays bit-identical. See `mlm/docs/DATASETS.md` |
-| Baseline / multimodal model | **Not started** (Stage 4, needs authorization) |
-| Evaluation harness | Contracts only; nothing computed |
-| Real-time inference | Python reference only |
+| Baseline / multimodal model | **Trained (Stage 4, 2026-11-22).** RF, 50 trees, depth 8, per track (multimodal, SIMULATED_ENV-only, IMU-only); LR and XGBoost compared in CV. Held-out, single run: multimodal + SIMULATED_ENV fallback at CV-selected entry 0.97 detected 17/21 FBTCS (81%; 7/11 without sub-115/116) at 0.68 interictal FA/24h. Research estimates on an in-hospital cohort, not clinical validation. See `mlm/docs/TRAINING_PLAN.md` §7 |
+| Evaluation harness | **Implemented** (`lyra_mlm.training`): event matching, interictal FA/24h, non-FBTCS alert rate, latency, precision, AUPRC, specificity, per participant |
+| Real-time inference | Python reference; RF classifiers exported to C99 (m2cgen, exact parity on the host). Feature extraction not yet ported; ESP32-S3 Flash/RAM not measured |
 | Mobile app | Simulated companion app exists |
 | Clinical validation / ethics | Not started |
 
@@ -1418,6 +1418,7 @@ Still open: U6, U7, U9, U12–U17.
 | # | Decision | Resolves |
 |---|---|---|
 | D19 | **SeizeIT2 IMU scale rule (Stage 3.5, from the read-only Step 1 investigation):** stored ACC/GYR = sensor / D with D ∈ {6, 2} per recording. ACC × D → g (±8 g); GYR × 125·D → deg/s (±1000 deg/s; the factor 125 is medium confidence). The IMU is rejected per recording (INVALID, never partial) for: unit ≠ g; corrupted Z (header bound ≥ 30 or > 1% at ±32.767); an axis more than 50% at the 8/D ceiling; failed D test (resting \|g\| outside 0.155–0.180 / 0.45–0.60, axis disagreement > 10%, a value above 8/D, quiet-block spread); converted resting \|g\| outside 0.93–1.08 g. Window saturation limits ±8 g / ±1000 deg/s. Applied blind to held-out (aggregate counts only). | Stage 4 blocker 1 |
+| D21 | **Operating points (owner decision after CV, before held-out):** at the locked entry threshold 0.65, CV gave about 48 interictal FA/24h. Each configuration therefore reports the locked 0.65 point and a CV-selected entry threshold (the lowest of 0.65–0.99 with pooled CV interictal FA ≤ 1/24h). The CV-selected point is primary, and other confirmation parameters stay at D17. Selected: multimodal 0.95, multimodal + fallback 0.97, SIMULATED_ENV 0.97, IMU 0.99. | D17 (entry threshold, for evaluation) |
 | D20 | **Stage 4 rules:** split sub-001–096 / sub-097–125 locked on `main`; inference on the ESP32-S3; branch `seizeit2-model` stays fully independent (no merge, no borrowed window length, hyperparameters, threshold or metrics). IGNORE, unusable and impedance-check (sub-031, sub-043) windows are excluded from the loss but kept for event evaluation. Three tracks (multimodal, SIMULATED_ENV-only, IMU-only), no zero-imputation; a missing required feature → SUPPRESSED. Event TP = POSSIBLE_EVENT entry within [onset − 30 s, offset + 30 s], one per FBTCS; interictal FA/24h reported separately from the non-FBTCS seizure alert rate. Gap > 6 s: ACCUMULATING → IDLE, POSSIBLE_EVENT → 60 s cooldown (the REFRACTORY state). | Stage 4 blocker 2, U11 |
 
 ---
@@ -1563,6 +1564,7 @@ Still open: U6, U7, U9, U12–U17.
 | 2026-11-21 | 1.1 | Finalized hardware (§5.8), implementation status (§9.7, §13.1a), decisions D9–D18 including the four locked Stage 3 decisions (§14.3); `src/services/ml/` marked legacy. Earlier sections kept and marked superseded. |
 | 2026-11-21 | 1.2 | Stage 3 complete: SeizeIT2 wearable subset verified (55 FBTCS in 37 participants, 0 GTCS; 5 malformed `impd` rows skipped), participant split verified against the real inventory, all windows processed and audited. FBTCS with usable windows: 30/33 Train/CV, 17/22 held-out. |
 | 2026-11-22 | 1.3 | Step 1 (read-only, Train/CV) and Stage 3.5: SeizeIT2 IMU is value / D (D = 6 or 2). v1.0.0 exported Z as a copy of Y, and the v1.1.0 Z re-export is corrupt in 374 recordings. IMU converted or rejected per recording (D19), features recomputed, re-audited with 0 problems and non-IMU arrays bit-identical. Usable FBTCS (overall / SIMULATED_ENV): 29 / 30 of 33 Train/CV, 15 / 21 of 22 held-out. Stage 4 rules recorded (D20). |
+| 2026-11-22 | 1.4 | Stage 4: RF/LR/XGBoost CV on Train/CV; RF frozen per track; operating points D21; single held-out run: primary multimodal + SIMULATED_ENV fallback at entry 0.97 detected 17/21 FBTCS (macro 83%; 7/11 without sub-115/116) at 0.68 interictal FA/24h (locked 0.65: 19/21, 49.9 FA/24h). C99 export exact on the host; ESP32-S3 sizes not measured. Research estimates only. |
 
 ---
 

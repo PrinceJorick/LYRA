@@ -144,3 +144,71 @@ Code: `lyra_mlm.training`, `scripts/train_stage4.py`, `scripts/evaluate_heldout.
   wrapper mirrors scikit-learn's float32 input cast. `tests/test_c99_export.py` compiles with
   `cc -std=c99 -O2 -Wall -Wextra -Werror` and requires 100% class agreement and
   max |p_C − p_sklearn| < 1e-5 on 1,200 threshold-boundary vectors per model.
+
+## 7. Results (2026-11-22)
+
+Research estimates on an in-hospital focal-epilepsy cohort (SeizeIT2). They are not clinical
+validation and not GTCS evidence. Frozen pipeline `1de1b13`; artifacts in `mlm/models/` (gitignored).
+
+**Training sets (per training fold, 1:50):** about 1,660–1,710 positives and 83k–85k negatives per
+track. RF winners, chosen by CV AUPRC, are the same for every track: 50 trees, depth 8,
+min_samples_leaf 10.
+
+**CV (Train/CV, 96 participants, 30 FBTCS events in processed recordings), locked entry 0.65:**
+
+| Track | Model | Window AUPRC | Detected | Interictal FA/24h |
+|---|---|---|---|---|
+| multimodal | LR / **RF** / XGBoost | 0.019 / **0.160** / 0.201 | 27 / **28** / 28 | 89.2 / **48.1** / 85.5 |
+| SIMULATED_ENV | LR / **RF** / XGBoost | 0.001 / **0.038** / 0.017 | 30 / **29** / 30 | 90.2 / **84.3** / 122.4 |
+| IMU | LR / **RF** / XGBoost | 0.018 / **0.084** / 0.097 | 27 / **28** / 28 | 69.7 / **102.2** / 117.9 |
+
+At 0.65, every model raises dozens of false alarms per day. Balanced class weights plus 1:50
+subsampling inflate the forest's probabilities, so 0.65 sits far too low for a 1:7,000 prior. Hence
+the CV-selected operating points (§6), all with the selected RFs:
+
+| Configuration | CV-selected entry | CV detected | CV interictal FA/24h | CV median latency |
+|---|---|---|---|---|
+| multimodal, suppress | 0.95 | 27/30 | 0.49 | 54 s |
+| **multimodal + SIMULATED_ENV fallback** | **0.97** | **27/30** | **0.38** | 54 s |
+| SIMULATED_ENV-only | 0.97 | 21/30 | 0.67 | 62 s |
+| IMU-only | 0.99 | 23/30 | 0.37 | 60 s |
+
+**D2 vs D6 (CV, multimodal + fallback at 0.97):**
+- D6: 59 participants, 25/27 detected, 0.11 FA/24h, AUPRC 0.203.
+- D2: 24 participants, 1/2 detected, 0.34 FA/24h, AUPRC 0.048.
+
+False-alarm rates are low in both groups, with no sign of a scale shortcut on the negative side. But
+27 of the 30 Train/CV FBTCS events come from D6 participants, so D2 sensitivity can't be judged. This
+cohort imbalance (D2 = mostly early participant IDs) is a confound, not something the scaling can fix.
+
+**Held-out, single run (sub-097…sub-125: 28 participants with recordings, 756 recordings, 21
+FBTCS events in 9 participants, 145 non-FBTCS seizures):**
+
+| Configuration (entry) | Detected (pooled / macro) | Excl. sub-115, sub-116 | Interictal FA/24h (n, valid h) | Non-FBTCS alert rate | Median latency | Precision | Suppressed |
+|---|---|---|---|---|---|---|---|
+| **multimodal + fallback (0.97)** | **17/21, 81% / 83%** | 7/11 | **0.68** (78, 2,737 h) | 1.4% | 67 s | 17.5% | 0.4% |
+| multimodal, suppress (0.95) | 15/21, 71% / 67% | 5/11 | 0.44 (42, 2,285 h) | 2.1% | 54 s | 24.6% | 16.8% |
+| SIMULATED_ENV-only (0.97) | 15/21, 71% / 70% | 6/11 | 0.97 (111, 2,737 h) | 0.7% | 73 s | 11.7% | 0.4% |
+| IMU-only (0.99) | 12/21, 57% / 53% | 3/11 | 0.17 (16, 2,286 h) | 1.4% | 65 s | 40.0% | 16.8% |
+| multimodal + fallback (locked 0.65) | 19/21, 90% / 91% | 9/11 | 49.9 | 15.9% | 45 s | 0.4% | 0.4% |
+| multimodal, suppress (locked 0.65) | 15/21, 71% / 67% | 5/11 | 50.3 | 13.8% | 36 s | 0.4% | 16.8% |
+
+- Window AUPRC: multimodal 0.195, fallback combination 0.089, SIMULATED_ENV 0.013, IMU 0.102.
+  Specificity at the entry threshold: 0.998 for fallback at 0.97.
+- 61 of the 78 interictal false alarms of the primary configuration come from one participant (sub-114).
+  sub-121 had 0/3 events detected.
+- sub-115 and sub-116 hold 10 of the 21 events (all detected), so the result without them (7/11) matters
+  as much as the pooled figure.
+- Missing-modality policy: `fallback_unimodal` recovers 2 events that `suppress` misses and cuts
+  suppressed time from 16.8% to 0.4%. The cost is a higher FA rate (0.68 vs 0.44 per 24 h).
+
+**C99 export (`mlm/export/c99/`):**
+- Both forests are 50 trees: multimodal 14,276 nodes, SIMULATED_ENV 13,470 nodes.
+- `cc -std=c99 -O2 -Wall -Wextra -Werror` compiles both cleanly.
+- On 1,200 threshold-boundary vectors each: 100% class agreement, max |Δp| = 3.3e-16, and identical
+  decisions at 0.65 and 0.45.
+- Host (arm64) object size is about 363 KB / 354 KB of code with no `.data`/`.bss`. That is a proxy
+  only: **the ESP32-S3 Flash/RAM sizes were not measured.** The Espressif xtensa toolchain wasn't
+  available, and downloading it was blocked. The forest uses double arithmetic, which the ESP32-S3
+  (single-precision FPU only) runs in software. That is about 400 comparisons per 2 s window, so the
+  cost is negligible.
