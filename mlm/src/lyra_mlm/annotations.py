@@ -21,11 +21,15 @@ class AnnotationKind(StrEnum):
     BACKGROUND = "background"  # annotated non-seizure epoch (e.g. SeizeIT2 'bckg')
     ARTIFACT = "artifact"
     UNMAPPED = "unmapped"  # raw label not mapped yet; never silently treated as negative
+    # Scripted convulsion-like movement by a healthy volunteer (pod recordings). Never a seizure and
+    # never sensitivity evidence, but its windows must not count as clean negatives either.
+    SIMULATED_CONVULSION = "simulated_convulsion"
 
 
 # Kinds that block a NEGATIVE label. UNMAPPED is included: an unknown label may be a seizure.
 SEIZURE_LIKE = frozenset({AnnotationKind.SEIZURE_FBTCS, AnnotationKind.SEIZURE_GTCS,
-                          AnnotationKind.SEIZURE_OUT_OF_SCOPE, AnnotationKind.UNMAPPED})
+                          AnnotationKind.SEIZURE_OUT_OF_SCOPE, AnnotationKind.UNMAPPED,
+                          AnnotationKind.SIMULATED_CONVULSION})
 
 
 HARD_NEGATIVE_CATEGORIES: dict[str, tuple[str, ...]] = {

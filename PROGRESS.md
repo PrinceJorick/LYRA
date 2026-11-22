@@ -283,13 +283,41 @@ cd mlm && .venv/bin/python -m pytest -q
   - Not measured: per-window latency, which needs the board. A rough estimate is ~30 ms per window,
     because doubles are software-emulated on the S3's single-precision FPU. Compare with the 2 s step.
 
+### Item 3: pod data-collection plan and tooling
+- `mlm/docs/POD_DATA_PROTOCOL.md` (draft v1) covers:
+  - governance: consent approval first, pseudonyms, data never in git;
+  - questions Q1–Q4: ENV mapping, domain gap, hard negatives and false alarms per 24 h, engineering
+    checks;
+  - hardware setup: data-collection firmware records RAW 1000 Hz + ENV 50 Hz in mV and IMU 25 Hz on
+    one clock;
+  - the Phase 1 lab script (about 75 min, using the existing activity vocabulary) and Phase 2
+    (24 h free living);
+  - session format schema v1, the report, decision gates and rules.
+- New kind `AnnotationKind.SIMULATED_CONVULSION` (scripted movement by healthy volunteers). It blocks
+  NEGATIVE labels and is excluded from every seizure metric.
+- `lyra_mlm.pod`: `PodAdapter` with `HARDWARE` origin, plus `check_session`.
+  - It refuses sessions without consent, without a pseudonym, with a wrong schema, or with
+    wrong units.
+  - Events are mapped onto the taxonomy, and unknown labels become UNMAPPED.
+- `lyra_mlm.domain` + `scripts/pod_report.py`: per session, quality, the `env` path (hardware ENV) and
+  the `simenv` path (pod RAW → trained schema) against the SeizeIT2 Train/CV reference.
+  - The comparison gives percentiles, the share outside the 1st–99th percentile range, KS values,
+    simulated convulsions vs FBTCS, and MyoWare ENV vs simulated ENV (r, ratio, line).
+  - The reference is cached in `data/processed/reference_traincv.npz`: 261,232 negatives and 2,021
+    positives from the 96 Train/CV participants.
+- `tests/test_pod.py` (9 tests) uses synthetic sessions. The script was also run end to end on a
+  synthetic session against the real reference, and its output was deleted.
+- Not built yet: the data-collection firmware mode and the laptop/phone logger that writes this format.
+  They depend on the firmware (step 3 of the roadmap).
+
 ### State at end of session
 - `main` has `9584404` (Stage 3.5) and `1de1b13` (Stage 4 code), plus the results-docs commit. None
   of these are pushed.
 - `mlm/models/` and `mlm/export/` are gitignored.
 
 ### Next
-1. On-board check (needs the DevKit): an ESP-IDF test app that runs `lyra_step` on stored test windows, then measures per-window latency (esp_timer) and checks parity on the board.
+1. Firmware: data-collection mode (RAW 1 kHz + ENV 50 Hz + IMU 25 Hz in the POD_DATA_PROTOCOL format) and the deployed `lyra_step` loop. An on-board test app measures latency and checks parity (needs ESP-IDF + the DevKit).
+2. Ethics/consent approval for Phase 1 pod recordings (owner action) before any session.
 2. Install the ESP-IDF / xtensa toolchain (or allow the download) to measure ESP32-S3 Flash/RAM.
    Then an on-device benchmark and Python-vs-C parity on hardware.
 3. Port feature extraction to C99, in `feature_names` order.

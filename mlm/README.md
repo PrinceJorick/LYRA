@@ -35,13 +35,17 @@ mlm/
     seizeit2.py           SeizeIT2 BIDS adapter and label mapper
     prep.py               Stage 3 per-recording preparation (simulated ENV, windows, labels, features)
     training.py           Stage 4 tracks, negative subsampling, models, offline confirmation, event metrics
+    pod.py                LYRA pod session format (schema v1), adapter, integrity checks
+    domain.py             domain-shift report: pod vs SeizeIT2 Train/CV features, MyoWare ENV vs simulated ENV
   scripts/
     download_seizeit2.py  resumable, size-checked download of the wearable subset
     prepare_seizeit2.py   inventory, checksums, window files, split manifest -> data/processed/
     audit_stage3.py       re-derives labels/grid, checks quality and the Stage 3.5 IMU rule
     train_stage4.py       participant-grouped CV, selection, frozen models -> models/ (gitignored)
     evaluate_heldout.py   the single held-out evaluation (refuses a second run)
-    export_c99.py         frozen random forests -> export/c99/ (m2cgen)
+    export_c99.py         frozen random forests -> export/c99/ (m2cgen, one function per tree)
+    size_esp32s3.py       ESP32-S3 Flash/RAM of the pod C code (xtensa GCC)
+    pod_report.py         integrity check + domain-shift report per pod session -> data/pod_reports/
   c99/                    hand-written C99 port for the pod: lyra_features (22 features, training order),
                           lyra_quality (quality gate + routing), lyra_confirm (event confirmation),
                           lyra_pipeline (lyra_step: one call per window); parity tested against Python
@@ -77,3 +81,4 @@ Never commit anything under `data/`.
 - [docs/DATASETS.md](docs/DATASETS.md): source registry, LYRA vs dataset differences, integration procedure
 - [docs/TRAINING_PLAN.md](docs/TRAINING_PLAN.md): how the separate training session should begin
 - [docs/BLE_PROTOCOL.md](docs/BLE_PROTOCOL.md): draft pod ↔ phone payloads
+- [docs/POD_DATA_PROTOCOL.md](docs/POD_DATA_PROTOCOL.md): pod data-collection protocol, session format, decision gates

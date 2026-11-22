@@ -93,7 +93,7 @@ SOURCES: Mapping[str, DatasetSource] = {
                 "hard-negative activities.",
         access="Internal; requires an approved consent protocol before any collection",
         license="Not applicable (participant data; governed by consent terms)",
-        facts={"status": "No recordings exist yet"},
+        facts={"status": "No recordings exist yet", "format": "docs/POD_DATA_PROTOCOL.md, schema v1 (lyra_mlm.pod)"},
         differences_from_lyra=(),
     ),
 }
