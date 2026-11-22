@@ -8,7 +8,8 @@ State semantics, per modality and per window:
 - VALID: enough usable samples, no detected problems.
 - DEGRADED: usable, with recorded problems (some missing samples, irregular timing, partial
   saturation, some flat channels). Downstream use requires an explicit policy.
-- INVALID: samples exist but cannot be trusted (flatline, heavy saturation).
+- INVALID: samples exist but cannot be trusted (flatline, heavy saturation, or the adapter
+  rejected the whole stream: SignalStream.untrusted).
 - MISSING: modality not recorded, no samples in the window, or too few usable samples.
 - UNSYNCHRONIZED: duplicate/out-of-order timestamps, or the clocks of the modalities disagree.
 """
@@ -75,6 +76,8 @@ def assess_modality(stream: SignalStream | None, modality: Modality, start_s: fl
     win = stream.slice_time(start_s, end_s)
     if win.n == 0:
         return result(QualityState.MISSING, ["no samples in window: sensor disconnected or not acquired"])
+    if stream.untrusted:
+        return result(QualityState.INVALID, [stream.untrusted])
     tr = check_timestamps(win.timestamps, win.nominal_rate_hz, cfg.interval_tolerance, cfg.gap_factor)
     if tr.duplicates or tr.out_of_order:
         return result(QualityState.UNSYNCHRONIZED,

@@ -162,3 +162,44 @@ cd mlm && .venv/bin/python -m pytest -q
 3. Only then authorize Stage 4.
 
 `mlm/data/processed_superseded/` (384 MB) can be deleted.
+
+## Session 4 (2026-11-22): Step 1 IMU investigation, Stage 3.5 remediation, Stage 4
+
+### Step 1 (read-only, Train/CV only)
+- The authors' loader (`biomedepi/seizeit2`, which redirects to `mbhagubai/seizeit2`, commit
+  `fcde7a7`, pre-v1.1.0) only calls `pyedflib.readSignal()`, which returns EDF physical units. It
+  does no movement scaling, and the authors' model uses EEG only. EDF physical min/max are taken
+  from the data, so they carry no sensor full-scale information.
+- v1.0.0 exported ACC Z as an exact copy of Y. v1.1.0 ("Corrected accelerometer data") re-exported
+  Z only. In 221 Train/CV recordings (sub-066/067/068/084/086/088) the new Z is garbage.
+- Stored ACC/GYR = sensor / D, with D = 6 or 2 per recording:
+  - both sensors clip at exactly 8/D;
+  - both modules of a recording share D;
+  - the ACC axes share one scale;
+  - GYR ≈ counts/4096 at ±1000 deg/s (125·D deg/s per unit, medium confidence).
+- Device faults: sub-083 runs 01–20, the sub-074 Y offset progressing to a stuck axis, sub-075 Y
+  stuck, sub-084 Z stuck.
+
+### Stage 3.5 (approved rule, D19)
+- Code:
+  - `seizeit2.assess_imu_scale` / `convert_imu` / `rest_gravity`.
+  - `SignalStream.untrusted`: a rejected stream, which quality rates INVALID.
+  - Saturation limits ±8 g / ±1000 deg/s.
+  - `imu_scale_manifest.json`.
+  - Audit `--baseline`.
+  - `tests/test_stage35.py`.
+- Train/CV: 1,552 accepted (1,376 D6, 176 D2) and 306 rejected. The 21 rejections beyond the Step 1
+  list come from the approved axis-disagreement and post-conversion checks.
+- Held-out (aggregate only): 474 accepted, 157 rejected (153 of them corrupted Z).
+- Full recompute: 2 h 13 min, 3 workers. The old files are in `mlm/data/processed_pre35/`, which can
+  be deleted once Stage 4 is accepted.
+- Audit: 0 problems.
+  - Non-IMU arrays are bit-identical in 2,806 of 2,806 recordings.
+  - All 2,026 accepted IMU rest at 0.93–1.08 g.
+  - Usable positives (multimodal) fell 3,456 → 2,980 (Train/CV 2,022).
+  - Usable FBTCS (overall / SIMULATED_ENV): Train/CV 29 / 30 of 33, held-out 15 / 21 of 22.
+- Environment: `brew install libomp` (xgboost); scikit-learn, xgboost and m2cgen are in the `train`
+  extra. emlearn was evaluated and rejected: its 8-bit leaf probabilities miss the 1e-5 parity
+  tolerance.
+- Blocked: ESP32-S3 Flash/RAM measurement needs Espressif's xtensa toolchain. Auto mode denied
+  downloading it, so the user must install it (ESP-IDF) or allow it.
