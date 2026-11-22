@@ -85,8 +85,33 @@ such recordings.
 2. **Bandwidth:** 256 Hz covers only up to 128 Hz, so RAW spectral features use 20–128 Hz.
 3. **IMU placement:** the left chest (ECGEMG module) is used, tagged `imu_placement=chest_upper_back`.
    LYRA's IMU is on the upper arm.
-4. **IMU units:** the EDF labels ACC and GYR as "g". The resting |acc| is about 0.5 (checked on
-   sub-001 run-01), and the gyro unit is unverified. Units are kept as given, with no conversion.
+4. **IMU units (Step 1 investigation 2026-11-22, Train/CV only; Stage 3.5 remediation):** the EDF
+   label "g" is wrong for both sensors. v1.1.0 stores every ACC and GYR value as *sensor value / D*,
+   with D = 6 or D = 2 per recording. Both sensors clip at exactly 8/D (1.333 or 4.000), both modules
+   of a recording share the same D, and the three ACC axes share one scale. ACC × D is g (±8 g full
+   scale). GYR × 125·D is deg/s (±1000 deg/s). The 125 factor was inferred from posture changes
+   (ACC tilt vs integrated gyro), medium confidence, and is not documented by the dataset.
+   - The authors' loader (`biomedepi/seizeit2`, which redirects to `mbhagubai/seizeit2`, commit
+     `fcde7a7`) only calls `pyedflib.readSignal()` (EDF physical units). It applies no movement
+     scaling, and their model uses EEG only. EDF physical min/max are taken from the data, so they
+     carry no sensor full-scale information.
+   - v1.0.0 exported ACC Z as an exact copy of Y. The v1.1.0 "Corrected accelerometer data" release
+     re-exported Z only. In 221 Train/CV recordings (sub-066/067/068/084/086/088) the new Z is
+     garbage: 77% of samples sit at ±32.767, and the rest are integers.
+   - Stage 3.5 rule (`seizeit2.assess_imu_scale`, per recording, no labels, nothing fitted across
+     recordings). The IMU is rejected (INVALID) if any of these holds:
+     - the unit isn't "g";
+     - a Z header bound is ≥ 30, or more than 1% of Z samples are at ±32.767;
+     - any channel is more than 50% at a ceiling;
+     - the resting |g| doesn't fit D=6 (0.155–0.180) or D=2 (0.45–0.60);
+     - a value exceeds 8/D;
+     - per-axis resting |g| differs by more than 10%;
+     - the quiet-block p95/p5 is 1.15 or more (D=6) / 1.20 or more (D=2);
+     - the converted resting |g| is outside 0.93–1.08 g.
+   - Accepted IMU is converted. Samples at the stored 8/D ceiling become exactly ±8 g / ±1000 deg/s, so
+     the window saturation limits catch them (more than 5% saturated → INVALID, any → DEGRADED).
+     Decisions are in `processed/imu_scale_manifest.json`; held-out entries hold only D and the
+     category.
 5. **Timing:** EMG and MOV EDF start times are anonymised differently, so both are assumed to start
    at t = 0, the reference for `events.tsv` onsets.
 6. **Scope:** an in-hospital focal-epilepsy cohort. FBTCS windows are not GTCS evidence and not
@@ -101,40 +126,61 @@ such recordings.
 | `feature_schema.json` | feature order and specs, quality and label codes, prep config; "no normalization fitted" |
 | `windows_manifest.json` | per-recording window, label and quality counts, or the exclusion reason |
 | `splits_manifest.json` | participant split, FBTCS counts, window label counts |
-| `audit.json` | `scripts/audit_stage3.py` results (0 problems) |
+| `imu_scale_manifest.json` | Stage 3.5 IMU decision per recording (D or rejection category; held-out: D and category only), rule, counts |
+| `audit.json` | `scripts/audit_stage3.py` results (0 problems after Stage 3.5) |
 
 Features are raw, with no normalization or other dataset statistic fitted.
 
-### Window accounting (4 s windows, 2 s step, labels per Decision 1)
+### Stage 3.5 IMU remediation (2026-11-22)
 
-| | All windows | Usable (overall VALID/DEGRADED) |
-|---|---|---|
-| **N_total** | **20,296,484** | |
-| Positive | 3,716 | 3,456 |
-| Negative | 20,244,889 | 19,112,674 |
-| Ignore | 47,879 | 42,468 |
-| **N_excluded (signal)**: overall INVALID or MISSING | | **1,137,886** |
+IMU decisions per recording (`imu_scale_manifest.json`):
 
-Conservation holds: 20,296,484 = 3,456 + 19,112,674 + 42,468 + 1,137,886. Labels are assigned to
-every window independently of quality, so the "all windows" column also sums to N_total.
+| | Accepted (D=6 / D=2) | Z corrupt | Fails D test | Axis disagreement | Stuck axis | Post-conversion | Rest spread | No ECGEMG IMU |
+|---|---|---|---|---|---|---|---|---|
+| Train/CV | 1,552 (1,376 / 176) | 221 | 44 | 24 | 7 | 5 | 5 | 214 |
+| Held-out (aggregate only) | 474 (434 / 40) | 153 | 2 | 1 | 0 | 0 | 1 | 147 |
+
+The rule reproduces the Step 1 classification for 2,051 of 2,072 Train/CV recordings. The 21
+differences are all extra rejections, from the approved axis-disagreement (more than 10%) and
+post-conversion (0.93–1.08 g) checks; 18 of them are D=2 recordings, where Z often reads 10–15% above
+X/Y. The audit verifies:
+- every non-IMU array (grid, labels, overlaps, EMG states, the 9 `emg_simenv_*` features, secondary
+  features, provenance) is bit-identical to the pre-remediation files (2,806 of 2,806);
+- every accepted IMU (2,026) re-loads in g / deg/s within full scale and rests at 0.93–1.08 g;
+- no rejected IMU (780, including recordings without one) is ever rated usable.
+
+### Window accounting (4 s windows, 2 s step, labels per Decision 1; after Stage 3.5)
+
+| | All windows | Usable (overall VALID/DEGRADED) | Before Stage 3.5 |
+|---|---|---|---|
+| **N_total** | **20,296,484** | | |
+| Positive | 3,716 | 2,980 (Train/CV 2,022, held-out 958) | 3,456 |
+| Negative | 20,244,889 | 17,176,078 | 19,112,674 |
+| Ignore | 47,879 | 39,960 | 42,468 |
+| **N_excluded (signal)**: overall INVALID or MISSING | | **3,077,466** | 1,137,886 |
+
+Conservation holds: 20,296,484 = 2,980 + 17,176,078 + 39,960 + 3,077,466. Labels are assigned to
+every window independently of quality, so the "all windows" column also sums to N_total. "Usable"
+here means usable for the multimodal track. The SIMULATED_ENV-only track keeps every EMG-usable window.
 
 Quality per modality across all windows:
 
 | Modality | VALID | DEGRADED | INVALID | MISSING |
 |---|---|---|---|---|
-| Overall (EMG + IMU) | 15,515,947 | 3,642,651 | 107,784 | 1,030,102 |
+| Overall (EMG + IMU) | 14,585,462 | 2,633,556 | 2,049,468 | 1,027,998 |
 | Simulated ENV (inherits RAW) | 20,191,789 | – | 92,382 | 12,313 |
-| IMU | 15,524,391 | 3,652,695 | 92,932 | 1,026,466 |
+| IMU | 14,592,395 | 2,638,767 | 2,038,856 | 1,026,466 |
 | RAW EMG | 20,191,789 | – | 92,382 | 12,313 |
 
-No window was `UNSYNCHRONIZED`.
+Before Stage 3.5, IMU was VALID 15,524,391 / DEGRADED 3,652,695 / INVALID 92,932: corrupted-Z windows
+were then rated usable. No window was `UNSYNCHRONIZED`.
 
-### FBTCS coverage
+### FBTCS coverage (after Stage 3.5)
 
-| Split | FBTCS events | With positive windows | With ≥ 1 usable positive window |
+| Split | FBTCS events | With positive windows | Usable positive: overall / SIMULATED_ENV / IMU |
 |---|---|---|---|
-| Train/CV | 33 | 30 | 30 |
-| Held-out | 22 | 21 | 17 |
+| Train/CV | 33 | 30 | 29 / 30 / 29 |
+| Held-out | 22 | 21 | 15 / 21 / 15 |
 
 The 4 events without windows (sub-049 run-02, sub-054 run-04, sub-058 run-02, sub-115 run-12) are
 in excluded recordings with no EMG and no ECGEMG IMU.
@@ -144,5 +190,5 @@ in excluded recordings with no EMG and no ECGEMG IMU.
 ```bash
 .venv/bin/python scripts/download_seizeit2.py   # resumable
 .venv/bin/python scripts/prepare_seizeit2.py --workers 3   # resumable; 8 GB RAM fits 3 workers
-.venv/bin/python scripts/audit_stage3.py
+.venv/bin/python scripts/audit_stage3.py [--baseline data/processed_pre35]   # Stage 3.5: bit-identity check
 ```

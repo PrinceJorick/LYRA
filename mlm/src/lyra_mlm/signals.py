@@ -77,6 +77,7 @@ class SignalStream:
     bandwidth_hz: float | None = None  # sensor-side analog bandwidth as delivered, if known
     flags: np.ndarray | None = None  # optional source flags; merged with flags derived from values
     provenance: tuple[str, ...] = ()
+    untrusted: str = ""  # non-empty: the whole stream was rejected (the reason); quality rates it INVALID
 
     def __post_init__(self) -> None:
         ts = np.array(self.timestamps, dtype=np.float64)

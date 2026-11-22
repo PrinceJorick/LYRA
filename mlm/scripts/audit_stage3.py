@@ -5,7 +5,10 @@ count per recording (from EDF header durations), availability masks, that unusab
 NaN (never 0), and the SIMULATED_ENV_FROM_RAW provenance. Files written before provenance was
 stored are backfilled by re-running the conditioning on their raw EMG. Only labels, quality codes
 and availability are read for held-out participants; the raw-scale check uses Train/CV only.
-Usage: python scripts/audit_stage3.py [--data mlm/data]
+Stage 3.5: with --baseline (the pre-remediation processed folder) every non-IMU array must be
+bit-identical; rejected IMU must never be usable; accepted IMU is re-loaded and its converted
+resting |g| must lie in [0.93, 1.08] g (held-out: pass/fail counts only).
+Usage: python scripts/audit_stage3.py [--data mlm/data] [--baseline mlm/data/processed_pre35]
 """
 
 import argparse
@@ -23,12 +26,27 @@ from lyra_mlm.features import feature_names
 from lyra_mlm.prep import QUALITY_CODE, PrepConfig, primary_emg_metadata
 from lyra_mlm.preprocess import raw_to_simulated_env
 from lyra_mlm.quality import QUALITY_RANK, USABLE, QualityState
-from lyra_mlm.seizeit2 import SeizeIT2Adapter
+from lyra_mlm.seizeit2 import ACC_FULL_SCALE_G, GYR_FULL_SCALE_DPS, IMU_UNITS, REST_G_RANGE, SeizeIT2Adapter, rest_gravity
 
 DATA = Path(__file__).resolve().parents[1] / "data"
 STATE = {v: k.value for k, v in QUALITY_CODE.items()}
 USABLE_CODES = [QUALITY_CODE[s] for s in USABLE]
 RANK_OF_CODE = np.array([QUALITY_RANK[s] for s in QualityState])  # indexed by stored code
+UNCHANGED = ("start_s", "end_s", "label", "fbtcs_overlap_s", "artifact_overlap", "emg_state", "raw_emg_state",
+             "emg_coverage", "secondary", "secondary_available", "primary_emg_signal_type", "primary_emg_provenance",
+             "emg_provenance", "participant_id", "recording_id", "placement", "emg_rate_hz", "imu_rate_hz")
+
+
+def bit_identical(a: np.ndarray, b: np.ndarray) -> bool:
+    return a.dtype == b.dtype and a.shape == b.shape and a.tobytes() == b.tobytes()
+
+
+def check_baseline(z, b, emg_cols: list[int]) -> list[str]:
+    bad = [k for k in UNCHANGED if not bit_identical(z[k], b[k])]
+    for k in ("primary", "primary_available"):
+        if not bit_identical(np.ascontiguousarray(z[k][:, emg_cols]), np.ascontiguousarray(b[k][:, emg_cols])):
+            bad.append(f"{k}[emg_simenv_*]")
+    return bad
 
 
 def expected_windows(adapter: SeizeIT2Adapter, rid: str, cfg: PrepConfig) -> int:
@@ -49,9 +67,33 @@ def backfill(path: Path, adapter: SeizeIT2Adapter, cfg: PrepConfig) -> None:
     tmp.replace(path)
 
 
+def check_imu(adapter: SeizeIT2Adapter, rid: str, entry: dict | None, imu_state: np.ndarray, n: Counter,
+              held_out: bool) -> list[str]:
+    """Rejected IMU must never be usable; accepted IMU must be converted (units, full scale) and rest at
+    ~1 g. Held-out failures are reported without values."""
+    if entry is None:
+        return [f"{rid}: no Stage 3.5 IMU scale decision"]
+    if entry["d"] is None:
+        n["rejected"] += 1
+        return [f"{rid}: rejected IMU rated usable in {int(np.isin(imu_state, USABLE_CODES).sum())} windows"] \
+            if np.isin(imu_state, USABLE_CODES).any() else []
+    n["accepted"] += 1
+    stream, _ = adapter._imu(adapter._paths(rid)["mov"], adapter.info(rid).imu_rate_hz)
+    r = rest_gravity(stream.values[:, :3], stream.nominal_rate_hz)
+    ok = (stream.units == IMU_UNITS and not stream.untrusted and r is not None
+          and REST_G_RANGE[0] <= r["rest"] <= REST_G_RANGE[1]
+          and np.abs(stream.values[:, :3]).max() <= ACC_FULL_SCALE_G
+          and np.abs(stream.values[:, 3:]).max() <= GYR_FULL_SCALE_DPS)
+    n["accepted_pass" if ok else "accepted_fail"] += 1
+    if ok:
+        return []
+    return [f"{rid}: accepted IMU fails the post-conversion check" + ("" if held_out or r is None else f" (rest {r['rest']:.3f} g)")]
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--data", type=Path, default=DATA)
+    ap.add_argument("--baseline", type=Path, default=None, help="pre-remediation processed folder")
     args = ap.parse_args()
     raw, out = args.data / "seizeit2", args.data / "processed"
     adapter, cfg, labels_cfg = SeizeIT2Adapter(raw), PrepConfig(), LabelConfig()
@@ -65,6 +107,10 @@ def main() -> None:
     n_primary, i_rms = len(feature_names(cfg.primary)), feature_names(cfg.primary).index("emg_simenv_rms")
     emg_block = [i for i, n in enumerate(feature_names(cfg.primary)) if n.startswith("emg_")]
     imu_block = [i for i, n in enumerate(feature_names(cfg.primary)) if n.startswith("imu_")]
+    xmod_block = [i for i, n in enumerate(feature_names(cfg.primary)) if n.startswith("xmod_")]
+    scale_path = out / "imu_scale_manifest.json"
+    scale = json.loads(scale_path.read_text())["recordings"] if scale_path.exists() else {}
+    imu_checks = Counter()
 
     missing_from_manifest = sorted(set(rids) - set(manifest))
     excluded = {r: m["excluded"] for r, m in manifest.items() if "excluded" in m}
@@ -94,8 +140,16 @@ def main() -> None:
             emg_bad = ~np.isin(z["emg_state"], USABLE_CODES)
             imu_bad = ~np.isin(z["imu_state"], USABLE_CODES)
             if z["primary_available"][np.ix_(emg_bad, emg_block)].any() or \
-                    z["primary_available"][np.ix_(imu_bad, imu_block)].any():
+                    z["primary_available"][np.ix_(imu_bad, imu_block)].any() or \
+                    z["primary_available"][np.ix_(emg_bad | imu_bad, xmod_block)].any():
                 problems.append(f"{rid}: features present for an unusable modality")
+            if args.baseline is not None:
+                with np.load(args.baseline / "windows" / rid.split("_")[0] / f"{rid}.npz") as b:
+                    if changed := check_baseline(z, b, emg_block):
+                        problems.append(f"{rid}: changed vs pre-remediation baseline: {changed}")
+                imu_checks["baseline_compared"] += 1
+            problems += check_imu(adapter, rid, scale.get(rid), z["imu_state"], imu_checks,
+                                  held_out=SEIZEIT2_PLANNED_SPLIT.partition_of(rid.split("_")[0]) is Partition.TEST)
             if (RANK_OF_CODE[z["emg_state"]] < RANK_OF_CODE[z["raw_emg_state"]]).any():
                 problems.append(f"{rid}: simulated ENV rated better than its RAW source")
             if z["primary"].shape[1] != n_primary:
@@ -132,6 +186,7 @@ def main() -> None:
         "windows": dict(t), "conservation_holds": bool(conservation),
         "by_partition": {str(p): dict(c) for p, c in by_partition.items()},
         "quality": {k: dict(v) for k, v in quality.items()},
+        "stage35_imu_checks": dict(imu_checks),
         "train_only_raw_scale_check": {
             "emg_simenv_rms_min": float(rms.min()) if rms.size else None,
             "emg_simenv_rms_median": float(np.median(rms)) if rms.size else None,
