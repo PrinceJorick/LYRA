@@ -1,7 +1,19 @@
 # Draft BLE protocol: pod ↔ phone
 
-Draft for alignment only. No GATT service or characteristic UUIDs are assigned, and no firmware or phone
-transport exists. Reference implementation: `lyra_mlm/ble.py` (pack/unpack with validation).
+Draft for alignment only. No GATT service or characteristic UUIDs are assigned, and no real BLE transport
+exists yet. There are three byte-identical implementations:
+- `lyra_mlm/ble.py`: the reference;
+- `firmware/components/lyra_pod/lyra_ble.c`: pod side;
+- `src/services/pod/protocol.ts`: app decoder.
+
+Parity is tested in `mlm/tests/test_firmware_core.py` and `test_app_pod_protocol.py`. The app
+receives payloads through `src/services/pod` (`PodLink`), which today is a simulated pod emitting
+real payload bytes.
+
+**Open gap:** there is no phone → pod message for `CANCELLED_ON_PHONE`. When the user cancels on the
+phone, the app records it, but the pod is never told. The pod-side `lyra_pod_cancel()` already
+supports it, so a small phone → pod cancel command (event_id + cancellation code) needs defining
+together with the GATT UUIDs.
 
 - **Roles:** ESP32-S3 pod = BLE peripheral / GATT server. Phone = central / GATT client.
 - **Normal operation** sends small status and event notifications only, never continuous raw waveforms.

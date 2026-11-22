@@ -338,6 +338,32 @@ cd mlm && .venv/bin/python -m pytest -q
     installed; installing it is the owner's decision;
   - GATT UUIDs.
 
+### App: pod BLE consumer (item 6)
+- `src/services/pod/`:
+  - `protocol.ts`: decodes DeviceStatus / EventStatus and encodes them for the simulator. It is
+    byte-exact with `ble.py` and `lyra_ble.c` and rejects unknown versions, origins, codes and lengths.
+  - `PodLink` interface.
+  - `simulatedPodLink`: emits real payload bytes with origin SIMULATED, plus a 15 s heartbeat.
+- `AppState` subscribes and decodes, dropping malformed payloads.
+  - Status updates the battery and sync time, but only while a pod is paired.
+  - POSSIBLE_EVENT opens `/alert`.
+  - A pod-button cancel ends the matching countdown ("Alert cancelled on the pod").
+  - Events keep the payload origin. SIMULATED → "Simulated"; HARDWARE → the new origin `pod_hardware`
+    → "LYRA Pod".
+- The alert now reads "Possible convulsive seizure detected" / "This is not a diagnosis.". The owner
+  approved this as part of item 6. Simulated events add "Simulated pod event (no Bluetooth)." The Home
+  demo button now goes through the simulated pod. `demoTrigger` is removed.
+- Checks:
+  - `tsc --noEmit` and `expo lint` are clean, and the web export bundles.
+  - `mlm/tests/test_app_pod_protocol.py`: Node runs the TS decoder against Python, with 300 payloads
+    byte-exact and 8 malformed ones rejected by both.
+  - The web build was driven in headless Chromium: Home → alert (wording and simulated notice) →
+    cancel → History "Cancelled by user", with no console errors.
+- Not done:
+  - a real BLE link (needs GATT UUIDs and a native BLE module, hence a dev build);
+  - the phone → pod cancel message (protocol gap, see BLE_PROTOCOL.md);
+  - showing sensor quality from status payloads.
+
 ### State at end of session
 - `main` has `9584404` (Stage 3.5) and `1de1b13` (Stage 4 code), plus the results-docs commit. None
   of these are pushed.
