@@ -50,6 +50,7 @@ def lib(tmp_path_factory):
     lib.lyra_features.argtypes = [D, D, ctypes.c_int, ctypes.c_double, D, D, ctypes.c_int, ctypes.c_double, D]
     lib.lyra_confirm_init.argtypes = [ctypes.POINTER(Confirm), ctypes.POINTER(Cfg)]
     lib.lyra_confirm_update.argtypes = [ctypes.POINTER(Confirm), ctypes.c_double, ctypes.c_double, ctypes.c_int]
+    lib.lyra_confirm_reset.argtypes = [ctypes.POINTER(Confirm)]
     return lib
 
 
@@ -136,3 +137,23 @@ def test_c_confirmation_matches_python(lib, seed):
     np.testing.assert_array_equal(got, expected)
     assert lib.lyra_confirm_update(ctypes.byref(state), ts[-1], 0.9, 1) == -1  # duplicate timestamp rejected
     assert lib.lyra_confirm_init(ctypes.byref(state), ctypes.byref(Cfg(0.4, 0.5, 3, 6.0, 60.0))) == -1
+
+
+def test_c_confirmation_reset_matches_python(lib):
+    from lyra_mlm.confirmation import EventConfirmation
+    from synthetic import pred
+    from lyra_mlm.model import PredictionStatus
+    ts = np.arange(2.0, 200.0, 2.0)
+    score = np.where((ts > 20) & (ts < 120), 0.9, 0.1)
+    ref, state = EventConfirmation(), Confirm()
+    lib.lyra_confirm_init(ctypes.byref(state), ctypes.byref(Cfg(0.65, 0.45, 3, 6.0, 60.0)))
+    got, want = [], []
+    for t, s in zip(ts, score):
+        if t == 40.0:  # user cancels during the possible event: back to IDLE, may re-alert
+            ref.reset(t - 1.0, "cancelled on pod")
+            lib.lyra_confirm_reset(ctypes.byref(state))
+        if ref.update(pred(float(t), float(s), PredictionStatus.VALID)).event_started:
+            want.append(t)
+        if lib.lyra_confirm_update(ctypes.byref(state), t, s, 1) == 1:
+            got.append(t)
+    assert got == want and len(want) == 2  # once before the cancel, once after it
