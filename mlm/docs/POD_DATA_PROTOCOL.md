@@ -137,9 +137,18 @@ with no usable samples, and unknown event labels.
 
 ## 5. After each session
 
+The data-collection firmware writes one line per record over USB serial
+(`firmware/components/lyra_pod/lyra_logline.h`). Capture that stream to a file, then:
+
 ```bash
-.venv/bin/python scripts/pod_report.py --recording pod-p001_s01   # writes data/pod_reports/pod-p001_s01.json
+.venv/bin/python scripts/pod_logger.py capture.txt --participant pod-p001 --session s01 \
+    --consent <approved id> --side left --events operator_events.tsv     # -> data/pod/pod-p001/s01/
+.venv/bin/python scripts/pod_report.py --recording pod-p001_s01        # -> data/pod_reports/pod-p001_s01.json
 ```
+
+The logger drops and counts malformed lines without repairing them, and refuses to overwrite an
+existing session. It writes pod button markers to `markers.tsv`, for the operator to reconcile with
+`events.tsv`.
 
 Fix every integrity problem at its source before the next session. The report contains:
 - **quality** state counts, the usable windows, and window counts per event label;

@@ -1,6 +1,6 @@
 """Measure the ESP32-S3 Flash/RAM cost of the pod C code with Espressif's xtensa toolchain.
 
-Compiles mlm/c99/*.c and the generated forests (mlm/export/c99/*.c) with ESP-IDF style flags
+Compiles mlm/c99/*.c, firmware/components/lyra_pod/*.c and the generated forests (mlm/export/c99/*.c) with ESP-IDF style flags
 (-mlongcalls -ffunction-sections -fdata-sections, -std=c99 -O2 -Wall -Wextra -Werror), then reports
 per-section sizes (size -A), the worst per-function stack frame (-fstack-usage), and a test link
 from lyra_step that shows how much newlib libm / libgcc soft-float code the models pull in.
@@ -44,7 +44,8 @@ def main() -> None:
     ap.add_argument("--toolchain", type=Path, default=DEFAULT_TOOLCHAIN)
     args = ap.parse_args()
     gcc, size = args.toolchain / "xtensa-esp32s3-elf-gcc", args.toolchain / "xtensa-esp32s3-elf-size"
-    sources = sorted((ROOT / "c99").glob("*.c")) + sorted((ROOT / "export" / "c99").glob("*.c"))
+    fw = ROOT.parent / "firmware" / "components" / "lyra_pod"
+    sources = sorted((ROOT / "c99").glob("*.c")) + sorted(fw.glob("*.c")) + sorted((ROOT / "export" / "c99").glob("*.c"))
     report, objs = {"compiler": subprocess.run([str(gcc), "--version"], capture_output=True, text=True).stdout.split("\n")[0],
                     "flags": FLAGS, "forest_flags": FOREST_FLAGS, "modules": {}}, []
     with tempfile.TemporaryDirectory() as d:
@@ -52,7 +53,7 @@ def main() -> None:
         for src in sources:
             obj = d / (src.stem + ".o")
             extra = FOREST_FLAGS if src.parent.name == "c99" and src.parent.parent.name == "export" else []
-            subprocess.run([str(gcc), *FLAGS, *extra, f"-I{ROOT / 'c99'}", f"-I{ROOT / 'export' / 'c99'}", "-c", str(src),
+            subprocess.run([str(gcc), *FLAGS, *extra, f"-I{ROOT / 'c99'}", f"-I{fw}", f"-I{ROOT / 'export' / 'c99'}", "-c", str(src),
                             "-o", str(obj)], check=True, cwd=d)
             sec = sections(size, obj)
             su = [line.rsplit(None, 2) for line in (d / (src.stem + ".su")).read_text().splitlines()]
@@ -63,6 +64,9 @@ def main() -> None:
         elf = d / "pod.elf"  # test link: everything reachable from lyra_step and the two forests
         link = subprocess.run([str(gcc), "-mlongcalls", "-nostartfiles", "-Wl,--gc-sections", "-Wl,-e,lyra_step",
                                "-Wl,--undefined=lyra_multimodal_rf_predict", "-Wl,--undefined=lyra_simenv_rf_predict",
+                               "-Wl,--undefined=lyra_pod_tick", "-Wl,--undefined=lyra_pod_cancel",
+                               "-Wl,--undefined=lyra_pod_device_status", "-Wl,--undefined=lyra_log_emg",
+                               "-Wl,--undefined=lyra_log_imu", "-Wl,--undefined=lyra_ble_unpack_device_config",
                                "-o", str(elf), *map(str, objs), "-lm"], capture_output=True, text=True)
         if link.returncode == 0:
             sec = sections(size, elf)

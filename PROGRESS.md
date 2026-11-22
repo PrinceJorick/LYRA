@@ -310,13 +310,41 @@ cd mlm && .venv/bin/python -m pytest -q
 - Not built yet: the data-collection firmware mode and the laptop/phone logger that writes this format.
   They depend on the firmware (step 3 of the roadmap).
 
+### Firmware: hardware-independent core (`firmware/`)
+- `firmware/components/lyra_pod/` (C99, static allocation):
+  - `lyra_pod`: the streaming runtime. It keeps ring buffers, cuts 4 s / 2 s windows from t = 0 (the
+    `segment()` grid), runs a per-window clock check (median interval within 5000 ppm), calls
+    `lyra_step`, and produces BLE event payloads on event start and end, cancel and device status.
+  - `lyra_ble`: a codec byte-exact with `ble.py`.
+  - `lyra_logline`: the data-collection line format.
+- `mlm/c99/lyra_confirm_reset` matches `EventConfirmation.reset`, and is parity-tested.
+- `mlm/scripts/pod_logger.py` turns a captured stream into a protocol session folder. It drops and
+  counts malformed lines, refuses to overwrite, and runs `check_session`.
+- `mlm/tests/test_firmware_core.py` (6 tests):
+  - BLE byte parity, including rejected payloads;
+  - streaming parity against the Python chain, with samples pushed one at a time on the bursty and
+    defective recordings (routes, statuses, scores, alerts and the clock flag identical);
+  - event, cancel and device-status payloads decoded by the Python parser;
+  - the capture → logger → `PodAdapter` round trip, with a corrupted line dropped and overwriting
+    refused.
+- ESP32-S3: 646 KB of Flash and 54.7 KB of static RAM linked, with a largest stack frame of 448 B
+  (`scripts/size_esp32s3.py` now includes the firmware core).
+- `firmware/README.md` holds the ESP-IDF integration contract and the bring-up checks:
+  - the BMI270's real ODR vs the 5000 ppm clock check;
+  - the domain gap: no validated meaning on the pod yet;
+  - on-board parity and timing.
+- Not done:
+  - the ESP-IDF platform layer (ADC, BMI270, timer, button, NimBLE, USB serial). ESP-IDF isn't
+    installed; installing it is the owner's decision;
+  - GATT UUIDs.
+
 ### State at end of session
 - `main` has `9584404` (Stage 3.5) and `1de1b13` (Stage 4 code), plus the results-docs commit. None
   of these are pushed.
 - `mlm/models/` and `mlm/export/` are gitignored.
 
 ### Next
-1. Firmware: data-collection mode (RAW 1 kHz + ENV 50 Hz + IMU 25 Hz in the POD_DATA_PROTOCOL format) and the deployed `lyra_step` loop. An on-board test app measures latency and checks parity (needs ESP-IDF + the DevKit).
+1. Install ESP-IDF (owner decision), then write the platform layer against the contract in `firmware/README.md`: ADC ENV/RAW, BMI270, esp_timer, button, NimBLE GATT (define the UUIDs), USB serial data-collection mode. Then run the bring-up checks on the DevKit.
 2. Ethics/consent approval for Phase 1 pod recordings (owner action) before any session.
 2. Install the ESP-IDF / xtensa toolchain (or allow the download) to measure ESP32-S3 Flash/RAM.
    Then an on-device benchmark and Python-vs-C parity on hardware.

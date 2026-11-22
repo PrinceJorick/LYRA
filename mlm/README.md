@@ -46,6 +46,7 @@ mlm/
     export_c99.py         frozen random forests -> export/c99/ (m2cgen, one function per tree)
     size_esp32s3.py       ESP32-S3 Flash/RAM of the pod C code (xtensa GCC)
     pod_report.py         integrity check + domain-shift report per pod session -> data/pod_reports/
+    pod_logger.py         captured pod data-collection stream -> session folder (POD_DATA_PROTOCOL schema v1)
   c99/                    hand-written C99 port for the pod: lyra_features (22 features, training order),
                           lyra_quality (quality gate + routing), lyra_confirm (event confirmation),
                           lyra_pipeline (lyra_step: one call per window); parity tested against Python
