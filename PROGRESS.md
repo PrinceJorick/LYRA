@@ -203,3 +203,39 @@ cd mlm && .venv/bin/python -m pytest -q
   tolerance.
 - Blocked: ESP32-S3 Flash/RAM measurement needs Espressif's xtensa toolchain. Auto mode denied
   downloading it, so the user must install it (ESP-IDF) or allow it.
+
+### Stage 4 (authorized 2026-11-22; protocol in `mlm/docs/TRAINING_PLAN.md` §6, results in §7)
+- Code commit `1de1b13`: `lyra_mlm.training`, `scripts/train_stage4.py`, `evaluate_heldout.py`,
+  `export_c99.py`, the replaced guard test, the `train` extra and `uv.lock`. Training takes about 6 min.
+- At the locked entry threshold 0.65, CV gave about 48 interictal FA/24h (multimodal RF), so that
+  threshold is unusable as is. The owner chose two pre-declared points per configuration: locked 0.65
+  and a CV-selected entry threshold (lowest grid value with CV interictal FA ≤ 1/24h). Selected:
+  multimodal 0.95, multimodal + fallback 0.97, SIMULATED_ENV 0.97, IMU 0.99.
+- Held-out, run once (`mlm/models/heldout_report.json`; a second run is refused):
+  - Primary, multimodal + SIMULATED_ENV fallback at 0.97: 17/21 FBTCS detected (81%, macro 83%).
+    Without sub-115 and sub-116, 7/11.
+  - Interictal FA 0.68/24h, of which 61 of the 78 alarms come from sub-114. Non-FBTCS seizure alert
+    rate 1.4%; median latency 67 s.
+  - At locked 0.65: 19/21 detected but 49.9 FA/24h.
+- D2 vs D6 (CV): FA rates are low in both groups, but 27 of the 30 Train/CV events are in D6
+  participants, so D2 sensitivity is unmeasurable (cohort confound).
+- C99 (`mlm/export/c99/`, untracked, about 1.7 MB per model):
+  - m2cgen; exact (max |Δp| = 3.3e-16; 100% agreement on 1,200 boundary vectors per model).
+  - ESP32-S3 Flash/RAM not measured, because the xtensa toolchain is unavailable. The host arm64 proxy
+    is about 360 KB of code per model, with no RAM data.
+
+### State at end of session
+- `main` has `9584404` (Stage 3.5) and `1de1b13` (Stage 4 code), plus the results-docs commit. None
+  of these are pushed.
+- `mlm/models/` is gitignored. `mlm/export/c99/` is untracked: decide whether to commit the generated C.
+- `mlm/data/processed_pre35/` (Stage 3.5 baseline) and `processed_superseded/` can be deleted.
+
+### Next
+1. Push. Decide on committing `mlm/export/c99/`.
+2. Install the ESP-IDF / xtensa toolchain (or allow the download) to measure ESP32-S3 Flash/RAM.
+   Then an on-device benchmark and Python-vs-C parity on hardware.
+3. Port feature extraction to C99, in `feature_names` order.
+4. Record real MyoWare ENV + BMI270 data from the pod, and compare simulated ENV with real ENV before
+   any hardware claim.
+5. Optional research: probability calibration instead of threshold-only operating points; sub-114
+   false alarms; why sub-121's three events were missed.
