@@ -1,4 +1,4 @@
-import type { DetectionResult, MlService, SensorWindow } from './types';
+import type { MlService, SensorWindow } from './types';
 
 const channels = (w: SensorWindow) => [
   w.emg, w.accelerometer.x, w.accelerometer.y, w.accelerometer.z,
@@ -7,7 +7,7 @@ const channels = (w: SensorWindow) => [
 
 /**
  * Placeholder: no model is integrated. detect() never invents a prediction, it always
- * reports no_event. Possible events in the demo come only from demoTrigger().
+ * reports no_event. Possible events come from the pod link (services/pod), simulated for now.
  */
 export const mockMlService: MlService = {
   getMetadata: () => ({ modelId: 'none', version: '0.0.0', status: 'mock' }),
@@ -27,10 +27,3 @@ export const mockMlService: MlService = {
 
   getInsights: () => [],
 };
-
-/** Explicit, user-initiated demo trigger. Labelled source: 'mock', never 'ml_model'. */
-export const demoTrigger = (): DetectionResult => ({
-  eventType: 'possible_event',
-  timestamp: Date.now(),
-  source: 'mock',
-});

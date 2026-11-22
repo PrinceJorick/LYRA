@@ -5,7 +5,6 @@ import { BackHandler, View } from 'react-native';
 import { CountdownRing } from '../components/graphics';
 import { NotificationStatus } from '../components/NotificationStatus';
 import { Button, Card, Notice, Screen, Txt } from '../components/ui';
-import { demoTrigger } from '../services/ml';
 import { useApp } from '../state/AppState';
 import { space } from '../theme/colors';
 import { useTheme } from '../theme/useTheme';
@@ -13,15 +12,17 @@ import type { NotificationResult, PossibleEvent } from '../types';
 
 type Phase =
   | { name: 'countdown' }
-  | { name: 'cancelled'; event: PossibleEvent }
+  | { name: 'cancelled'; event: PossibleEvent; onPod: boolean }
   | { name: 'notified'; event: PossibleEvent; notification?: NotificationResult };
 
 export default function AlertScreen() {
   const c = useTheme();
-  const { prefs, recordAlert, completeAlert } = useApp();
+  const { prefs, podAlert, recordAlert, completeAlert } = useApp();
   // Fixed at mount so changing preferences mid-alert can't alter a running countdown.
   const [total] = useState(prefs.countdownSeconds);
-  const [detection] = useState(demoTrigger); // mock detection, source: 'mock'
+  const [alert] = useState(podAlert); // the pod-reported possible event that opened this screen
+  const timestamp = alert?.receivedAt ?? 0;
+  const origin = alert?.origin ?? 'simulated';
   const [msLeft, setMsLeft] = useState(total * 1000);
   const [phase, setPhase] = useState<Phase>({ name: 'countdown' });
   const deadline = useRef<number | null>(null); // set when the timer first starts
@@ -35,9 +36,20 @@ export default function AlertScreen() {
   const finish = useCallback(async () => {
     if (settled.current) return;
     settled.current = true;
-    const event = await api.current.completeAlert(detection.timestamp);
+    const event = await api.current.completeAlert(timestamp, origin);
     setPhase({ name: 'notified', event, notification: event.notification });
-  }, [detection.timestamp]);
+  }, [timestamp, origin]);
+
+  useEffect(() => {
+    if (!alert) router.back(); // opened without a pod event (e.g. a stale link): nothing to show
+  }, [alert]);
+
+  // The wearer pressed the pod's cancel button during the countdown.
+  useEffect(() => {
+    if (phase.name !== 'countdown' || settled.current || !podAlert?.cancelledOnPod || podAlert.eventId !== alert?.eventId) return;
+    settled.current = true;
+    setPhase({ name: 'cancelled', onPod: true, event: api.current.recordAlert('cancelled', timestamp, origin) });
+  }, [podAlert, alert, phase.name, timestamp, origin]);
 
   useEffect(() => {
     if (phase.name !== 'countdown') return;
@@ -63,10 +75,11 @@ export default function AlertScreen() {
   const cancel = () => {
     if (settled.current) return;
     settled.current = true;
-    setPhase({ name: 'cancelled', event: api.current.recordAlert('cancelled', detection.timestamp) });
+    setPhase({ name: 'cancelled', onPod: false, event: api.current.recordAlert('cancelled', timestamp, origin) });
   };
 
   const seconds = Math.ceil(msLeft / 1000);
+  if (!alert) return null;
 
   if (phase.name === 'countdown') {
     return (
@@ -85,8 +98,8 @@ export default function AlertScreen() {
         }
       >
         <View style={{ alignItems: 'center', gap: space.sm }} accessibilityRole="alert">
-          <Txt v="title" style={{ textAlign: 'center' }}>Possible event detected</Txt>
-          <Txt muted style={{ textAlign: 'center' }}>Are you okay? Cancel if this was a mistake.</Txt>
+          <Txt v="title" style={{ textAlign: 'center' }}>Possible convulsive seizure detected</Txt>
+          <Txt muted style={{ textAlign: 'center' }}>This is not a diagnosis. Are you okay? Cancel if this was a mistake.</Txt>
         </View>
         <CountdownRing progress={msLeft / (total * 1000)}>
           <View style={{ alignItems: 'center' }} accessible accessibilityLiveRegion="polite" accessibilityLabel={`${seconds} seconds to cancel`}>
@@ -95,6 +108,7 @@ export default function AlertScreen() {
           </View>
         </CountdownRing>
         <Notice tone="warning">
+          {origin === 'simulated' ? 'Simulated pod event (no Bluetooth). ' : ''}
           {prefs.notifyOnTimeout
             ? 'A caregiver notification will be simulated if you do not cancel in time.'
             : 'Caregiver notification is turned off in Care preferences.'}{' '}
@@ -119,7 +133,9 @@ export default function AlertScreen() {
           <View style={{ width: 72, height: 72, borderRadius: 36, backgroundColor: c.tint, alignItems: 'center', justifyContent: 'center' }}>
             <Check size={36} color={c.primary} />
           </View>
-          <Txt v="title" style={{ textAlign: 'center' }} accessibilityRole="header">Alert cancelled</Txt>
+          <Txt v="title" style={{ textAlign: 'center' }} accessibilityRole="header">
+            {phase.onPod ? 'Alert cancelled on the pod' : 'Alert cancelled'}
+          </Txt>
           <Txt muted style={{ textAlign: 'center' }}>
             No caregiver notification was simulated. The event was saved to History as “Cancelled by user”.
           </Txt>

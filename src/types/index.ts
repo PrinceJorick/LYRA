@@ -2,9 +2,10 @@
 
 export type ReviewStatus = 'needs_review' | 'reviewed';
 export type ReportStatus = 'not_started' | 'ready' | 'exported';
-/** sample_record = bundled demo data; the other two come from the in-app simulation. */
+/** sample_record = bundled demo data; the other two come from the alert flow. */
 export type EventOutcome = 'sample_record' | 'cancelled' | 'notification_simulated';
-export type EventOrigin = 'demo_sample' | 'simulated_alert';
+/** pod_hardware = reported by a real pod (payload origin HARDWARE); simulated pod payloads stay 'simulated_alert'. */
+export type EventOrigin = 'demo_sample' | 'simulated_alert' | 'pod_hardware';
 
 export type Responsiveness = 'responsive' | 'partly_responsive' | 'unresponsive' | 'unsure';
 export type Reporter = 'self' | 'witness';

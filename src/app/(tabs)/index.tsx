@@ -9,6 +9,7 @@ import {
 } from '../../components/ui';
 import { emgSample, ILLUSTRATIVE_LABEL, imuSample } from '../../data/mockSignals';
 import { sortNewestFirst } from '../../services/events';
+import { podLink } from '../../services/pod';
 import { useApp } from '../../state/AppState';
 import { space } from '../../theme/colors';
 import { useTheme } from '../../theme/useTheme';
@@ -112,7 +113,7 @@ export default function Home() {
         <Button
           label="Simulate Possible Event Alert"
           icon={<Bell size={20} color={c.onPrimary} />}
-          onPress={() => router.push('/alert')}
+          onPress={() => podLink.simulatePossibleEvent()} // the alert opens from the decoded pod payload
         />
       </Card>
 

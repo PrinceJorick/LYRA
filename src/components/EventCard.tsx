@@ -23,7 +23,8 @@ export function OriginBadge({ event }: { event: PossibleEvent }) {
   const c = useTheme();
   if (event.outcome === 'cancelled')
     return <Badge label="Cancelled by user" tone="neutral" icon={<X size={13} color={c.textMuted} />} />;
-  return <Badge label={event.origin === 'demo_sample' ? 'Demo data' : 'Simulated'} tone="neutral" />;
+  const label = { demo_sample: 'Demo data', simulated_alert: 'Simulated', pod_hardware: 'LYRA Pod' }[event.origin];
+  return <Badge label={label} tone="neutral" />;
 }
 
 export function EventCard({ event, flat }: { event: PossibleEvent; flat?: boolean }) {
