@@ -6,7 +6,7 @@
 | **Document purpose** | Central context, source of truth, and onboarding document for LYRA. Written so that developers, researchers, clinicians, and AI coding assistants can understand the project, its evidence base, its decisions, and its open questions without re-deriving the background. |
 | **Last updated** | 2026-11-21 |
 | **Document version** | 1.4 (Stage 4 complete: models trained, single held-out evaluation, C99 export) |
-| **Project status** | **Stage 4 complete (2026-11-22): random-forest models trained on SeizeIT2 Train/CV, evaluated once on held-out (research estimates only), exported to C99; ESP32-S3 sizes not yet measured.** Hardware selected (§5.8, not yet built or tested). Python ML foundation and SeizeIT2 preparation pipeline in `mlm/` (§9.7). **No model trained, no performance measured.** Expo companion app with simulated data in `src/`. |
+| **Project status** | **Stage 4 complete (2026-11-22): random-forest models trained on SeizeIT2 Train/CV, evaluated once on held-out (research estimates only), exported to C99 (ESP32-S3: 593 KB Flash, 26.7 KB static RAM for models + pod pipeline; latency not yet measured on hardware).** Hardware selected (§5.8, not yet built or tested). Python ML foundation and SeizeIT2 preparation pipeline in `mlm/` (§9.7). **No model trained, no performance measured.** Expo companion app with simulated data in `src/`. |
 | **Repository** | `https://github.com/PrinceJorick/LYRA` (branch `main`) |
 | **Owner / maintainer** | Kyle Masilang (git author on record) |
 
@@ -1321,7 +1321,7 @@ sequenceDiagram
 | Preprocessing / quality / windowing / features | **Implemented, unit-tested and run on SeizeIT2:** 20,296,484 windows from 2,806 recordings (44 excluded); 3,716 positive, 20,244,889 negative and 47,879 ignore windows. **Stage 3.5 (2026-11-22):** SeizeIT2 stores IMU as value / D (D = 6 or 2), and the v1.1.0 Z re-export is corrupt in 374 recordings. A per-recording rule converts accepted IMU to g / deg/s (2,026 recordings) and rejects the rest as INVALID (Train/CV: 1,552 accepted, 306 rejected). Re-audit: 0 problems, non-IMU arrays bit-identical. See `mlm/docs/DATASETS.md` |
 | Baseline / multimodal model | **Trained (Stage 4, 2026-11-22).** RF, 50 trees, depth 8, per track (multimodal, SIMULATED_ENV-only, IMU-only); LR and XGBoost compared in CV. Held-out, single run: multimodal + SIMULATED_ENV fallback at CV-selected entry 0.97 detected 17/21 FBTCS (81%; 7/11 without sub-115/116) at 0.68 interictal FA/24h. Research estimates on an in-hospital cohort, not clinical validation. See `mlm/docs/TRAINING_PLAN.md` §7 |
 | Evaluation harness | **Implemented** (`lyra_mlm.training`): event matching, interictal FA/24h, non-FBTCS alert rate, latency, precision, AUPRC, specificity, per participant |
-| Real-time inference | Python reference; RF classifiers exported to C99 (m2cgen, exact parity on the host). Feature extraction not yet ported; ESP32-S3 Flash/RAM not measured |
+| Real-time inference | C99 pod pipeline in `mlm/c99/` (quality gate, 22 features, routing, confirmation, `lyra_step`) plus the RF exported per tree; parity with Python on the host. Cross-compiled for the ESP32-S3: 593 KB Flash, 26.7 KB static RAM. Latency and on-board parity not yet measured |
 | Mobile app | Simulated companion app exists |
 | Clinical validation / ethics | Not started |
 

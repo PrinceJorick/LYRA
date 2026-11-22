@@ -207,8 +207,12 @@ FBTCS events in 9 participants, 145 non-FBTCS seizures):**
 - `cc -std=c99 -O2 -Wall -Wextra -Werror` compiles both cleanly.
 - On 1,200 threshold-boundary vectors each: 100% class agreement, max |Δp| = 3.3e-16, and identical
   decisions at 0.65 and 0.45.
-- Host (arm64) object size is about 363 KB / 354 KB of code with no `.data`/`.bss`. That is a proxy
-  only: **the ESP32-S3 Flash/RAM sizes were not measured.** The Espressif xtensa toolchain wasn't
-  available, and downloading it was blocked. The forest uses double arithmetic, which the ESP32-S3
+- ESP32-S3 (xtensa GCC 14.4, `-mlongcalls -O2`, `scripts/size_esp32s3.py`):
+  - the forests are about 352 KB / 349 KB of Flash each, with no RAM;
+  - linked with the C99 feature, quality, confirmation and `lyra_step` code plus libm and soft-float,
+    the total is 593 KB of Flash and 26.7 KB of static RAM.
+
+  The forests are exported one function per tree: a single ~370 KB function is beyond Xtensa's jump
+  and literal reach. Latency is not yet measured on hardware. The forest uses double arithmetic, which the ESP32-S3
   (single-precision FPU only) runs in software. That is about 400 comparisons per 2 s window, so the
   cost is negligible.

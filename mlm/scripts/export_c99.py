@@ -4,6 +4,8 @@ Converter: m2cgen (exact double-precision leaf probabilities). emlearn 0.23.2 wa
 and rejected for this export: it stores leaf probabilities in 8 bits (leaf_bits=8), which cannot
 meet the required max |p_C - p_sklearn| < 1e-5. The wrapper takes float features and widens them
 to double, which mirrors scikit-learn's float32 cast of its inputs, so tree decisions match.
+Each tree is its own static function (~7 KB) and the forest averages them, as predict_proba does:
+a single ~370 KB function breaks Xtensa codegen on the ESP32-S3 (J and L32R reach +-128 / 256 KB).
 Writes mlm/export/c99/ (lyra_<track>_rf.c/.h, export_manifest.json).
 Usage: python scripts/export_c99.py
 """
@@ -35,6 +37,25 @@ int {name}_predict(const float *features, int n_features, double proba_out[2]);
 #endif
 """
 
+FOREST = """
+static void (*const {name}_trees[{k}])(double *, double *) = {{
+    {table}
+}};
+
+static void {name}_score(double *input, double *output) {{  /* mean of the trees' class probabilities */
+    double p[2];
+    int t;
+    output[0] = output[1] = 0.0;
+    for (t = 0; t < {k}; ++t) {{
+        {name}_trees[t](input, p);
+        output[0] += p[0];
+        output[1] += p[1];
+    }}
+    output[0] /= {k};
+    output[1] /= {k};
+}}
+"""
+
 WRAPPER = """
 int {name}_predict(const float *features, int n_features, double proba_out[2]) {{
     double x[{n}];
@@ -57,16 +78,19 @@ def export(track: str, meta: dict) -> dict:
         raise SystemExit(f"{path.name} does not match its frozen sha256")
     model, name = joblib.load(path), f"lyra_{track}_rf"
     n, feats = len(meta["feature_names"]), meta["feature_names"]
-    code = m2cgen.export_to_c(model, function_name=f"{name}_score")
-    for helper in ("add_vectors", "mul_vector_number"):  # file-local, so two models can link together
-        code = code.replace(f"void {helper}(", f"static void {helper}(")
-    code = code.replace(f"void {name}_score(", f"static void {name}_score(")
+    trees = []
+    for i, est in enumerate(model.estimators_):  # one static function per tree (file-local names)
+        t = m2cgen.export_to_c(est, function_name=f"{name}_tree_{i}").replace("#include <string.h>\n", "")
+        trees.append(t.replace(f"void {name}_tree_{i}(", f"static void {name}_tree_{i}("))
+    k = len(trees)
+    code = "#include <string.h>\n" + "\n".join(trees) + FOREST.format(
+        name=name, k=k, table=",\n    ".join(f"{name}_tree_{i}" for i in range(k)))
     c = OUT / f"{name}.c"
     h = OUT / f"{name}.h"
     h.write_text(HEADER.format(name=name, track=track, m2c=m2cgen.__version__, guard=name.upper() + "_H",
                                macro=name.upper(), n=n, features="\n".join(f" *   [{i:2d}] {f}" for i, f in enumerate(feats))))
     c.write_text(f'#include "{h.name}"\n' + code + WRAPPER.format(name=name, n=n))
-    return {"model_file": meta["file"], "model_sha256": meta["sha256"], "function": f"{name}_predict",
+    return {"model_file": meta["file"], "model_sha256": meta["sha256"], "function": f"{name}_predict", "trees": k,
             "feature_names": feats, "files": {f.name: sha256(f) for f in (c, h)}}
 
 
