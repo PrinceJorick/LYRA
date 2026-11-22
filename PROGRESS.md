@@ -262,6 +262,26 @@ cd mlm && .venv/bin/python -m pytest -q
     of code each.
   - Still firmware-side: window buffering (4 s / 2 s ring buffers), the running clock check
     (`clocks_ok`), BLE notification.
+- **Step 2: ESP32-S3 build** (`mlm/scripts/size_esp32s3.py`).
+  - Toolchain: Espressif crosstool-NG `esp-14.4.0_20261030` (xtensa GCC 14.4.0), verified against its
+    published SHA-256 (checksum file kept next to it). It is installed in
+    `~/.espressif/tools/xtensa-esp-elf/esp-14.4.0_20261030/` (ESP-IDF layout, outside the repo), which
+    is the size script's default.
+  - Found on the S3 only: each m2cgen forest was a single ~370 KB function. Xtensa can't build that
+    (L32R literal reach is 256 KB and J reach is 128 KB), and neither `-mtext-section-literals` nor
+    `-mauto-litpools` fixes it. `export_c99.py` now emits one static function per tree (50 × ~7 KB)
+    plus an averaging wrapper. C parity is unchanged: the boundary-vector and `lyra_step` real-forest
+    tests pass.
+  - The DFT now uses a twiddle table, so the trig calls happen once per length instead of per sample
+    × bin. Results are bit-identical.
+  - Sizes (`-mlongcalls -O2`, objects and a test link from `lyra_step` with newlib libm and libgcc
+    soft-float): 593 KB of Flash and 26.7 KB of static RAM in total. The forests are about 350 KB
+    each; the hand-written code is about 13 KB plus the 26.7 KB of scratch RAM. The largest stack
+    frame is 240 B.
+  - That excludes FreeRTOS, drivers and BLE. ESP-IDF's default 1 MB app partition will be tight with
+    NimBLE, so use a larger app partition (the board has 8 MB of flash).
+  - Not measured: per-window latency, which needs the board. A rough estimate is ~30 ms per window,
+    because doubles are software-emulated on the S3's single-precision FPU. Compare with the 2 s step.
 
 ### State at end of session
 - `main` has `9584404` (Stage 3.5) and `1de1b13` (Stage 4 code), plus the results-docs commit. None
@@ -269,7 +289,7 @@ cd mlm && .venv/bin/python -m pytest -q
 - `mlm/models/` and `mlm/export/` are gitignored.
 
 ### Next
-1. ESP32-S3 build: install ESP-IDF (or allow the xtensa toolchain download), compile `mlm/c99/` + the exported forests for the S3, measure Flash/RAM and per-window latency, check parity on the board.
+1. On-board check (needs the DevKit): an ESP-IDF test app that runs `lyra_step` on stored test windows, then measures per-window latency (esp_timer) and checks parity on the board.
 2. Install the ESP-IDF / xtensa toolchain (or allow the download) to measure ESP32-S3 Flash/RAM.
    Then an on-device benchmark and Python-vs-C parity on hardware.
 3. Port feature extraction to C99, in `feature_names` order.

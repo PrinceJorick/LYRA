@@ -47,14 +47,24 @@ static void hann_periodic(double *w, int n) {  /* scipy get_window('hann', n), f
     for (i = 0; i < n; ++i) w[i] = 0.5 - 0.5 * cos(2.0 * LYRA_PI * i / n);
 }
 
+static double s_cos[MAXN], s_sin[MAXN];  /* twiddles cos/sin(2*pi*m/n), rebuilt when n changes */
+static int s_twiddle_n = 0;
+
 static void dft_onesided(const double *y, int n, double *re, double *im) {  /* rfft, nb = n/2 + 1 bins */
-    int k, i, nb = n / 2 + 1;
+    int k, i, m, nb = n / 2 + 1;
+    if (n != s_twiddle_n) {  /* the trig calls happen here only, not per sample and bin */
+        for (m = 0; m < n; ++m) {
+            double ang = 2.0 * LYRA_PI * (double)m / n;
+            s_cos[m] = cos(ang);
+            s_sin[m] = sin(ang);
+        }
+        s_twiddle_n = n;
+    }
     for (k = 0; k < nb; ++k) {
         double r = 0.0, s = 0.0;
-        for (i = 0; i < n; ++i) {
-            double ang = 2.0 * LYRA_PI * (double)((long)k * i % n) / n;
-            r += y[i] * cos(ang);
-            s -= y[i] * sin(ang);
+        for (i = 0, m = 0; i < n; ++i, m = (m + k) % n) {  /* m = k * i mod n */
+            r += y[i] * s_cos[m];
+            s -= y[i] * s_sin[m];
         }
         re[k] = r;
         im[k] = s;
