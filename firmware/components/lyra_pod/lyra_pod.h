@@ -69,6 +69,12 @@ int lyra_pod_tick(lyra_pod *p, double now_s, lyra_pod_window_cb cb, void *ctx);
  * and fills an event payload (state IDLE, the cancellation code) for the phone. Returns 0 or -1. */
 int lyra_pod_cancel(lyra_pod *p, double now_s, uint8_t cancellation, uint8_t out[LYRA_BLE_EVENT_STATUS_LEN]);
 
+/* Phone command from the phone_command characteristic (DRAFT protocol). CANCEL_EVENT naming the current
+ * event_id cancels like the pod button (lyra_pod_cancel, CANCELLED_ON_PHONE) and fills the EventStatus
+ * confirmation to indicate back. Returns 0 (handled, out filled), 1 (stale or unknown event id: ignored),
+ * or -1 (malformed: reject the GATT write). */
+int lyra_pod_on_phone_command(lyra_pod *p, double now_s, const uint8_t *in, int len, uint8_t out[LYRA_BLE_EVENT_STATUS_LEN]);
+
 /* Device status payload with the latest window's quality codes. Returns 0 or -1. */
 int lyra_pod_device_status(const lyra_pod *p, uint8_t battery_percent, uint16_t battery_mv, uint16_t heartbeat_seq,
                            uint32_t uptime_s, uint8_t out[LYRA_BLE_DEVICE_STATUS_LEN]);

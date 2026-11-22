@@ -1,4 +1,4 @@
-import { encodeDeviceStatus, encodeEventStatus, type Cancellation, type EventState } from './protocol';
+import { decodePhoneCommand, encodeDeviceStatus, encodeEventStatus, type Cancellation, type EventState } from './protocol';
 import type { PodLink } from './types';
 
 // No Bluetooth involved: emits the exact bytes the pod firmware sends, every payload marked origin 'simulated'.
@@ -38,6 +38,11 @@ export const simulatedPodLink: PodLink & { simulatePossibleEvent(): void; simula
         timer = null;
       }
     };
+  },
+  /** Like the firmware (lyra_pod_on_phone_command): a cancel for the current event is confirmed, a stale id ignored. */
+  async sendCommand(bytes) {
+    const cmd = decodePhoneCommand(bytes); // throws PayloadError, like a rejected GATT write
+    if (cmd.command === 'cancel_event' && eventId !== 0 && cmd.eventId === eventId) emitEvent('idle', 'cancelled_on_phone');
   },
   /** Demo: the pod confirming a possible event (POSSIBLE_EVENT entry). */
   simulatePossibleEvent() {

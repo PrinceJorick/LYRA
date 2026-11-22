@@ -9,7 +9,8 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from lyra_mlm.ble import DeviceStatusPayload, EventStatusPayload
+from lyra_mlm.ble import (GATT_UUIDS, CommandCode, DeviceStatusPayload, EventStatusPayload, PayloadOrigin,
+                          PhoneCommandPayload)
 
 PROTOCOL_TS = Path(__file__).resolve().parents[2] / "src" / "services" / "pod" / "protocol.ts"
 RUNNER = """
@@ -98,3 +99,32 @@ def test_typescript_decoder_rejects_what_python_rejects(tmp_path):
         assert r == {"ok": False, "error": "PayloadError"}, (kind, b.hex(), r)
         with pytest.raises(ValueError):
             (DeviceStatusPayload if kind == "status" else EventStatusPayload).unpack(b)
+
+
+COMMAND_RUNNER = """
+const p = await import(process.argv[2]);
+const out = { uuids: p.GATT_UUIDS, encoded: [], decoded: [] };
+for (const [origin, id] of [['hardware', 1], ['simulated', 513], ['hardware', 65535]])
+  out.encoded.push(Buffer.from(p.encodePhoneCommand({ origin, command: 'cancel_event', eventId: id })).toString('hex'));
+for (const hex of JSON.parse(process.argv[3])) {
+  try { out.decoded.push(p.decodePhoneCommand(Uint8Array.from(Buffer.from(hex, 'hex')))); }
+  catch (e) { out.decoded.push(e instanceof p.PayloadError ? 'PayloadError' : String(e)); }
+}
+console.log(JSON.stringify(out));
+"""
+
+
+def test_phone_command_and_gatt_uuids_match_python(tmp_path):
+    good = PhoneCommandPayload(PayloadOrigin.SIMULATED, CommandCode.CANCEL_EVENT, 513).pack()
+    probes = [good, good[:4], good[:2] + b"\x00" + good[3:], b"\x02" + good[1:]]
+    (tmp_path / "cmd.mjs").write_text(COMMAND_RUNNER)
+    r = subprocess.run(["node", str(tmp_path / "cmd.mjs"), PROTOCOL_TS.as_uri(), json.dumps([b.hex() for b in probes])],
+                       capture_output=True, text=True)
+    assert r.returncode == 0, r.stderr
+    out = json.loads(r.stdout)
+    camel = {k: k.split("_")[0] + "".join(w.title() for w in k.split("_")[1:]) for k in GATT_UUIDS}
+    assert {camel[k]: v for k, v in GATT_UUIDS.items()} == out["uuids"]
+    assert out["encoded"] == [PhoneCommandPayload(o, CommandCode.CANCEL_EVENT, i).pack().hex()
+                              for o, i in ((PayloadOrigin.HARDWARE, 1), (PayloadOrigin.SIMULATED, 513),
+                                           (PayloadOrigin.HARDWARE, 65535))]
+    assert out["decoded"] == [{"origin": "simulated", "command": "cancel_event", "eventId": 513}] + ["PayloadError"] * 3

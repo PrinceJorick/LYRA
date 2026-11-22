@@ -8,8 +8,8 @@ from synthetic import emg, model_config
 
 from lyra_mlm.annotations import Annotation, AnnotationKind
 from lyra_mlm.ble import (
-    CancellationCode, DeviceConfigPayload, DeviceStatusPayload, EventStateCode, EventStatusPayload, PayloadOrigin,
-    QualityCode,
+    GATT_UUIDS, CancellationCode, CommandCode, DeviceConfigPayload, DeviceStatusPayload, EventStateCode,
+    EventStatusPayload, PayloadOrigin, PhoneCommandPayload, QualityCode,
 )
 from lyra_mlm.confirmation import ConfirmationState
 from lyra_mlm.datasets import SOURCES, sha256_file, validate_recording
@@ -100,6 +100,7 @@ def test_sha256_file(tmp_path):
     DeviceStatusPayload(PayloadOrigin.HARDWARE, 87, 3912, QualityCode.VALID, QualityCode.DEGRADED, 42, 3600),
     EventStatusPayload(PayloadOrigin.SIMULATED, 7, EventStateCode.POSSIBLE_EVENT, CancellationCode.NONE, 1234, 3),
     DeviceConfigPayload(PayloadOrigin.SIMULATED, 100, 25, 4000, 2000, 8),
+    PhoneCommandPayload(PayloadOrigin.HARDWARE, CommandCode.CANCEL_EVENT, 7),
 ])
 def test_ble_payloads_round_trip_with_origin(payload):
     data = payload.pack()
@@ -155,3 +156,17 @@ def test_stage4_leakage_and_artifact_integrity_guard():
         assert set(meta["training"]["participants"]) <= SEIZEIT2_PLANNED_SPLIT.train
         for m in meta["models"].values():
             assert hashlib.sha256((root / "models" / m["file"]).read_bytes()).hexdigest() == m["sha256"]
+
+def test_phone_command_is_five_bytes_and_rejects_unknown_commands():
+    data = PhoneCommandPayload(PayloadOrigin.SIMULATED, CommandCode.CANCEL_EVENT, 513).pack()
+    assert data == bytes([1, 2, 1, 1, 2])  # version, origin, CANCEL_EVENT, event_id 513 little-endian
+    for bad in (data[:4], data[:2] + b"\x00" + data[3:], data[:2] + b"\x02" + data[3:]):
+        with pytest.raises(ValueError):
+            PhoneCommandPayload.unpack(bad)
+
+
+def test_gatt_uuids_are_distinct_custom_128_bit_uuids():
+    import uuid
+    ids = [uuid.UUID(u) for u in GATT_UUIDS.values()]
+    assert len(set(ids)) == len(ids) == 5
+    assert not any(str(u).endswith("-0000-1000-8000-00805f9b34fb") for u in ids)  # not the Bluetooth SIG base

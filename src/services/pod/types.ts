@@ -6,4 +6,6 @@
 export interface PodLink {
   /** Subscribes to DeviceStatus and EventStatus notifications; returns the unsubscribe function. */
   subscribe(onDeviceStatus: (bytes: Uint8Array) => void, onEventStatus: (bytes: Uint8Array) => void): () => void;
+  /** Writes a phone -> pod command (encodePhoneCommand) to the phone_command characteristic. */
+  sendCommand(bytes: Uint8Array): Promise<void>;
 }

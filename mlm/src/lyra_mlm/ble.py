@@ -18,6 +18,18 @@ from .quality import QualityState
 
 PROTOCOL_VERSION = 1
 
+# GATT layout: DRAFT, pending owner approval (docs/BLE_PROTOCOL.md). A random 128-bit base (uuid4),
+# never the Bluetooth SIG base; the low 16 bits of the first group number the service and its parts.
+# The firmware (lyra_ble.h) and the app (src/services/pod/protocol.ts) must use exactly these strings.
+GATT_BASE = "28b7{:04x}-8eb8-490a-aaa2-b981ca09340c"
+GATT_UUIDS = {
+    "service": GATT_BASE.format(0x0001),
+    "device_status": GATT_BASE.format(0x0002),  # read + notify
+    "event_status": GATT_BASE.format(0x0003),  # read + indicate (acknowledged: safety-relevant)
+    "device_config": GATT_BASE.format(0x0004),  # read + write with response
+    "phone_command": GATT_BASE.format(0x0005),  # write with response
+}
+
 
 class PayloadOrigin(IntEnum):
     HARDWARE = 1
@@ -51,6 +63,10 @@ class CancellationCode(IntEnum):
     NONE = 0
     CANCELLED_ON_POD = 1  # tactile cancellation button
     CANCELLED_ON_PHONE = 2
+
+
+class CommandCode(IntEnum):
+    CANCEL_EVENT = 1  # the user cancelled the alert on the phone
 
 
 class _Payload:
@@ -130,3 +146,15 @@ class DeviceConfigPayload(_Payload):
             raise ValueError("imu_odr_hz must be 25 (initial) or 50 (experimental)")
         if not 0 < self.step_ms <= self.window_ms:
             raise ValueError("need 0 < step_ms <= window_ms")
+
+
+@dataclass(frozen=True)
+class PhoneCommandPayload(_Payload):
+    """Phone -> pod command (DRAFT). CANCEL_EVENT names the event_id of the EventStatus being cancelled.
+    The pod ignores a stale id and confirms a valid cancel with EventStatus(IDLE, CANCELLED_ON_PHONE)."""
+
+    FORMAT = "<BBBH"
+    ENUMS = {"origin": PayloadOrigin, "command": CommandCode}
+    origin: PayloadOrigin
+    command: CommandCode
+    event_id: int

@@ -364,6 +364,25 @@ cd mlm && .venv/bin/python -m pytest -q
   - the phone → pod cancel message (protocol gap, see BLE_PROTOCOL.md);
   - showing sensor quality from status payloads.
 
+### Item A: draft GATT layout and phone → pod cancel (pending owner approval)
+- One custom service on a random 128-bit base (`28b7xxxx-8eb8-490a-aaa2-b981ca09340c`):
+  - device status: read + notify;
+  - event status: read + **indicate**;
+  - device config: read + write;
+  - phone command: write with response.
+
+  The table is in `mlm/docs/BLE_PROTOCOL.md`.
+- New `PhoneCommandPayload` `<BBBH` (5 B): CANCEL_EVENT + event_id. The pod cancels the current event
+  like its button and indicates `(IDLE, CANCELLED_ON_PHONE)`; a stale id is ignored and malformed
+  bytes are rejected.
+- Implemented identically in `ble.py`, `lyra_ble.c` / `lyra_pod_on_phone_command`, and the app's
+  `protocol.ts` / `PodLink.sendCommand` / simulated pod. The alert's Cancel now tells the pod.
+- Tests: the UUID strings are equal in all three; the command bytes are equal across Python, C and
+  TS; malformed commands are rejected by all three; the pod handler returns 0 / 1 / −1 correctly.
+  `tsc` and lint are clean, and the web flow was re-driven with no console errors.
+- Still open (owner): approve the layout; pairing and bonding/security, connection parameters, the
+  standard Battery / Device Information services.
+
 ### State at end of session
 - `main` has `9584404` (Stage 3.5) and `1de1b13` (Stage 4 code), plus the results-docs commit. None
   of these are pushed.

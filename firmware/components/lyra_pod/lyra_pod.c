@@ -166,6 +166,13 @@ int lyra_pod_cancel(lyra_pod *p, double now_s, uint8_t cancellation, uint8_t out
                                       (uint8_t)(usable(p->last_emg) | (usable(p->last_imu) << 1)));
 }
 
+int lyra_pod_on_phone_command(lyra_pod *p, double now_s, const uint8_t *in, int len, uint8_t out[LYRA_BLE_EVENT_STATUS_LEN]) {
+    lyra_ble_command cmd;
+    if (p == NULL || lyra_ble_unpack_phone_command(in, len, &cmd) != 0) return -1;
+    if (p->event_id == 0 || cmd.event_id != p->event_id) return 1;
+    return lyra_pod_cancel(p, now_s, LYRA_CANCEL_ON_PHONE, out);
+}
+
 int lyra_pod_device_status(const lyra_pod *p, uint8_t battery_percent, uint16_t battery_mv, uint16_t heartbeat_seq,
                            uint32_t uptime_s, uint8_t out[LYRA_BLE_DEVICE_STATUS_LEN]) {
     if (p == NULL) return -1;

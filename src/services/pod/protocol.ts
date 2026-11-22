@@ -6,17 +6,30 @@
 export const PROTOCOL_VERSION = 1;
 export const DEVICE_STATUS_LENGTH = 13; // <BBBHBBHI
 export const EVENT_STATUS_LENGTH = 11; // <BBHBBIB
+export const PHONE_COMMAND_LENGTH = 5; // <BBBH
+
+/** GATT layout: DRAFT, pending owner approval. Same strings as lyra_mlm.ble.GATT_UUIDS and lyra_ble.h. */
+export const GATT_UUIDS = {
+  service: '28b70001-8eb8-490a-aaa2-b981ca09340c',
+  deviceStatus: '28b70002-8eb8-490a-aaa2-b981ca09340c', // read + notify
+  eventStatus: '28b70003-8eb8-490a-aaa2-b981ca09340c', // read + indicate
+  deviceConfig: '28b70004-8eb8-490a-aaa2-b981ca09340c', // read + write with response
+  phoneCommand: '28b70005-8eb8-490a-aaa2-b981ca09340c', // write with response
+};
 
 /** Every payload says whether it came from pod hardware or a simulation; show simulated ones as simulated. */
 export type PayloadOrigin = 'hardware' | 'simulated';
 export type QualityCode = 'VALID' | 'DEGRADED' | 'INVALID' | 'MISSING' | 'UNSYNCHRONIZED';
 export type EventState = 'idle' | 'accumulating' | 'possible_event' | 'refractory';
 export type Cancellation = 'none' | 'cancelled_on_pod' | 'cancelled_on_phone';
+/** Phone -> pod (DRAFT). cancel_event: the user cancelled the alert on the phone. */
+export type PhoneCommand = 'cancel_event';
 
 const ORIGINS: Record<number, PayloadOrigin> = { 1: 'hardware', 2: 'simulated' };
 const QUALITY: QualityCode[] = ['VALID', 'DEGRADED', 'INVALID', 'MISSING', 'UNSYNCHRONIZED'];
 const STATES: EventState[] = ['idle', 'accumulating', 'possible_event', 'refractory'];
 const CANCELS: Cancellation[] = ['none', 'cancelled_on_pod', 'cancelled_on_phone'];
+const COMMANDS: Record<number, PhoneCommand> = { 1: 'cancel_event' };
 
 export interface DeviceStatusPayload {
   origin: PayloadOrigin;
@@ -37,6 +50,13 @@ export interface EventStatusPayload {
   timestampS: number;
   emgAvailable: boolean;
   imuAvailable: boolean;
+}
+
+export interface PhoneCommandPayload {
+  origin: PayloadOrigin;
+  command: PhoneCommand;
+  /** The event_id of the EventStatus being cancelled; the pod ignores a stale id. */
+  eventId: number;
 }
 
 export class PayloadError extends Error {}
@@ -111,4 +131,22 @@ export function encodeEventStatus(p: EventStatusPayload): Uint8Array {
   v.setUint32(6, p.timestampS, true);
   v.setUint8(10, (p.emgAvailable ? 1 : 0) | (p.imuAvailable ? 2 : 0));
   return b;
+}
+
+export function encodePhoneCommand(p: PhoneCommandPayload): Uint8Array {
+  const b = new Uint8Array(PHONE_COMMAND_LENGTH);
+  const v = new DataView(b.buffer);
+  v.setUint8(0, PROTOCOL_VERSION);
+  v.setUint8(1, originCode(p.origin));
+  v.setUint8(2, 1); // cancel_event: the only command
+  v.setUint16(3, p.eventId, true);
+  return b;
+}
+
+/** For the simulated pod: validates a command exactly as the firmware does. */
+export function decodePhoneCommand(bytes: Uint8Array): PhoneCommandPayload {
+  const v = view(bytes, PHONE_COMMAND_LENGTH, 'PhoneCommand');
+  const command = COMMANDS[v.getUint8(2)];
+  if (!command) throw new PayloadError(`command: unknown code ${v.getUint8(2)}`);
+  return { origin: ORIGINS[v.getUint8(1)], command, eventId: v.getUint16(3, true) };
 }

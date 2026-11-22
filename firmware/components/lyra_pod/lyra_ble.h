@@ -11,9 +11,24 @@
 #define LYRA_BLE_DEVICE_STATUS_LEN 13
 #define LYRA_BLE_EVENT_STATUS_LEN 11
 #define LYRA_BLE_DEVICE_CONFIG_LEN 10
+#define LYRA_BLE_PHONE_COMMAND_LEN 5
+
+/* GATT layout: DRAFT, pending owner approval. Same strings as lyra_mlm.ble.GATT_UUIDS. */
+#define LYRA_GATT_SERVICE_UUID "28b70001-8eb8-490a-aaa2-b981ca09340c"
+#define LYRA_GATT_DEVICE_STATUS_UUID "28b70002-8eb8-490a-aaa2-b981ca09340c" /* read + notify */
+#define LYRA_GATT_EVENT_STATUS_UUID "28b70003-8eb8-490a-aaa2-b981ca09340c"  /* read + indicate */
+#define LYRA_GATT_DEVICE_CONFIG_UUID "28b70004-8eb8-490a-aaa2-b981ca09340c" /* read + write (response) */
+#define LYRA_GATT_PHONE_COMMAND_UUID "28b70005-8eb8-490a-aaa2-b981ca09340c" /* write (response) */
 
 enum { LYRA_ORIGIN_HARDWARE = 1, LYRA_ORIGIN_SIMULATED = 2 };
 enum { LYRA_CANCEL_NONE = 0, LYRA_CANCEL_ON_POD = 1, LYRA_CANCEL_ON_PHONE = 2 };
+enum { LYRA_COMMAND_CANCEL_EVENT = 1 }; /* phone -> pod (DRAFT) */
+
+typedef struct {
+    uint8_t origin;
+    uint8_t command;
+    uint16_t event_id;
+} lyra_ble_command;
 
 typedef struct {
     uint8_t origin;
@@ -37,5 +52,8 @@ int lyra_ble_pack_event_status(uint8_t out[LYRA_BLE_EVENT_STATUS_LEN], uint8_t o
 
 /* Phone -> pod configuration. Returns 0, or -1 for a wrong length, version, origin or range. */
 int lyra_ble_unpack_device_config(const uint8_t *in, int len, lyra_ble_config *out);
+
+/* Phone -> pod command "<BBBH" (DRAFT). Returns 0, or -1 for a wrong length, version, origin or command. */
+int lyra_ble_unpack_phone_command(const uint8_t *in, int len, lyra_ble_command *out);
 
 #endif

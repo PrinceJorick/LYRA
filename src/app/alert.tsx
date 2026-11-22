@@ -5,6 +5,7 @@ import { BackHandler, View } from 'react-native';
 import { CountdownRing } from '../components/graphics';
 import { NotificationStatus } from '../components/NotificationStatus';
 import { Button, Card, Notice, Screen, Txt } from '../components/ui';
+import { encodePhoneCommand, podLink } from '../services/pod';
 import { useApp } from '../state/AppState';
 import { space } from '../theme/colors';
 import { useTheme } from '../theme/useTheme';
@@ -76,6 +77,9 @@ export default function AlertScreen() {
     if (settled.current) return;
     settled.current = true;
     setPhase({ name: 'cancelled', onPod: false, event: api.current.recordAlert('cancelled', timestamp, origin) });
+    if (alert) // tell the pod, so its confirmation resets too (DRAFT phone_command)
+      podLink.sendCommand(encodePhoneCommand({ origin, command: 'cancel_event', eventId: alert.eventId }))
+        .catch((e: unknown) => console.warn('Pod did not accept the cancel command:', e));
   };
 
   const seconds = Math.ceil(msLeft / 1000);

@@ -52,6 +52,16 @@ int lyra_ble_pack_event_status(uint8_t out[LYRA_BLE_EVENT_STATUS_LEN], uint8_t o
     return 0;
 }
 
+int lyra_ble_unpack_phone_command(const uint8_t *in, int len, lyra_ble_command *out) {
+    if (in == NULL || out == NULL || len != LYRA_BLE_PHONE_COMMAND_LEN || in[0] != LYRA_BLE_VERSION || !origin_ok(in[1]) ||
+        in[2] != LYRA_COMMAND_CANCEL_EVENT)
+        return -1;
+    out->origin = in[1];
+    out->command = in[2];
+    out->event_id = get16(in + 3);
+    return 0;
+}
+
 int lyra_ble_unpack_device_config(const uint8_t *in, int len, lyra_ble_config *out) {
     lyra_ble_config c;
     if (in == NULL || out == NULL || len != LYRA_BLE_DEVICE_CONFIG_LEN || in[0] != LYRA_BLE_VERSION || !origin_ok(in[1]))

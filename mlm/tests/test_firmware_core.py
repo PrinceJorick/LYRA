@@ -15,7 +15,8 @@ from test_c99_port import recording as bursty_recording
 from test_c99_quality import QCFG, defective_recording
 from test_c99_step import SCORER, Res, mm_scorer, reference, sim_scorer
 
-from lyra_mlm.ble import DeviceConfigPayload, DeviceStatusPayload, EventStatusPayload
+from lyra_mlm.ble import (GATT_UUIDS, CommandCode, DeviceConfigPayload, DeviceStatusPayload, EventStatusPayload,
+                          PayloadOrigin, PhoneCommandPayload)
 from lyra_mlm.confirmation import ConfirmationConfig
 from lyra_mlm.pod import PodAdapter, check_session
 from lyra_mlm.prep import PrepConfig
@@ -113,7 +114,7 @@ def test_ble_config_unpacking_matches_python(lib):
 
 # --- streaming runtime ----------------------------------------------------------------------------
 
-def stream_through_pod(lib, rec, fallback=True, entry=0.9, cancel_after_first_event=False):
+def stream_through_pod(lib, rec, fallback=True, entry=0.9, cancel_after_first_event=False, on_first_event=None):
     pod = ctypes.create_string_buffer(300_000)  # opaque lyra_pod
     assert lib.lyra_pod_init(pod, ctypes.byref(Cfg(entry, 0.45, 3, 6.0, 60.0)), ctypes.cast(mm_scorer, ctypes.c_void_p),
                              ctypes.cast(sim_scorer, ctypes.c_void_p) if fallback else None, 1) == 0
@@ -138,6 +139,9 @@ def stream_through_pod(lib, rec, fallback=True, entry=0.9, cancel_after_first_ev
             buf = ctypes.create_string_buffer(11)
             assert lib.lyra_pod_cancel(pod, t, 1, buf) == 0
             cancels.append(buf.raw)
+        if on_first_event is not None and not cancels and any(o[4] for o in out):
+            on_first_event(pod, t)
+            cancels.append(None)  # fire once
     t_stop = max(rec.emg.timestamps[-1] + 1 / 50, rec.imu.timestamps[-1] + 1 / 25)
     assert lib.lyra_pod_tick(pod, t_stop + 0.25, collect, None) >= 0
     status = ctypes.create_string_buffer(13)
@@ -227,3 +231,37 @@ def test_logline_capture_round_trips_through_the_logger(lib, tmp_path):
     assert (tmp_path / "pod" / "pod-p001" / "s01" / "markers.tsv").read_text() == "onset\tlabel\n12.500000\tbutton\n"
     again = subprocess.run(run.args, capture_output=True, text=True)
     assert again.returncode != 0 and "refusing to overwrite" in again.stderr
+
+
+def test_gatt_uuids_in_firmware_header_match_python():
+    import re
+    header = (FW / "lyra_ble.h").read_text()
+    found = {k.lower(): v for k, v in re.findall(r'#define LYRA_GATT_(\w+)_UUID "([0-9a-f-]+)"', header)}
+    assert found == GATT_UUIDS
+
+
+def test_phone_command_parity_and_pod_handling(lib):
+    class Cmd(ctypes.Structure):
+        _fields_ = [("origin", ctypes.c_uint8), ("command", ctypes.c_uint8), ("event_id", ctypes.c_uint16)]
+    lib.lyra_ble_unpack_phone_command.argtypes = [ctypes.c_char_p, ctypes.c_int, ctypes.c_void_p]
+    lib.lyra_pod_on_phone_command.argtypes = [ctypes.c_void_p, ctypes.c_double, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p]
+    good = PhoneCommandPayload(PayloadOrigin.HARDWARE, CommandCode.CANCEL_EVENT, 1).pack()
+    c = Cmd()
+    assert lib.lyra_ble_unpack_phone_command(good, 5, ctypes.byref(c)) == 0 and (c.origin, c.command, c.event_id) == (1, 1, 1)
+    malformed = [good[:4], b"\x02" + good[1:], good[:1] + b"\x03" + good[2:], good[:2] + b"\x00" + good[3:]]
+    for raw in malformed:
+        assert lib.lyra_ble_unpack_phone_command(raw, len(raw), ctypes.byref(c)) == -1
+        with pytest.raises(ValueError):
+            PhoneCommandPayload.unpack(raw)
+    results = []
+
+    def on_first_event(pod, t):
+        buf = ctypes.create_string_buffer(11)
+        stale = PhoneCommandPayload(PayloadOrigin.HARDWARE, CommandCode.CANCEL_EVENT, 99).pack()
+        results.append(("stale", lib.lyra_pod_on_phone_command(pod, t, stale, 5, buf)))
+        results.append(("malformed", lib.lyra_pod_on_phone_command(pod, t, good[:4], 4, buf)))
+        results.append(("current", lib.lyra_pod_on_phone_command(pod, t, good, 5, buf), buf.raw))
+    stream_through_pod(lib, bursty_recording(7, 240.0), on_first_event=on_first_event)
+    assert results[0] == ("stale", 1) and results[1] == ("malformed", -1) and results[2][1] == 0
+    p = EventStatusPayload.unpack(results[2][2])
+    assert (int(p.state), int(p.cancellation), p.event_id) == (0, 2, 1)  # IDLE, CANCELLED_ON_PHONE, event 1

@@ -43,13 +43,19 @@ components/lyra_pod/
    LYRA_ORIGIN_HARDWARE)`. Set `cfg` = {entry **0.97**, exit 0.45, 3 windows, 6.0 s gap, 60 s
    cooldown}: the frozen "multimodal + fallback" point in `mlm/models/frozen_pipeline.json`. Use
    `LYRA_ORIGIN_SIMULATED` for any bench run on generated signals.
-6. **Cancel button:** a GPIO interrupt hands off to the task, which calls
-   `lyra_pod_cancel(now, LYRA_CANCEL_ON_POD, payload)` and notifies the phone.
+6. **Cancel:** the pod button (GPIO interrupt, handed off to the task) calls
+   `lyra_pod_cancel(now, LYRA_CANCEL_ON_POD, payload)`. A write to the phone-command characteristic
+   calls `lyra_pod_on_phone_command()`:
+   - 0: indicate the confirmation payload;
+   - 1: stale event, ignore;
+   - −1: reject the write.
+   Event status goes out as an **indication**.
 7. **Device status:** periodically call `lyra_pod_device_status()` with the MAX17048 battery reading
    and notify.
 8. **Phone config:** decode writes with `lyra_ble_unpack_device_config()`.
    - In v1, only `countdown_s` is applied; rates and window length are fixed by the trained model.
-   - GATT service and characteristic UUIDs are not defined yet (`mlm/docs/BLE_PROTOCOL.md`).
+   - GATT UUIDs and properties: the DRAFT table in `mlm/docs/BLE_PROTOCOL.md`, also defined as
+     `LYRA_GATT_*_UUID` in `lyra_ble.h`, pending owner approval.
 9. **Data-collection mode** (build option, never in the deployed build):
    - Also sample MyoWare RAW at **1000 Hz**.
    - Write `lyra_logline` lines over USB serial (header first, then E/R/I samples and M markers).
