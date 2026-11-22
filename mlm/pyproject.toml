@@ -7,6 +7,9 @@ dependencies = ["numpy>=1.26", "scipy>=1.11"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8"]
+# Stage 4 training / C99 export. xgboost on macOS needs the OpenMP runtime: `brew install libomp`.
+# m2cgen instead of emlearn: emlearn's 8-bit leaf probabilities miss the 1e-5 C-parity tolerance.
+train = ["scikit-learn>=1.5", "xgboost>=2.1", "m2cgen>=0.10"]
 
 [build-system]
 requires = ["setuptools>=68"]
